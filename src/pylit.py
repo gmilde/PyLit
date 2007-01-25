@@ -1,91 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# =====================================================
-# Literate programming with Python and reStructuredText
-# =====================================================
+# ..
+#    restindex
+#        crumb: pylit.py
+#    /restindex
 # 
-# :Version:   0.2
+# ===============================================================
+# pylit.py: Literate programming with Python and reStructuredText
+# ===============================================================
+# 
+# :Version:   0.2.1
 # :Date:      2006-12-06
 # :Copyright: 2006 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
-# :Changelog: 2005-06-29 Initial version
-#             2005-06-30 first literate version of the script
-#             2005-07-01 object orientated script using generators 
-#             2005-07-10 Two state machine
-#             2006-12-04 Start of work on version 0.2 (code restructuring)
+# :Contents:  see contents_ section at end of file
 # 
-# 
-# Motivation
-# ============
-# 
-# Literate Programming
-# --------------------
-# 
-# 
-#    Literate programming is the combination of documentation and source
-#    together in a fashion suited for reading by human beings.
-#    
-#    -- `Literate Programming FAQ`_
-# 
-# ..
-# 
-#    Let us change our traditional attitude to the construction of programs:
-#    Instead of imagining that our main task is to instruct a computer what to
-#    do, let us concentrate rather on explaining to humans what we want the
-#    computer to do. 
-#    
-#    -- Donald E. Knuth, 1984
-# 
-# ..
-#    
-#    The idea is that you do not document programs (after the fact), but write
-#    documents that contain the programs. 
-#    
-#    -- John Max Skaller in a `Charming Python`_ interview.
-#    
-# 
-# Restrictions
-# ------------
-# 
-# Literate programming environments of the WEB_ family failed to gain a strong
-# user base. Some of the reasons are:
-# 
-# * The steep learning curve for mastering TeX, the special WEB commands and
-#   the actual programming language in parallel discourages potential literate
-#   programmers.
-# 
-# * While a printout has the professional look of a TeX-typeset essay, the
-#   programmer will spend most time viewing and editing the source. A WEB
-#   source in a text editor looks rather alienating:
+#             
+# Changelog
+# ---------
 #   
-#     In Knuth's work, beautiful literate programs were woven from ugly mixes of
-#     markups in combined program and documentation files. The literate program
-#     was directly targeted towards paper and books. Of obvious reasons,
-#     programmers do not very often print their programs on paper. (And as
-#     argued above, few of us intend to publish our programs in a book). Within
-#     hours, such a program print out is no longer up-to-date. And furthermore,
-#     being based on a paper representation, we cannot use the computers dynamic
-#     potentials, such as outlining and searching.
-#        
-#     -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+# :2005-06-29: Initial version
+# :2005-06-30: first literate version of the script
+# :2005-07-01: object orientated script using generators
+# :2005-07-10: Two state machine (later added 'header' state)
+# :2006-12-04: Start of work on version 0.2 (code restructuring)
+# :2007-01-23: 0.2 published at http://pylit.berlios.de
+# :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
 # 
-# 
-# Nevertheless, the idea of "documents that contain a program" is still
-# usefull in many contexts. This is the reason for one more attempt of a
-# literate programming framework.
-# 
-# 
-# PyLit
-# =====
-# 
-# `PyLit` (Python-Literate) provides a plain but efficient tool for literate
-# programming: a translator between a *text source* (reStructuredText_ with
-# embedded code blocks) and a *code source* (source code with comment blocks).
-# 
-# It is written in Python but should work with any programming language that
-# provides a syntax for comment blocks. ::
+# ::
 
 """pylit: Literate programming with Python and reStructuredText
    Convert between 
@@ -94,114 +38,9 @@
    * Source code with embedded text comment blocks
 """
 
-# The most distinct features are:
-# 
-# Dual source
-# -----------
-# 
-# Text source and code source are considered equal. Both hold the full
-# information. 
-# 
-# The `pylit.py` script converts the text source to code source and vice
-# versa. Round-trips are possible without loss of information. (It is
-# possible, to 'export' to a format by stripping code or text during the
-# conversion using the ``--strip`` option)
-# 
-# Work on code or documentation can be done in adapted editor modes or
-# environments providing formatting tools, syntax highlight, outlining,
-# and other conveniences.
-# 
-# Debugging is straightforward, using the code source.
-# 
-# Simplicity
-# ----------
-# 
-# `Pylit` does not introduce "named chunks". It lets the programmer
-# intersperse documentation and code freely but does not provide code
-# re-ordering or multiple expansion of definitions. Some call this
-# *semi-literate* style.
-# 
-# This restriction was done deliberately. It reduces the complexity and seems
-# better suited for a programming language like Python where you would rather
-# use modules, classes, and functions to organise the code.
-# 
-#   The computer science and programming pioneers, like Wirth and Knuth, used
-#   another programming style than we recommend today. One notable difference
-#   is the use of procedure abstractions. When Wirth and Knuth wrote their
-#   influential books and programming, procedure calls were used with care,
-#   partly because they were relatively expensive. Consequently, they needed
-#   an extra level of structuring within a program or procedure. 
-#   'Programming by stepwise refinement' as well as 'literate programming' can
-#   be seen as techniques and representations to remedy the problem. The use
-#   of many small (procedure) abstractions goes in another direction. If you
-#   have attempted to use 'literate programming' on a program (maybe an
-#   object-oriented program) with lots of small abstractions, you will
-#   probably have realized that there is a misfit between, on the one hand,
-#   being forced to name literal program fragments (scraps) and on the other,
-#   named program abstractions. We do not want to leave the impression that
-#   this is a major conceptual problem, but it is the experience of the author
-#   that we need a variation of literate programming, which is well-suited to
-#   programs with many, small (named) abstractions.
-#   
-#   -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
-# 
-# 
-# reStructuredText
-# ----------------
-# 
-# `PyLit` uses reStructuredText_ from Python docutils_ for text markup
-# 
-# * reStructuredText is an "ASCII-markup" language. Its syntax is very similar
-#   to the usual conventions used to structure "ASCII text" like e.g. emails.
-#   Thus it is more easy to read and to edit in a text editor than e.g. TeX,
-#   HTML, or XML.
-#   
-#   Most of the time, a programmer will see the source in a "text editor".
-#   With reStructuredText as documenting language, not only the pretty printed
-#   documentation, but either version of the source is a "combination of
-#   documentation and source together in a fashion suited for reading by human
-#   beings."
-#   
-# * reStructuredText is well documented, and actively maintained.
-#   
-# * Special editor modes for editing reStructuredText already exist (see
-#   `Editor Support for reStructuredText`_.) 
-#   
-# * With docutils_, the text source can be converted to a nice looking,
-#   hyperlinked, browsable HTML documentation as well as to a printer-ready
-#   PDF manual.
-# 
-# Actually, only the syntax for literal blocks is needed for pylit to convert
-# from text to code. I.e. if no pretty-printed or web-ready document is
-# needed, the programmer doesnot need to know anything else about
-# reStructuredText.
-# 
-# ::
-
 __docformat__ = 'restructuredtext'
 
 
-# .. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
-# 
-# .. _`Charming Python`: 
-#      http://www-128.ibm.com/developerworks/library/l-pyth7.html
-# 
-# .. _WEB: http://www-cs-faculty.stanford.edu/~knuth/cweb.html
-# 
-# .. _`Literate Programming - Issues and Problems`:
-#      http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
-# 
-# .. _docutils: http://docutils.sourceforge.net/rst.html
-# 
-# .. _reStructuredText: http://docutils.sourceforge.net/rst.html
-# 
-# .. _Editor Support for reStructuredText: 
-#       http://docutils.sourceforge.net/tools/editors/README.html
-# 
-# 
-# Implementation
-# ==============
-# 
 # Requirements
 # ------------
 # 
@@ -219,14 +58,22 @@ import optparse
 
 from simplestates import SimpleStates  # generic state machine
 
-# Previous versions imported from my iterqueue module::
-# 
-# from iterqueue import PushIterator            # iterator with backtracking
-# 
+# Previous versions imported from the iterqueue module::
+
+# ## from iterqueue import PushIterator            # iterator with backtracking
+#  
 # The PushIterator is a minimal implementation of an iterator with
 # backtracking from the `Effective Python Programming`_ OSCON 2005 tutorial by
-# Anthony Baxter As the definition is small, it is inlined now. For the full
-# reasoning and doc see iterqueue.py.txt (unpublished)
+# Anthony Baxter. As the definition is small, it is inlined now. For the full
+# reasoning and doc see `iterqueue.py.html`_. 
+# 
+# .. _`Effective Python Programming`: 
+#    http://www.interlink.com.au/anthony/tech/talks/OSCON2005/effective_r27.pdf
+# 
+# .. _`iterqueue.py.html`: iterqueue.py.html
+# 
+# ::
+
 class PushIterator:
     def __init__(self, iterable):
         self.it = iter(iterable)
@@ -257,6 +104,8 @@ class PushIterator:
 # Using the full blown docutils_ rst parser would introduce a large overhead
 # and slow down the conversion. 
 # 
+# .. _docutils: http://docutils.sourceforge.net/
+# 
 # The generic `PyLitConverter` class inherits the state machine framework
 # (initalisation, scheduler, iterator interface, ...) from `SimpleStates`,
 # overrides the ``__init__`` method, and adds auxiliary methods and
@@ -265,7 +114,7 @@ class PushIterator:
 # ::
 
 class PyLitConverter(SimpleStates):
-    """parent class for Text2Code and Code2Text, the state machines
+    """parent class for `Text2Code` and `Code2Text`, the state machines
     converting between text source and code source of a literal program.
     """
 
@@ -359,7 +208,7 @@ class PyLitConverter(SimpleStates):
 # 
 #    >>> 23 + 3
 #    26
-#
+# 
 # The state handlers are implemented as generators. Iterating over a
 # `Text2Code` instance initializes them to generate iterators for
 # the respective states (see ``simplestates.py``).
@@ -374,7 +223,7 @@ class Text2Code(PyLitConverter):
 # ~~~~~~~~~~~~~~~~
 # 
 # Convert the comment string of the header (shebang and coding lines). The
-# first a non-matching and non-blank line  will trigger the switch to 'text'
+# first non-matching and non-blank line  will trigger the switch to 'text'
 # state. ::
 
     def header(self):
@@ -657,7 +506,6 @@ class Code2Text(PyLitConverter):
         else:
             yield self.join(lines)
         
-                
 
 # Command line use
 # ================
@@ -677,7 +525,7 @@ class Code2Text(PyLitConverter):
 # 
 # .pytxt
 #   is recognised as extension by os.path.splitext but also fails on FAT16
-#   
+# 
 # .pyt 
 #   (PYthon Text) is used by the Python test interpreter
 #   `pytest <http:www.zetadev.com/software/pytest/>`__
@@ -704,7 +552,7 @@ class Code2Text(PyLitConverter):
 # 
 # OptionValues
 # ------------
-#           
+# 
 # For use as keyword arguments, it is handy to have the options
 # in a dictionary. The following class adds an `as_dict` method
 # to  `optparse.Values`::
@@ -1096,263 +944,28 @@ def main(args=sys.argv[1:], **default_values):
 if __name__ == '__main__':
     main()
 
+# TODO
+# ----
+# 
+# Bugfix: a comment joined to code should not put the whole preceding text
+# block into a code block but only up to the next empty line::
+        
+# The classical programming example in Python
+# 
+# A variable springs into existence, if a value is assigned to it::
 
-# Alternatives
-# ============
-# 
-# There are already a lot of literate programming frameworks available, both
-# sophisticated and lightwight. This non-comprehensive listing will compare
-# them to `PyLit`.
-# 
-# WEB and friends
-# ---------------
-# 
-# The first published literate programming environment was WEB, introduced by
-# Donald Knuth in 1981 for his TeX typesetting system; it uses Pascal as its
-# underlying programming language and TeX for typesetting of the
-# documentation. CWEB_ is a newer version of WEB for the C programming
-# language.
-# 
-# Other implementations of the concept are noweb_ and FunnelWeb_.
-# 
-# Just compare hello.noweb::
+# a string variable
+greeting = "Hello world."
+print greeting
 
-# | @
-# | \section{Hello world}
-# | 
-# | Today I awakened and decided to write
-# | some code, so I started to write a Hello World in \textsf C.
-# | 
-# | <<hello.c>>=
-# | /*
-# |   <<license>>
-# | */
-# | #include <stdio.h>
-# | 
-# | int main(int argc, char *argv[]) {
-# |   printf("Hello World!\n");
-# |   return 0;
-# | }
-# | @
-# | \noindent \ldots then I did the same in PHP.
-# | 
-# | <<hello.php>>=
-# | <?php
-# |   /*
-# |   <<license>>
-# |   */
-# |   echo "Hello world!\n";
-# | ?>
-# | @
-# | \section{License}
-# | Later, same day some lawyer reminded me about licenses.
-# | So, here it is:
-# | 
-# | <<license>>=
-# | This work is placed in the public domain.
-# | @
-# 
-# to the Pylit Version (in 3 files)
-# 
-# hello.c.txt::
 
-# | Hello world
-# | -----------
-# | 
-# | Today I awakened and decided to write
-# | some code, so I started to write a Hello World in `C`.
-# | 
-# | ..include: license
-# | 
-# | :: 
-
-# | 
-# | #include <stdio.h>
-# | 
-# | int main(int argc, char *argv[]) {
-# |   printf("Hello World!\n");
-# |   return 0;
-# | }
+# New behaviour of --diff option to let it e.g. detect parallel edits:
 # 
-# hello.php.txt::
-
-# | ... then I did the same in PHP.
-# |
-# | ..include: license
-# | 
-# | :: 
-
-# | 
-# | <?php
-# |   /*
-# |   <<license>>
-# |   */
-# |   echo "Hello world!\n";
-# | ?>
+# * compare converted version to `outfile` (be it given or autoguessed)
 # 
-# Later, same day some lawyer reminded me about licenses.
-# So, here it is:
-# 
-# license::
-
-# | This work is placed in the public domain.
-# 
-# .. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
-# 
-# .. _FunnelWeb: http://www.ross.net/funnelweb/
-# 
-# XMLTangle
-# ---------
-# 
-# XMLTangle_ is an generic tangle  program written in Python. It differs from
-# PyLit mainly by its choice of XML as documenting language (making the source
-# document harder to read for a human being).
-# 
-#   This program is a version of the tangle program which has the following
-#   features:
-#   
-#   * Works with any programming language
-#   * Uses XML as the documentation language
-#   * Is not tied to any specific DTD - instead it relies on processing
-#     instructions to perform it's tasks
-#   
-#   It does not include every feature of literate programming - specifically it
-#   does not include any macro facility.
-# 
-#   -- http://literatexml.sourceforge.net/xmltangle/t1.html
-#   
-# .. _XMLTangle: http://literatexml.sourceforge.net/xmltangle/
+# * only if `outfile` == `infile`, do a diff of a "round trip"
 # 
 # 
-# Lightweight literate programming
-# --------------------------------
-# 
-# `Lightweight literate programming`_ is one more example of a Python based
-# literal programming framework. One XML source processed to either text or
-# code. The XML source itself is rather hard to read for human beeings.
-# 
-#   In the author's current toolchain, the input is written in a slightly
-#   customized dialect of DocBook. Automated tools produce the two primary
-#   forms of output:
-# 
-#   * The ordinary DocBook toolchain processes the source file as a document,
-#     producing both Web and PDF formats. For details of this toolchain, see
-#     `Writing documentation with Docbook-XML 4.2`_.
-#   
-#   * A small Python script extracts one or more source files from the
-#     document, and these are the executable form of the program. 
-# 
-# .. _`Lightweight literate programming`: 
-#    http://infohost.nmt.edu/~shipman/soft/litprog/
-#    
-# .. _`Writing documentation with Docbook-XML 4.2`:   
-#    http://www.nmt.edu/tcc/help/pubs/docbook42/
-#    
-# SourceBrowser
-# -------------
-# 
-#   SourceBrowser_ is a documentation meta-programming tool that generates a
-#   wiki representation of a source tree. 
-# 
-#   It provides a `Source Annotation Language` for writing a documentation
-#   meta-program and a tool for generating a static wiki for the host program.
-# 
-# It is a rather complex tool aimed at a hyperlinked representation of complex
-# programming projects.
-# 
-# .. _SourceBrowser: http://web.media.mit.edu/~vyzo/srcb/doc/index.html
-# 
-# 
-# Interscript
-# -----------
-# 
-# PyLit it a simple literal programming framework...
-# 
-#   Interscript_ is different, because the fundamental paradigm is extended so
-#   that there are three kinds of LP sections in file:
-# 
-#    1. Code sections
-#    2. Documentation sections
-#    3. Scripting sections
-#    
-#    -- Interscript_ homepage
-#    
-# .. _Interscript: http://interscript.sourceforge.net/
-# 
-# Ly
-# --
-# 
-# Ly_, the "lyterate programming thingy." is an engine for Literate Programming.
-# The design consideration look very much like the ones for Pylit:
-# 
-#   So why would anybody use Ly instead of the established Literate
-#   Programming tools like WEB or noweb? 
-# 
-#     * Elegance. I do not consider the source code of WEB or noweb to be
-#       particularly nice. I especially wanted a syntax that allows me to easily
-#       write a short paragraph, then two or three lines of code, then another
-#       short paragraph. Ly accomplishes this by distinguishing code from text
-#       through indentation.
-#     * HTML. WEB and CWEB are targeted at outputting TeX. This is a valid
-#       choice, but not mine, as I want to create documents with WWW links, and
-#       as I want to re-create documents each time I change something-- both of
-#       these features don't go well together with a format suited to printout,
-#       like TeX is. (Of course you can create HTML from LaTeX, but if my output
-#       format is HTML, I want to be able to write HTML directly.)
-#     * Python. I originally created Ly for a Python-based project, and
-#       therefore I wanted it to run everywhere where Python runs. WEB and noweb
-#       are mostly targeted at UNIX-like platforms. 
-# 
-# Ly introduces its own language with a syntax for code chunks instead of the
-# simpler "semi literate" style of pylit. "Ly has some special ways for
-# entering HTML tags. However, they are currently undocumented."
-# 
-# .. _Ly: http://lyterate.sourceforge.net/intro.html
-# 
-# pyreport
-# --------
-# 
-# Pyreport is quite similar to PyLit in its focus on Python and the use of
-# reStructuredText. It is a combination of `documentation generator`__
-# (processing embedded documentation) and report tool (processing Python
-# output). It is not suited to "write documents that contain the programs".
-# 
-# __ http://en.wikipedia.org/wiki/Documentation_generator
-# 
-#   pyreport is a program that runs a python script and captures its output,
-#   compiling it to a pretty report in a pdf or an html file. It can display
-#   the output embedded in the code that produced it and can process special
-#   comments (literate comments) according to markup languages (rst or LaTeX)
-#   to compile a very readable document.
-#   
-#   This allows for extensive literate progamming in python, for generating
-#   reports out of calculations written in python, and for making nice
-#   tutorials.
-# 
-# 
-# 
-# 
-# 
-# Open questions
-# ==============
-# 
-# * How to handle docstrings in code blocks? (it would be nice to convert them
-#   to rst-text if the ``__docformat__`` is ``restructuredtext``)
-#   
-# * road testing
-# 
-# * publication and advertisement
-# 
-# * How can I include a literal block that should not be in the
-#   executable code (e.g. an example, an earlier version or variant)?
-#   
-#   Workaround: Use a `quoted literal block` (with a quotation different from
-#               the comment string used for text blocks to keep it as
-#               commented over the code-text round-trips.
-#           
-#               Python `pydoc` examples can also use the special pydoc block
-#               syntax (no double colon!).
-#   
 # .. contents::
 # 
-#   
+# 
