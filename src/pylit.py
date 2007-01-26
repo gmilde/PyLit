@@ -10,17 +10,17 @@
 # pylit.py: Literate programming with Python and reStructuredText
 # ===============================================================
 # 
-# :Version:   0.2.1
-# :Date:      2006-12-06
-# :Copyright: 2006 Guenter Milde.
+# :Version:   0.2.2
+# :Date:      2007-01-26
+# :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
 # :Contents:  see contents_ section at end of file
 # 
-#             
+# 
 # Changelog
 # ---------
-#   
+# 
 # :2005-06-29: Initial version
 # :2005-06-30: first literate version of the script
 # :2005-07-01: object orientated script using generators
@@ -28,6 +28,7 @@
 # :2006-12-04: Start of work on version 0.2 (code restructuring)
 # :2007-01-23: 0.2 published at http://pylit.berlios.de
 # :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
+# :2007-01-26: 0.2.2: new behaviour of diff()
 # 
 # ::
 
@@ -61,7 +62,7 @@ from simplestates import SimpleStates  # generic state machine
 # Previous versions imported from the iterqueue module::
 
 # ## from iterqueue import PushIterator            # iterator with backtracking
-#  
+# 
 # The PushIterator is a minimal implementation of an iterator with
 # backtracking from the `Effective Python Programming`_ OSCON 2005 tutorial by
 # Anthony Baxter. As the definition is small, it is inlined now. For the full
@@ -853,24 +854,40 @@ def run_doctest(infile="-", txt2code=True,
 # ::
 
 def diff(infile='-', outfile='-', txt2code=True, **keyw):
-    """Do a round-trip and report differences
+    """Report differences between converted infile and existing outfile
+    
+    If outfile is '-', do a round-trip conversion and report differences
     """
+    
     import difflib
     
-    data = file(infile)
+    instream = file(infile)
     # for diffing, we need a copy of the data as list::
-    data = data.readlines()
+    data = instream.readlines()
     # convert
     converter = get_converter(data, txt2code)
-    output = "".join(converter()).splitlines(True)
-    # back-convert the output data
-    converter = get_converter(output, not txt2code)
-    output = "".join(converter()).splitlines(True)
+    new = "".join(converter()).splitlines(True)
+    
+    if outfile != '-':
+        outstream = file(outfile)
+        old = outstream.readlines()
+        oldname = outfile
+        newname = "<conversion of %s>"%infile
+    else:
+        old = data
+        oldname = infile
+        # back-convert the output data
+        converter = get_converter(new, not txt2code)
+        new = "".join(converter()).splitlines(True)
+        newname = "<round-conversion of %s>"%infile
+        
     # find and print the differences
-    delta = list(difflib.unified_diff(data, output, infile,
-                                      "result of pylit round-cycle"))
+    delta = list(difflib.unified_diff(old, new, fromfile=oldname, 
+                                      tofile=newname))
     if not delta:
-        print "no differences found in result of pylit round-cycle"
+        print oldname
+        print newname
+        print "no differences found"
         return False
     print "".join(delta)
     return True
@@ -943,6 +960,7 @@ def main(args=sys.argv[1:], **default_values):
 
 if __name__ == '__main__':
     main()
+ 
 
 # TODO
 # ----
@@ -954,18 +972,8 @@ if __name__ == '__main__':
 # 
 # A variable springs into existence, if a value is assigned to it::
 
-# a string variable
-greeting = "Hello world."
-print greeting
+## a string variable
+#  greeting = "Hello world."
+#  print greeting
 
-
-# New behaviour of --diff option to let it e.g. detect parallel edits:
-# 
-# * compare converted version to `outfile` (be it given or autoguessed)
-# 
-# * only if `outfile` == `infile`, do a diff of a "round trip"
-# 
-# 
 # .. contents::
-# 
-# 
