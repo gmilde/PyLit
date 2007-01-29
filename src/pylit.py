@@ -10,7 +10,7 @@
 # pylit.py: Literate programming with Python and reStructuredText
 # ===============================================================
 # 
-# :Version:   0.2.2
+# :Version:   0.2.3
 # :Date:      2007-01-26
 # :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
@@ -29,7 +29,7 @@
 # :2007-01-23: 0.2 published at http://pylit.berlios.de
 # :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
 # :2007-01-26: 0.2.2: new behaviour of diff()
-# 
+# :2007-01-29: 0.2.3: new `header` methods after suggestion by Riccardo Murri
 # ::
 
 """pylit: Literate programming with Python and reStructuredText
@@ -133,7 +133,6 @@ class PyLitConverter(SimpleStates):
     keep_lines = False
     state = 'header'   # initial state
     codeindent = 2
-    join = "".join    # join lists to a string (by default with empty string)
 
 # Instantiation
 # ~~~~~~~~~~~~~
@@ -152,7 +151,7 @@ class PyLitConverter(SimpleStates):
 # `PushIterator`::
 
         self.data = PushIterator(data)
-        self.__textindent = 0
+        self._textindent = 0
 
 # Additional keyword arguments are stored as data attributes, overwriting the
 # class defaults::
@@ -170,7 +169,16 @@ class PyLitConverter(SimpleStates):
 # 
 #        To convert a string into a suitable object, use its splitlines method
 #        with the optional `keepends` argument set to True.
-# 
+
+# Converter.__str__
+# ~~~~~~~~~~~~~~~~~
+
+# Return converted data as string::
+
+    def __str__(self):
+        blocks = ["".join(block) for block in self()]
+        return "".join(blocks)
+
 # Converter.get_indent
 # ~~~~~~~~~~~~~~~~~~~~
 # 
@@ -185,12 +193,14 @@ class PyLitConverter(SimpleStates):
 # Converter.ensure_trailing_blank_line
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Ensure blank line at end of a block ::
+# Ensure there is a blank line as last element of the list `lines`.
+# 
+# Pass, if self.strip == True or the `lines` list is empty ::
 
     def ensure_trailing_blank_line(self, lines, line):
-        if self.strip:
+        if self.strip or not lines:
             return
-        if lines and lines[-1].lstrip(): 
+        if lines[-1].lstrip(): 
             sys.stderr.write("\nWarning: inserted blank line between\n %s %s"
                              %(lines[-1], line))
             lines.append("\n")
@@ -223,33 +233,32 @@ class Text2Code(PyLitConverter):
 # Text2Code.header
 # ~~~~~~~~~~~~~~~~
 # 
-# Convert the comment string of the header (shebang and coding lines). The
-# first non-matching and non-blank line  will trigger the switch to 'text'
-# state. ::
+# Convert the header (leading rst comment block) to code.
+# ::
 
     def header(self):
-        """Uncomment python header lines"""
-        lines = []
-        line = ""
-        # Test first lines for special python header comments
-        for line in self.data_iterator:
-            # pass on blank lines
-            if not line.lstrip():
-                lines.append(line)  
-            # strip rst-comment from special python header lines
-            elif line.startswith(".. #!"):
-                lines.append(line[len(".. "):])
-            elif (line.startswith(".. " + self.comment_string)
-                  and line.find("coding:") != -1):
-                lines.append(line[len(".. "):])
-            # everything else is the first non-header line
-            else:
-                break
-        # Push back first non-header line and set state to "text"
+        """Convert header (comment) to code"""
+        line = self.data_iterator.next()
+
+# Test first line for rst comment: Which variant is better?
+
+# 1. starts with comment marker and has
+#    something behind the comment on the first line::
+
+        if line.startswith("..") and len(line.rstrip()) > 2:
+
+# 2. Convert any leading comment to code::
+
+        #if line.startswith(".."):
+            self.data_iterator.appendleft(line.replace("..", "  ", 1))
+            return self.code()
+        
+# No header code found: Push back first non-header line and set state to
+# "text"::
+
         self.data_iterator.appendleft(line)
         self.state = "text"
-        self.ensure_trailing_blank_line(lines, line)
-        return self.join(lines)
+        return []
 
 # Text2Code.text_handler_generator
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -258,37 +267,67 @@ class Text2Code(PyLitConverter):
 # comment. Text is quoted with the comment_string or filtered (with
 # strip=True). 
 # 
-# ::
+# It is implemented as a generator function that acts on the `data` iterator
+# and yields text blocks.
+# 
+# Declaration and initialization::
 
     def text_handler_generator(self):
         """Convert text blocks from rst to comment
         """
         lines = []
+        
+# Iterate over the data_iterator (which yields the data lines)::
+          
         for line in self.data_iterator:
             # print "Text: '%s'"%line
-            # default action: add comment string
+            
+# Default action: add comment string and collect in `lines` list
+# Skip if ``self.strip`` evaluates to True::
+
             if not self.strip:
                 lines.append(self.comment_string + line)
-            # End of text block: 
+                
+# Test for the end of the text block: a line that ends with `::` but is neither
+# a comment nor a directive::
+
             if (line.rstrip().endswith("::")
                 and not line.lstrip().startswith("..")):
-                # set the current text indent level 
-                # (needed by the code handler to find the end of code block)
-                self.__textindent = self.get_indent(line)
+                
+# End of text block is detected, now:
+# 
+# set the current text indent level (needed by the code handler to find the
+# end of code block) and set the state to "code" (i.e. the next call of
+# `self.next` goes to the code handler)::
+
+                self._textindent = self.get_indent(line)
                 self.state = 'code'
-                # ensure trailing blank line
+                
+# Ensure a trailing blank line (which is the paragraph separator in
+# reStructured Text. Look at the next line, if it is blank, ok, if it is not
+# blank, push it back (it should be code) and add a line by calling the
+# `ensure_trailing_blank_line` method (which also issues a warning)::
+
                 line = self.data_iterator.next()
                 if line.lstrip():
                     self.data_iterator.appendleft(line) # push back
                     self.ensure_trailing_blank_line(lines, line)
                 elif not self.strip:
                     lines.append(line)
-                # remove_literal_marker(lines)
-                yield self.join(lines)
+
+# Now yield and reset the lines. (There was a function call to remove a
+# literal marker (if on a line on itself) to shorten the comment. However,
+# this behaviour was removed as the resulting difference in line numbers leads
+# to misleading error messages in doctests)::
+
+                #remove_literal_marker(lines)
+                yield lines
                 lines = []
-                continue
-        # End of data
-        yield self.join(lines)
+                
+# End of data: if we "fall of" the iteration loop, just join and return the
+# lines::
+
+        yield lines
 
 
 # Text2Code.code_handler_generator
@@ -308,46 +347,54 @@ class Text2Code(PyLitConverter):
         """Convert indented literal blocks to source code
         """
         lines = []
-        codeindent = "indent of first non-blank code line" # set below
+        codeindent = None # indent of first non-blank code line, set below
         for line in self.data_iterator:
             # print "Code: '%s'"%line
-            # pass on blank lines (no whitespace except newline)
+            # pass on empty lines (no whitespace except newline)
             if not line.rstrip("\n"):
                 lines.append(line)
-                continue                    
-            # literal block ends with first less indented, nonblank line
-            # self.__textindent is set by the text handler to the indent of
-            # the surrounding text block
-            if line.lstrip() and self.get_indent(line) <= self.__textindent:
-                self.data_iterator.appendleft(line) # push back
+                continue
+
+# Test for end of code block:
+#
+# A literal block ends with the first less indented, nonblank line.
+# `self._textindent` is set by the text handler to the indent of the
+# preceding paragraph. 
+#
+# To prevent problems with different tabulator settings, hard tabs in code
+# lines  are expanded with the `expandtabs` string method when calculating the
+# indentation (i.e. replaced by 8 spaces, by default).
+
+            if line.lstrip() and self.get_indent(line) <= self._textindent:
+                # push back line
+                self.data_iterator.appendleft(line) 
                 self.state = 'text'
+                # append blank line (if not already present)
                 self.ensure_trailing_blank_line(lines, line)
-                yield self.join(lines)
+                yield lines
+                # reset list of lines
                 lines = []
                 continue
-            # default action: append unindented line
-            # just in case the line is shorter than codeindent but not totally
-            # empty, append only a newline.
-            try:
-                lines.append(line[codeindent:] or "\n")
-            except TypeError:
-                # Determine the code indentation:
-                if not line.lstrip(): # pass on "white" lines
-                    lines.append(line)
-                    continue
+            
+            # Determine the code indentation from first non-blank code line
+            if codeindent is None and line.lstrip():
                 codeindent = self.get_indent(line)
-                lines.append(line[codeindent:] or "\n")
-        yield self.join(lines)
+            
+            # default action: append unindented line
+            # (in case the line is shorter than codeindent but not totally
+            # empty, append only a newline.)
+            lines.append(line[codeindent:] or "\n")
+        yield lines
                         
 
 # Txt2Code.remove_literal_marker
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Remove literal marker (::) in expanded form i.e. in a paragraph on its own.
+# Remove literal marker (::) in "expanded form" i.e. in a paragraph on its own.
 # 
 # While cleaning up the code source, it leads to confusion for doctest and
-# searches (e.g. grep) as line-numbers between text and code source will differ.
-# ::
+# searches (e.g. grep) as line-numbers between text and code source will
+# differ. ::
 
     def remove_literal_marker(list):
         try:
@@ -366,9 +413,8 @@ class Text2Code(PyLitConverter):
 # valid source code, extracts comments, and puts non-commented code in literal
 # blocks. 
 # 
-# Only comments starting at the first column and with a comment string
-# matching the one in the `comment_string` attribute are treated as text
-# blocks.
+# Only lines starting with a comment string matching the one in the
+# `comment_string` data attribute are considered text lines.
 # 
 # The class is derived from the PyLitConverter state machine and adds handlers
 # for the three states "header", "text", and "code". ::
@@ -380,122 +426,201 @@ class Code2Text(PyLitConverter):
 # Code2Text.header
 # ~~~~~~~~~~~~~~~~
 # 
-# Convert the header (shebang and coding lines) to a reStructured text
-# comment. Set the state to "text" afterwards (as we expect a leading comment
-# block to be the common case). ::
+# Sometimes code needs to remain on the first line(s) of the document to be
+# valid. The most common example is the "shebang" line that tells a POSIX
+# shell how to process an executable file::
+
+#!/usr/bin/env python
+
+# In Python, the ``# -*- coding: iso-8859-1 -*-`` line must occure before any
+# other comment or code.
+# 
+# If we want to keep the line numbers in sync for text and code source, the
+# reStructured Text markup for these header lines must start at the same line
+# as the first header line. Therfore, header lines could not be marked as
+# literal block (this would require the "::" and an empty line above the code.
+# 
+# OTOH, a comment may start at the same line as the comment marker and
+# includes subsequent indented lines. Comments are visible in the reStructured
+# Text source but hidden in the pretty-printed output.
+# 
+# With a header converted to comment in the text source, everything before the
+# first text block (i.e. before the first paragraph using the matching comment
+# string) will be hidden away (in HTML or PDF output). 
+# 
+# This seems a good compromise, the advantages
+# 
+# * line numbers are kept
+# * the "normal" code conversion rules (indent/unindent by `codeindent` apply
+# * greater flexibility: you can hide a repeating header in a project
+#   consisting of many source files.
+#   
+# set off the disadvantages
+# 
+# - it may come as surprise if a part of the file is not "printed",
+# - one more syntax element to learn for rst newbees to start with pylit,
+#   (however, starting from the code source, this will be auto-generated)
+# 
+# In the case that there is no matchin comment at all, the complete code
+# source will become a comment -- however, in this case it is not very likely
+# the source is a literate source.
+#
+# It is possible to repeat the header for documentation issues in the first
+# text block (at least if it only contains code that is just disregarded if it
+# appears in a later position as e.g. the typical Python header :
+# 
+#   #!/usr/bin/env python
+#   # -*- coding: iso-8859-1 -*-
+#   
+# An alternative would be an inline-literal, but this seems (at least to me)
+# too complicated.
+# 
+# ::
 
     def header(self):
-        """Comment header lines"""
-        lines = []
-        for line in self.data_iterator:
-            # pass on blank lines
-            if not line.lstrip():
-                lines.append(line)
-                continue
-            if (line.startswith("#!") 
-                or (line.startswith(self.comment_string)
-                    and line.find("coding:") != -1)):
-                lines.append(".. " + line)
-            else:
-                break
-        self.data_iterator.appendleft(line)
-        self.state = "text"
-        self.ensure_trailing_blank_line(lines, line)
-        if self.strip:
-            return ""
-        return self.join(lines)
+        """Convert leading code to rst comment"""
 
+# Test first line for text or code, push back again to let it be handled by
+# the  correct state handler method::
+
+        line = self.data_iterator.next()
+        self.data_iterator.appendleft(line)
+        
+        if line.startswith(self.comment_string):
+            self.state = "text"
+            return []
+
+# Leading code detected, handle with the `code` method and replace the
+# first line to start with a rst comment marker            
+            
+        lines = self.code()
+        if lines:
+            lines[0] = lines[0].replace("  ", "..", 1)
+        return lines
+            
+            
 # Code2Text.text_handler_generator
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The text handler processes 
+# The text handler converts a comment to a text block if it matches the
+# following requirements:
 # 
-# * non-indented comment blocks 
-# * with matching comment string,
-# * that are separated from code by a blank line (the paragraph separator in
+# * every line starts with a matching comment string (test includes whitespace!)
+# * comment is separated from code by a blank line (the paragraph separator in
 #   reStructuredText)
 # 
+# It is implemented as a generator function that acts on the `data` iterator
+# and yields text blocks.
+# 
 # Text is uncommented. A literal block marker is appended, if not already
-# present. ::
+# present. If `self.strip` evaluates to `True`, text is filtered.
+# ::
 
     def text_handler_generator(self):
         """Uncomment text blocks in source code
         """
-        prefix = " "*self.codeindent + self.comment_string
-        lines = [""]
+        lines = []
+        
+# Iterate over the data lines (remember, code lines are processed by the code
+# handler and not seen here). ::
+          
         for line in self.data_iterator:
-            # print "Text: " + line
-            # pass on blank lines
+              # print "Text: " + line
+              
+# Pass on blank lines. Strip comment string from otherwise blank lines
+# (trailing whitespace in the `comment_string` is not significant for blank
+# lines). Continue with the next line, as there is no need to test blank lines
+# for the end of text. ::
+
             if not line.lstrip():
                 lines.append(line)
                 continue
-            # strip comment chars from empty lines
             if line.rstrip() == self.comment_string.rstrip():
                 lines.append("\n")
                 continue
-            # End of text block
+
+# Test for end of text block: the first line that doesnot start with a
+# matching comment string. This tests also whitespace that is part of the
+# comment string! ::
+
             if not line.startswith(self.comment_string):
-                self.data_iterator.appendleft(line)
+            
+# End of text block: Push back the line and let the "code" handler handle it
+# (and subsequent lines)::
+              
                 self.state = 'code'
-                # keep as comment if there is no trailing blank line
-                if lines and lines[-1].lstrip():
-                    lines = [prefix + line for line in lines]
-                    # add text block marker before first code block
-                    if lines[0] == prefix and not self.keep_lines:
-                        lines[0] = "::\n\n"
-                    yield self.join(lines)
-                else:
-                    # Ensure literal block marker
-                    if (not self.strip and len(lines)>1 
-                        and not lines[-2].rstrip().endswith("::")):
-                        lines.append("::\n\n")
-                    yield self.join(lines)
+                self.data_iterator.appendleft(line)
+
+# Also restore and push back lines that precede the next code line without a
+# blank line (paragraph separator) inbetween::
+                  
+                while lines and lines[-1].lstrip():
+                    line = self.comment_string + lines.pop()
+                    self.data_iterator.appendleft(line)
+                    
+# Ensure literal block marker (double colon) at the end of the text block::
+
+                if (not self.strip and len(lines)>1 
+                    and not lines[-2].rstrip().endswith("::")):
+                     lines.extend(["::\n", "\n"])
+                     
+# Yield the text block, reset the cache, continue with next line (when the
+# state is again set to "text")::
+                       
+                yield lines
                 lines = []
                 continue
-            # default action: strip the comment string
+                
+# Test passed: It's text line. Strip the comment string and append to the
+# `lines` cache::
+
             lines.append(line[len(self.comment_string):])
-        yield self.join(lines)
+            
+# No more lines: Just return the remaining lines::
+              
+        yield lines
 
     
 # Code2Text.code_handler_generator
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # The `code` method is called on non-commented code. Code is returned as
-# indented literal block or filtered (with ``strip=True``). The amount of the
-# code indentation is controled by `self.codeindent`. To prevent problems with
-# different tabulator settings, hard tabs in code lines  are expanded with the
-# `expandtabs` string method when calculating the indentation.
+# indented literal block (or filtered, if ``strip=True``). The amount of the
+# code indentation is controled by `self.codeindent` (default 2). 
 # 
 # ::
 
     def code_handler_generator(self):
         """Convert source code to indented literal blocks.
         
-        Expands hard tabs with the `expandtabs` string method.
-        Strips the code blocks if self.strip is True
+        Filter code blocks if self.strip is True
         """
         lines = []
         for line in self.data_iterator:
             # yield "Code: " + line
             # pass on empty lines (only newline)
-            if not line.rstrip("\n"):
+            if line == "\n":
                 lines.append(line)
                 continue
-            # strip comment chars from empty lines
-            if line.rstrip() == self.comment_string.rstrip():
-                lines.append("\n")
-                continue
-            # test for end of code block 
-            # (nonindented matching comment string following a blank line)
-            if (line.startswith(self.comment_string) 
-                and lines and not lines[-1].strip()):
+            # # strip comment string from blank lines
+            # if line.rstrip() == self.comment_string.rstrip():
+            #     lines.append("\n")
+            #     continue
+            
+# Test for end of code block: nonindented matching comment string following a
+# blank line. A comment string matche includes whitespace normally but ignores
+# trailing whitespace if the line after the comment is blank. ::
+
+            if (line.startswith(self.comment_string) or
+                line.rstrip() == self.comment_string.rstrip()
+               ) and lines and not lines[-1].strip():
                 self.data_iterator.appendleft(line)
                 self.state = 'text'
                 # self.ensure_trailing_blank_line(lines, line)
                 if self.strip:
-                    yield ""
+                    yield []
                 else:
-                    yield self.join(lines)
+                    yield lines
                 # reset
                 lines = []
                 continue
@@ -503,9 +628,9 @@ class Code2Text(PyLitConverter):
             lines.append(" "*self.codeindent + line)
         # no more lines in data_iterator
         if self.strip:
-            yield ""
+            yield []
         else:
-            yield self.join(lines)
+            yield lines
         
 
 # Command line use
@@ -832,7 +957,7 @@ def run_doctest(infile="-", txt2code=True,
     
     if txt2code is False: 
         converter = Code2Text(data, keep_lines=True, **keyw)
-        docstring = "".join(converter())
+        docstring = str(converter)
     else: 
         docstring = data.read()
         
@@ -866,7 +991,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
     data = instream.readlines()
     # convert
     converter = get_converter(data, txt2code)
-    new = "".join(converter()).splitlines(True)
+    new = str(converter).splitlines(True)
     
     if outfile != '-':
         outstream = file(outfile)
@@ -878,7 +1003,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
         oldname = infile
         # back-convert the output data
         converter = get_converter(new, not txt2code)
-        new = "".join(converter()).splitlines(True)
+        new = str(converter).splitlines(True)
         newname = "<round-conversion of %s>"%infile
         
     # find and print the differences
@@ -935,7 +1060,7 @@ def main(args=sys.argv[1:], **default_values):
     if options.ensure_value("execute", None):
         print "executing " + options.infile
         if options.txt2code:
-            code = "".join(converter())
+            code = str(converter)
         else:
             code = data
         exec code
@@ -943,8 +1068,7 @@ def main(args=sys.argv[1:], **default_values):
 
 # Default action::
 
-    output = "".join(converter())
-    out_stream.write(output)
+    out_stream.write(str(converter))
     if out_stream is not sys.stdout:
         print "extract written to", out_stream.name
         
@@ -966,8 +1090,8 @@ if __name__ == '__main__':
 # ----
 # 
 # Bugfix: a comment joined to code should not put the whole preceding text
-# block into a code block but only up to the next empty line::
-        
+# block into a code block but only up to the next empty line:
+#         
 # The classical programming example in Python
 # 
 # A variable springs into existence, if a value is assigned to it::

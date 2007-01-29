@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+## -*- coding: iso-8859-1 -*-
 
 # ****************************************************
 # Literal programming with Python and reStructuredText
@@ -9,43 +9,55 @@
 # :Copyright: 2006 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
-
-
+# 
+# 
+# .. contents::
+# 
 # Test the pylit.py literal python module
 # ***************************************
+# 
+# ::
 
 """pylit_test.py: test the "literal python" module"""
 
 from pprint import pprint
-from pylit_02 import *
-
+from pylit import *
 
 # Text <-> Code conversion
-# ====================
-
+# ========================
+# 
 # Test strings
 # ------------
-#
-# ::
+# 
+# First, a longer text, code and stripped code to "get the main picture"::
 
-textdata = ['.. #!/usr/bin/env python\n',
-            '.. # -*- coding: iso-8859-1 -*-\n',
-            '\n',
-            'Leading text\n',
-            '\n',
-            'in several paragraphs followed by a literal block::\n',
-            '\n',
-            "  block1 = 'first block'\n",
-            '\n',
-            'Some more text and the next block::\n',
-            '\n',
-            "  block2 = 'second block'\n",
-            '  print block1, block2\n',
-            '\n',
-            'Trailing text.\n']
+text = """..#!/usr/bin/env python
+  # -*- coding: iso-8859-1 -*-
 
-text = "".join(textdata)
+Leading text
+
+in several paragraphs followed by a literal block::
+
+  block1 = 'first block'
+
+Some more text and the next block::
+
+  block2 = 'second block'
+  print block1, block2
+
+Trailing text.
+"""
 # print text
+
+# The converter expects the data in separate lines (iterator or list)
+# with trailing newlines. We use the `splitlines` string method with
+# `keepends=True`::
+
+textdata = text.splitlines(True)
+# print textdata
+
+# If a "code source" is converted with the `strip` option, only text blocks
+# are extracted, which leads to::
 
 stripped_text = """Leading text
 
@@ -56,8 +68,12 @@ Some more text and the next block::
 Trailing text.
 """
 
+# The code corresponding to the text test string.
+# 
 # using a triple-quoted string for the code (and stripped_code) would create
-# problems with the conversion of this test by pylit::
+# problems with the conversion of this test by pylit 
+# (as the text parts would be converted to text) 
+# ::
 
 codedata = ['#!/usr/bin/env python\n',
             '# -*- coding: iso-8859-1 -*-\n',
@@ -78,6 +94,8 @@ codedata = ['#!/usr/bin/env python\n',
 code = "".join(codedata)
 # print code
 
+# Converting the text teststring with the `strip` option leads to::
+
 stripped_code = "".join(['#!/usr/bin/env python\n',
                          '# -*- coding: iso-8859-1 -*-\n',
                          '\n',
@@ -87,177 +105,375 @@ stripped_code = "".join(['#!/usr/bin/env python\n',
                          'print block1, block2\n',
                          '\n'])
 
-# pprint(textdata)
-# pprint(stripped_code.splitlines(True))
+## pprint(textdata)
+## pprint(stripped_code.splitlines(True))
+
+# Containers for special case examples:
+# 
+# 1. Text2Code samples
+# ``textsamples["what"] = (<text data>, <output>, <output (with `strip`)``
+# ::
+
+textsamples = {}
+
+# 2. Code2Txt samples
+# ``codesamples["what"] = (<code data>, <output>, <output (with `strip`)``
+# ::
+
+codesamples = {}
+
+# Auxiliary function to test the textsamples and codesamples::
+
+def check_converter(key, converter, output):
+    print "failed:", key
+    extract = converter()
+    # print "".join(data)
+    print "ist: ", extract
+    print "soll:", output
+    assert output == extract
+
+# Test generator for textsample tests::
+
+def test_Text2Code_samples():
+    for key, sample in textsamples.iteritems():
+        yield check_converter, key, Text2Code(sample[0]), sample[1]
+        if len(sample) == 3:
+            yield (check_converter, key, 
+                   Text2Code(sample[0], strip=True), sample[2])
+
+# Test generator for codesample tests::
+
+def test_Code2Text_samples():
+    for key, sample in codesamples.iteritems():
+        yield check_converter, key, Code2Text(sample[0]), sample[1]
+        if len(sample) == 3:
+            yield (check_converter, key, 
+                   Code2Text(sample[0], strip=True), sample[2])
+
 
 # Text2Code
 # ---------
+# 
+# base tests on the "long" test data ::
 
 def test_Text2Code():
     """Test the Text2Code class converting rst->code"""
-    extract = Text2Code(textdata)()
-    print codedata, '\n', extract
-    # print "".join(extract)
-    assert code == "".join(extract)
+    outstr = str(Text2Code(textdata))
+    print code,
+    print outstr
+    assert code == outstr
 
-def test_Text2Code_nonverbose():
+def test_Text2Code_strip():
     """strip=True should strip text parts"""
-    extract = Text2Code(textdata, strip=True)()
-    print stripped_code.splitlines(True), "\n", extract
-    # pprint(extract)
-    assert stripped_code == "".join(extract)
+    outstr = str(Text2Code(textdata, strip=True))
+    print stripped_code
+    print outstr
+    # pprint(outstr)
+    assert stripped_code == outstr
 
+# Special Cases
+# ~~~~~~~~~~~~~
+# 
+# Code follows text block without blank line
+# ''''''''''''''''''''''''''''''''''''''''''
+# 
+# End of text block detected ('::') but no paragraph separator (blank line)
+# follows
+# 
+# It is an reStructuredText syntax error, if a "literal block
+# marker" is not followed by a blank line.
+# 
+# Assuming that no double colon at end of line occures accidentially,
+# pylit will fix this and issue a warning::
 
-def test_Text2Code_no_blank_line_after_text():
-    """conversion should insert missing blank line after text"""
-    data = ['text followed by a literal block::\n',
-            "  block1 = 'first block'\n"]
-    output = ["", # empty header
-              "# text followed by a literal block::\n\n",
-              "block1 = 'first block'\n"]
-    extract = Text2Code(data)()
-    print output, '\n', extract
-    assert output == extract
+textsamples["insert missing blank line after text"] = (
+    ['text followed by a literal block::\n',
+     "  block1 = 'first block'\n"],
+    [[], # empty header
+     ["# text followed by a literal block::\n", "\n"],
+     ["block1 = 'first block'\n"]
+    ])
 
+# Text follows code block without blank line
+# ''''''''''''''''''''''''''''''''''''''''''
+# 
+# End of code block detected (a line not more indented than the preceding text
+# block)
+# 
+# reStructuredText syntax demands a paragraph separator (blank line) before
+# it.
+# 
+# Assuming that the unindent is not accidential, pylit fixes this and issues a
+# warning::
 
-def test_Text2Code_no_blank_line_after_code():
-    data = ['::\n',
-            '\n',
-            "  block1 = 'first block'\n",
-            "more text"]
-    output = ["", # empty header
-              "# ::\n\n",
-              "block1 = 'first block'\n\n", # added newline
-              "# more text"]
-    # codedata = ["# text followed by a literal block::\n",
-    #         "  foo = 'first'\n"]
-    # text = "text followed by a literal block::"
-    extract = Text2Code(data)()
-    print output, '\n', extract
-    assert output == extract, "should insert missing blank line after code"
+textsamples["insert missing blank line after code"] = (
+    ['::\n',
+     '\n',
+     "  block1 = 'first block'\n",
+     "more text"],
+    [[], # empty header
+     ["# ::\n", "\n"],
+     ["block1 = 'first block'\n", "\n"], # added newline
+     ["# more text"]
+    ])
 
+# A double colon on a line on its own
+# '''''''''''''''''''''''''''''''''''
+# 
+# As a double colon is added by the Code2Text conversion after a text block
+# (if not already present), it could be removed by the Text2Code conversion
+# to keep the source small and pretty.
+# 
+# However, this would put the text and code source line numbers out of sync,
+# which is bad for error reporting, failing doctests, and the `pylit_buffer()`
+# function in http://jedmodes.sf.net/mode/pylit.sl ::
+                                                       
+## textsamples["should remove single double colon"] = (
+##     ["text followed by a literal block\n",
+##      "\n",
+##      "::\n",
+##      "\n",
+##      "  foo = 'first'\n"]
+##     ["", # empty header
+##      "# text followed by a literal block\n\n",
+##      "foo = 'first'\n"]
+ 
 
-def test_Text2Code_remove_double_colon():
-    raise nose.DeprecatedTest, "feature removed"
-    data = ["text followed by a literal block\n",
-            "\n",
-            "::\n",
-            "\n",
-            "  foo = 'first'\n"]
-    output = ["", # empty header
-            "# text followed by a literal block\n\n",
-            "foo = 'first'\n"]
-    extract = Text2Code(data)()
-    print output, '\n', extract
-    assert output == extract, "should remove single double colon"
+# header samples
+# ''''''''''''''
+# 
+# Convert a leading reStructured text comment  (variant: only if there is
+# content on the first line) to a leading code block.  Return an empty list,
+# if there is no header. ::
+
+textsamples["simple header"] = (
+    ["..print 'hello world'"],
+    [["print 'hello world'"]
+    ])
+
+textsamples["no header (start with text)"] = (
+    ["a classical example without header::\n",
+     "\n",
+     "  print 'hello world'"],
+    [[],
+     ["# a classical example without header::\n",
+      "\n"],
+     ["print 'hello world'"]
+    ])
+
+textsamples["standard header, followed by text"] = (
+    ["..#!/usr/bin/env python\n",
+     "  # -*- coding: iso-8859-1 -*-\n",
+     "\n",
+     "a classical example with header::\n",
+     "\n",
+     "  print 'hello world'"],
+    [["#!/usr/bin/env python\n",
+      "# -*- coding: iso-8859-1 -*-\n",
+      "\n"],
+     ["# a classical example with header::\n",
+      "\n"],
+     ["print 'hello world'"]
+    ])
+
+textsamples["standard header, followed by code"] = (
+    ["..#!/usr/bin/env python\n",
+     "\n",
+     "  print 'hello world'"],
+    [["#!/usr/bin/env python\n", 
+      "\n",
+      "print 'hello world'"]
+    ])
+
 
 
 # Code2Text
 # ---------
+# 
+# base tests on the "long" test strings ::
 
 def test_Code2Text():
     """Test Code2Text class converting code->text"""
-    converter = Code2Text(codedata)
-    # print converter
-    extract = converter()
-    # print "".join(extract)
+    outstr = str(Code2Text(codedata))
     # print text
-    print repr(text), '\n', repr("".join(extract))
-    assert text == "".join(extract)
+    print repr(text)
+    print repr(outstr)
+    assert text == outstr
 
-def test_Code2Text_nonverbose():
+def test_Code2Text_strip():
     """Test Code2Text class converting code->rst with strip=True
     
     Should strip code blocks
     """
-    extract = Code2Text(codedata, strip=True)()
+    outstr = str(Code2Text(codedata, strip=True))
     print repr(stripped_text)
-    print repr("".join(extract))
-    print "".join(extract)
-    assert stripped_text == "".join(extract)
+    print repr(outstr)
+    print outstr
+    assert stripped_text == outstr
 
 def test_Code2Text_different_comment_string():
     """Convert only comments with the specified comment string to text
     """
-    extract = Code2Text(codedata, comment_string="##", strip=True)()
-    print (extract)
-    assert "".join(extract) == ""
+    outstr = str(Code2Text(codedata, comment_string="##", strip=True))
+    print outstr
+    assert outstr == ""
     data = ["# ::\n",
             "\n",
             "block1 = 'first block'\n",
             "\n", 
             "## more text"]
-    output = ['',  # empty header
-              '',  # empty text
-              '',  # stripped code
-              " more text"]
-    extract = Code2Text(data, comment_string="##", strip=True)()
-    print output, '\n', extract
-    assert output == extract
+    soll = [['..# ::\n', 
+             '\n', 
+             "  block1 = 'first block'\n", 
+             '\n'],                # leading code block as header
+            [' more text']         # keep space (not part of comment string)
+           ]
+    output = Code2Text(data, comment_string="##")()
+    print "ist ", output
+    print "soll", soll
+    assert output == soll
 
-def test_Code2Text_commented_empty_line():
-    """A commented empty line should not count as code 
-    
-    even if the comment misses trailing whitespace present in the 
-    `comment string`
-    """
-    data = ["# ::\n",
-            "\n",
-            "block1 = 'first block'\n",
-            "\n", 
-            "#\n", # should count as empty even if != "# \n"
-            "# more text\n"]
-    output = ['',  # empty header
-              '::\n\n',  # leading text
-              '',  # stripped code
-              "more text\n"]
-    extract = Code2Text(data, comment_string="# ", strip=True)()
-    print output
-    print extract
-    assert output == extract
+# Special cases
+# ~~~~~~~~~~~~~
+# 
+# blank comment line
+# ''''''''''''''''''''
+# 
+# Normally, whitespace in the comment string is significant, i.e. with
+# `comment_string = "# "`, a line "#something\n" will count as code.
+# 
+# However, if a comment line is blank, trailing whitespace in the comment
+# string should be ignored, i.e. "#\n" is recognized as a blank text line::
+
+codesamples["ignore trailing whitespace in comment string for blank line"] = (
+    ["# ::\n",
+     "\n",
+     "block1 = 'first block'\n",
+     "\n", 
+     "#\n", # should count as empty even if != "# \n"
+     "# more text\n"],
+    [[],                # empty header
+     ["::\n",
+      "\n"],            # leading text
+     ["  block1 = 'first block'\n", 
+      "\n"], 
+     ["\n", 
+      "more text\n"]
+    ])
 
 
-def test_Code2Text_no_blank_line_after_text():
-    """keep comments without trailing blank line"""
-    data = ["# text followed by code\n",
-            "foo = 'first'\n"]
-    output = ["",         # empty header
-              "::\n\n"  # empty leading text block
-              "  # text followed by code\n", # keep as comment
-              "  foo = 'first'\n"]
-    extract = Code2Text(data)()
-    print output, '\n', extract
-    assert output == extract 
+# No blank line after text
+# ''''''''''''''''''''''''
+# 
+# If a matching comment precedes oder follows a code line (i.e. any line
+# without matching comment) without a blank line inbetween, it counts as code
+# line. 
+# 
+# This will keep small inline comments close to the code they comment on. It
+# will also keep blocks together where one commented line doesnot match the
+# comment string (the whole block will be kept as commented code)
+# ::
 
-def test_Code2Text_no_blank_line_after_code():
-    """keep comments without leading blank line"""
-    data = ["# ::\n",
-            "\n",
-            "block1 = 'first block'\n", 
-            "# more text"]
-    output = ['',  # empty header
-              '::\n\n',
-              "  block1 = 'first block'\n" +
-              "  # more text"]              # keep as comment
-    extract = Code2Text(data)()
-    print output, '\n', extract
-    assert output == extract
+codesamples["comment before code (without blank line)"] = (
+    ["# this is text::\n",
+     "# \n",
+     "# this is a comment\n",
+     "foo = 'first'\n"],
+    [[],         # empty header
+     ["this is text::\n", 
+      "\n"],  # leading text block
+     ["  # this is a comment\n", 
+      "  foo = 'first'\n"]
+    ])
 
-def test_Code2Text_no_double_colon():
-    data = ["# text followed by a literal block\n",
-            "\n",
-            "foo = 'first'\n"]
-    output = ["", # empty header
-              "text followed by a literal block\n\n::\n\n", # colons added
-              "  foo = 'first'\n"]
-    extract = Code2Text(data)()
-    print output, '\n', extract
-    assert output == extract, "should insert missing double colon"
+codesamples["comment after code (without blank line)"] = (
+    ["# ::\n",
+     "\n",
+     "block1 = 'first block'\n", 
+     "# commented code"],
+    [[],  # empty header
+     ['::\n', 
+      '\n'],
+     ["  block1 = 'first block'\n",
+      "  # commented code"]
+    ])
+
+
+# missing literal block marker
+# ''''''''''''''''''''''''''''
+# 
+# If text (with matching comment string) is followed by code (line(s) without
+# matching comment string), but there is no double colon at the end, back
+# conversion would not recognize the end of text!
+# 
+# Therefore, pylit adds a paragraph containing only "::" -- the literal block
+# marker in expanded form. (While it would in many cases be nicer to add the
+# double colon to the last text line, this is not always valid rst syntax,
+# e.g. after a section header or a list. Therefore the automatic insertion
+# will use the save form, feel free to correct this by hand.)::
+
+codesamples["insert missing double colon after text block"] = (
+    ["# text followed by code without double colon\n",
+     "\n",
+     "foo = 'first'\n"],
+    [[], # empty header
+     ["text followed by code without double colon\n",
+      "\n",
+      "::\n", # colons added
+      "\n"], 
+     ["  foo = 'first'\n"]
+    ])
+
+# header samples
+# ''''''''''''''
+# 
+# Convert a header (leading code block) to a reStructured text comment. Return
+# an empty list, if there is no leading code. ::
+
+codesamples["no matching comment, just code"] = (
+    ["print 'hello world'"],
+    [["..print 'hello world'"]
+    ])
+
+codesamples["empty header (start with matching comment)"] = (
+    ["# a classical example without header::\n",
+     "\n",
+     "print 'hello world'"],
+    [[],
+     ["a classical example without header::\n",
+      "\n"],
+     ["  print 'hello world'"]
+    ])
+
+codesamples["standard header, followed by text"] = (
+    ["#!/usr/bin/env python\n",
+     "# -*- coding: iso-8859-1 -*-\n",
+     "\n",
+     "# a classical example with header::\n",
+     "\n",
+     "print 'hello world'"],
+    [["..#!/usr/bin/env python\n",
+      "  # -*- coding: iso-8859-1 -*-\n",
+      "\n"],
+     ["a classical example with header::\n",
+      "\n"],
+     ["  print 'hello world'"]
+    ])
+
+codesamples["standard header, followed by code"] = (
+    ["#!/usr/bin/env python\n",
+     "\n",
+     "print 'hello world'"],
+    [["..#!/usr/bin/env python\n", 
+      "\n",
+      "  print 'hello world'"]
+    ])
+
 
 
 # Command line use
 # ================
-
+# 
 # Test the option parsing::
 
 def test_Values():
@@ -373,6 +589,8 @@ class test_PylitOptions:
 
 # Input and Output streams
 # ------------------------
+# 
+# ::
 
 class IOTests:
     """base class for IO tests, sets up and tears down example files in /tmp
@@ -465,6 +683,8 @@ class test_Run_Doctest(IOTests):
         assert (failures, tests) == (0, 0)
 
 # The main() function is called if the script is run from the command line
+# 
+# ::
 
 class test_Main(IOTests):
     """test default operation from command line
