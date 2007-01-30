@@ -31,7 +31,7 @@ from pylit import *
 # 
 # First, a longer text, code and stripped code to "get the main picture"::
 
-text = """..#!/usr/bin/env python
+text = """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
 
 Leading text
@@ -247,7 +247,7 @@ textsamples["insert missing blank line after code"] = (
 # if there is no header. ::
 
 textsamples["simple header"] = (
-    ["..print 'hello world'"],
+    ["..  print 'hello world'"],
     [["print 'hello world'"]
     ])
 
@@ -262,7 +262,7 @@ textsamples["no header (start with text)"] = (
     ])
 
 textsamples["standard header, followed by text"] = (
-    ["..#!/usr/bin/env python\n",
+    ["..  #!/usr/bin/env python\n",
      "  # -*- coding: iso-8859-1 -*-\n",
      "\n",
      "a classical example with header::\n",
@@ -277,7 +277,7 @@ textsamples["standard header, followed by text"] = (
     ])
 
 textsamples["standard header, followed by code"] = (
-    ["..#!/usr/bin/env python\n",
+    ["..  #!/usr/bin/env python\n",
      "\n",
      "  print 'hello world'"],
     [["#!/usr/bin/env python\n", 
@@ -322,7 +322,7 @@ def test_Code2Text_different_comment_string():
             "block1 = 'first block'\n",
             "\n", 
             "## more text"]
-    soll = [['..# ::\n', 
+    soll = [['..  # ::\n', 
              '\n', 
              "  block1 = 'first block'\n", 
              '\n'],                # leading code block as header
@@ -432,7 +432,7 @@ codesamples["insert missing double colon after text block"] = (
 
 codesamples["no matching comment, just code"] = (
     ["print 'hello world'"],
-    [["..print 'hello world'"]
+    [["..  print 'hello world'"]
     ])
 
 codesamples["empty header (start with matching comment)"] = (
@@ -452,7 +452,7 @@ codesamples["standard header, followed by text"] = (
      "# a classical example with header::\n",
      "\n",
      "print 'hello world'"],
-    [["..#!/usr/bin/env python\n",
+    [["..  #!/usr/bin/env python\n",
       "  # -*- coding: iso-8859-1 -*-\n",
       "\n"],
      ["a classical example with header::\n",
@@ -464,7 +464,7 @@ codesamples["standard header, followed by code"] = (
     ["#!/usr/bin/env python\n",
      "\n",
      "print 'hello world'"],
-    [["..#!/usr/bin/env python\n", 
+    [["..  #!/usr/bin/env python\n", 
       "\n",
       "  print 'hello world'"]
     ])
@@ -723,13 +723,13 @@ class test_Main(IOTests):
     def test_main_diff(self):
         result = main(infile=self.codepath, diff=True)
         print "diff return value", result
-        assert result is False
+        assert result is False # no differences found
 
-    def test_main_diff_strip(self):
-        return # produces spurious output...
-        result = main(infile=self.codepath, diff=True, strip=True)
+    def test_main_diff_with_differences(self):
+        """diffing a file to itself should fail, as the input is converted"""
+        result = main(infile=self.codepath, outfile=self.codepath, diff=True)
         print "diff return value", result
-        assert result is True
+        assert result is True # differences found
         
     def test_main_execute(self):
         result = main(infile=self.txtpath, execute=True)

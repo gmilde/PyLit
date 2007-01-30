@@ -15,8 +15,11 @@
 # :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
-# :Contents:  see contents_ section at end of file
 # 
+# .. contents::
+# 
+# Frontmatter
+# ===========
 # 
 # Changelog
 # ---------
@@ -30,6 +33,7 @@
 # :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
 # :2007-01-26: 0.2.2: new behaviour of diff()
 # :2007-01-29: 0.2.3: new `header` methods after suggestion by Riccardo Murri
+# 
 # ::
 
 """pylit: Literate programming with Python and reStructuredText
@@ -84,10 +88,12 @@ class PushIterator:
         return self
     def next(self):
         return (self.cache and self.cache.pop()) or self.it.next()
-    def appendleft(self, value):
+    def push(self, value):
         self.cache.append(value)
 
-
+# Classes
+# =======
+# 
 # Converter
 # ---------
 # 
@@ -169,10 +175,10 @@ class PyLitConverter(SimpleStates):
 # 
 #        To convert a string into a suitable object, use its splitlines method
 #        with the optional `keepends` argument set to True.
-
+# 
 # Converter.__str__
 # ~~~~~~~~~~~~~~~~~
-
+# 
 # Return converted data as string::
 
     def __str__(self):
@@ -233,15 +239,14 @@ class Text2Code(PyLitConverter):
 # Text2Code.header
 # ~~~~~~~~~~~~~~~~
 # 
-# Convert the header (leading rst comment block) to code.
-# ::
+# Convert the header (leading rst comment block) to code::
 
     def header(self):
         """Convert header (comment) to code"""
         line = self.data_iterator.next()
 
 # Test first line for rst comment: Which variant is better?
-
+# 
 # 1. starts with comment marker and has
 #    something behind the comment on the first line::
 
@@ -250,13 +255,13 @@ class Text2Code(PyLitConverter):
 # 2. Convert any leading comment to code::
 
         #if line.startswith(".."):
-            self.data_iterator.appendleft(line.replace("..", "  ", 1))
+            self.data_iterator.push(line.replace("..", "", 1))
             return self.code()
         
 # No header code found: Push back first non-header line and set state to
 # "text"::
 
-        self.data_iterator.appendleft(line)
+        self.data_iterator.push(line)
         self.state = "text"
         return []
 
@@ -310,7 +315,7 @@ class Text2Code(PyLitConverter):
 
                 line = self.data_iterator.next()
                 if line.lstrip():
-                    self.data_iterator.appendleft(line) # push back
+                    self.data_iterator.push(line) # push back
                     self.ensure_trailing_blank_line(lines, line)
                 elif not self.strip:
                     lines.append(line)
@@ -340,7 +345,7 @@ class Text2Code(PyLitConverter):
 # 
 # As the code handler detects the switch to "text" state by looking at
 # the line indents, it needs to push back the last probed data token. I.e.
-# the  data_iterator must support the `.appendleft()` method. (This is the
+# the  data_iterator must support the `.push()` method. (This is the
 # reason for the use of the PushIterator class in `__init__`.) ::
 
     def code_handler_generator(self):
@@ -356,18 +361,20 @@ class Text2Code(PyLitConverter):
                 continue
 
 # Test for end of code block:
-#
+# 
 # A literal block ends with the first less indented, nonblank line.
 # `self._textindent` is set by the text handler to the indent of the
 # preceding paragraph. 
-#
+# 
 # To prevent problems with different tabulator settings, hard tabs in code
 # lines  are expanded with the `expandtabs` string method when calculating the
 # indentation (i.e. replaced by 8 spaces, by default).
+# 
+# ::
 
             if line.lstrip() and self.get_indent(line) <= self._textindent:
                 # push back line
-                self.data_iterator.appendleft(line) 
+                self.data_iterator.push(line) 
                 self.state = 'text'
                 # append blank line (if not already present)
                 self.ensure_trailing_blank_line(lines, line)
@@ -440,7 +447,7 @@ class Code2Text(PyLitConverter):
 # as the first header line. Therfore, header lines could not be marked as
 # literal block (this would require the "::" and an empty line above the code.
 # 
-# OTOH, a comment may start at the same line as the comment marker and
+# OTOH, a comment may start at the same line as the comment marker and it
 # includes subsequent indented lines. Comments are visible in the reStructured
 # Text source but hidden in the pretty-printed output.
 # 
@@ -454,48 +461,44 @@ class Code2Text(PyLitConverter):
 # * the "normal" code conversion rules (indent/unindent by `codeindent` apply
 # * greater flexibility: you can hide a repeating header in a project
 #   consisting of many source files.
-#   
+# 
 # set off the disadvantages
 # 
 # - it may come as surprise if a part of the file is not "printed",
 # - one more syntax element to learn for rst newbees to start with pylit,
 #   (however, starting from the code source, this will be auto-generated)
 # 
-# In the case that there is no matchin comment at all, the complete code
+# In the case that there is no matching comment at all, the complete code
 # source will become a comment -- however, in this case it is not very likely
-# the source is a literate source.
-#
-# It is possible to repeat the header for documentation issues in the first
-# text block (at least if it only contains code that is just disregarded if it
-# appears in a later position as e.g. the typical Python header :
+# the source is a literate document.
 # 
-#   #!/usr/bin/env python
-#   # -*- coding: iso-8859-1 -*-
-#   
-# An alternative would be an inline-literal, but this seems (at least to me)
-# too complicated.
+# If needed for the documentation, it is possible to repeat the header in (or
+# after) the first text block:
+# 
+#   ``#!/usr/bin/env python``
+#   ``# -*- coding: iso-8859-1 -*-``
 # 
 # ::
 
     def header(self):
         """Convert leading code to rst comment"""
 
-# Test first line for text or code, push back again to let it be handled by
-# the  correct state handler method::
+# Test first line for text or code and push back::
 
         line = self.data_iterator.next()
-        self.data_iterator.appendleft(line)
+        self.data_iterator.push(line)
         
         if line.startswith(self.comment_string):
             self.state = "text"
             return []
 
-# Leading code detected, handle with the `code` method and replace the
-# first line to start with a rst comment marker            
-            
+# Leading code detected: handle with the `code` method and prepend a rst
+# comment marker to the first line. (One could be even more flexible by
+# storing the "header-marker-string" in a class data argument.) ::
+
         lines = self.code()
         if lines:
-            lines[0] = lines[0].replace("  ", "..", 1)
+            lines[0] = ".." + lines[0]
         return lines
             
             
@@ -549,14 +552,14 @@ class Code2Text(PyLitConverter):
 # (and subsequent lines)::
               
                 self.state = 'code'
-                self.data_iterator.appendleft(line)
+                self.data_iterator.push(line)
 
 # Also restore and push back lines that precede the next code line without a
 # blank line (paragraph separator) inbetween::
                   
                 while lines and lines[-1].lstrip():
                     line = self.comment_string + lines.pop()
-                    self.data_iterator.appendleft(line)
+                    self.data_iterator.push(line)
                     
 # Ensure literal block marker (double colon) at the end of the text block::
 
@@ -614,7 +617,7 @@ class Code2Text(PyLitConverter):
             if (line.startswith(self.comment_string) or
                 line.rstrip() == self.comment_string.rstrip()
                ) and lines and not lines[-1].strip():
-                self.data_iterator.appendleft(line)
+                self.data_iterator.push(line)
                 self.state = 'text'
                 # self.ensure_trailing_blank_line(lines, line)
                 if self.strip:
@@ -1085,19 +1088,3 @@ def main(args=sys.argv[1:], **default_values):
 if __name__ == '__main__':
     main()
  
-
-# TODO
-# ----
-# 
-# Bugfix: a comment joined to code should not put the whole preceding text
-# block into a code block but only up to the next empty line:
-#         
-# The classical programming example in Python
-# 
-# A variable springs into existence, if a value is assigned to it::
-
-## a string variable
-#  greeting = "Hello world."
-#  print greeting
-
-# .. contents::
