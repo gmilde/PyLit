@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# ..
-#    restindex
-#        crumb: pylit.py
-#    /restindex
-# 
 # ===============================================================
 # pylit.py: Literate programming with Python and reStructuredText
 # ===============================================================
@@ -63,19 +58,15 @@ import optparse
 
 from simplestates import SimpleStates  # generic state machine
 
-# Previous versions imported from the iterqueue module::
-
-# ## from iterqueue import PushIterator            # iterator with backtracking
-# 
 # The PushIterator is a minimal implementation of an iterator with
 # backtracking from the `Effective Python Programming`_ OSCON 2005 tutorial by
 # Anthony Baxter. As the definition is small, it is inlined now. For the full
-# reasoning and doc see `iterqueue.py.html`_. 
+# reasoning and doc see `iterqueue.py`_.
 # 
 # .. _`Effective Python Programming`: 
 #    http://www.interlink.com.au/anthony/tech/talks/OSCON2005/effective_r27.pdf
 # 
-# .. _`iterqueue.py.html`: iterqueue.py.html
+# .. _iterqueue.py: iterqueue.py.html
 # 
 # ::
 
@@ -445,7 +436,7 @@ class Code2Text(PyLitConverter):
 # If we want to keep the line numbers in sync for text and code source, the
 # reStructured Text markup for these header lines must start at the same line
 # as the first header line. Therfore, header lines could not be marked as
-# literal block (this would require the "::" and an empty line above the code.
+# literal block (this would require the "::" and an empty line above the code).
 # 
 # OTOH, a comment may start at the same line as the comment marker and it
 # includes subsequent indented lines. Comments are visible in the reStructured
@@ -473,10 +464,10 @@ class Code2Text(PyLitConverter):
 # the source is a literate document.
 # 
 # If needed for the documentation, it is possible to repeat the header in (or
-# after) the first text block:
+# after) the first text block, e.g. with a *line block* in a *block quote*:
 # 
-#   ``#!/usr/bin/env python``
-#   ``# -*- coding: iso-8859-1 -*-``
+#   |  ``#!/usr/bin/env python``
+#   |  ``# -*- coding: iso-8859-1 -*-``
 # 
 # ::
 
