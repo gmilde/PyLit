@@ -1,8 +1,8 @@
-## -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 
-# ****************************************************
-# Literal programming with Python and reStructuredText
-# ****************************************************
+# Test the pylit.py literal python module
+# =======================================
 # 
 # :Version:   0.2
 # :Date:      2005-09-02
@@ -10,11 +10,7 @@
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
 # 
-# 
 # .. contents::
-# 
-# Test the pylit.py literal python module
-# ***************************************
 # 
 # ::
 
@@ -170,6 +166,22 @@ def test_Text2Code_strip():
     print outstr
     # pprint(outstr)
     assert stripped_code == outstr
+
+def test_Text2Code_malindented_code_line():
+    """raise error if code line is less indented than code-indent"""
+    data1 = ["..    #!/usr/bin/env python\n", # indent == 4 * " "
+            "\n",
+            "  print 'hello world'"]          # indent == 2 * " "
+    data2 = ["..\t#!/usr/bin/env python\n",   # indent == 4 * " "
+            "\n",
+            "  print 'hello world'"]          # indent == 2 * " "
+    for data in (data1, data2):
+        try:
+            blocks = Text2Code(data)()
+            assert False, "wrong indent did not raise ValueError"
+        except ValueError:
+            pass
+
 
 # Special Cases
 # ~~~~~~~~~~~~~

@@ -5,8 +5,7 @@
 # pylit.py: Literate programming with Python and reStructuredText
 # ===============================================================
 # 
-# :Version:   0.2.3
-# :Date:      2007-01-26
+# :Date:      2007-01-31
 # :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
@@ -28,6 +27,7 @@
 # :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
 # :2007-01-26: 0.2.2: new behaviour of diff()
 # :2007-01-29: 0.2.3: new `header` methods after suggestion by Riccardo Murri
+# :2007-01-31: 0.2.4: raise Error if code indent is too small 
 # 
 # ::
 
@@ -236,16 +236,25 @@ class Text2Code(PyLitConverter):
         """Convert header (comment) to code"""
         line = self.data_iterator.next()
 
-# Test first line for rst comment: Which variant is better?
+# Test first line for rst comment: (We need to do this explicitely here, as
+# the code handler will only recognize the start of a text block if a line
+# starting with "matching comment" is preceded by an empty line. However, we
+# have to care for the case of the first line beeing a "text line".
+# 
+# Which variant is better?
 # 
 # 1. starts with comment marker and has
 #    something behind the comment on the first line::
 
-        if line.startswith("..") and len(line.rstrip()) > 2:
+        # if line.startswith("..") and len(line.rstrip()) > 2:
 
 # 2. Convert any leading comment to code::
 
-        #if line.startswith(".."):
+        if line.startswith(".."):
+            
+# Strip leading comment string (typically added by `Code2Text.header`) and
+# return the result of processing the data with the code handler::
+
             self.data_iterator.push(line.replace("..", "", 1))
             return self.code()
         
@@ -300,8 +309,8 @@ class Text2Code(PyLitConverter):
                 self.state = 'code'
                 
 # Ensure a trailing blank line (which is the paragraph separator in
-# reStructured Text. Look at the next line, if it is blank, ok, if it is not
-# blank, push it back (it should be code) and add a line by calling the
+# reStructured Text. Look at the next line, if it is blank -- OK, if it is
+# not blank, push it back (it should be code) and add a line by calling the
 # `ensure_trailing_blank_line` method (which also issues a warning)::
 
                 line = self.data_iterator.next()
@@ -336,19 +345,25 @@ class Text2Code(PyLitConverter):
 # 
 # As the code handler detects the switch to "text" state by looking at
 # the line indents, it needs to push back the last probed data token. I.e.
-# the  data_iterator must support the `.push()` method. (This is the
+# the  data_iterator must support a `push` method. (This is the
 # reason for the use of the PushIterator class in `__init__`.) ::
 
     def code_handler_generator(self):
         """Convert indented literal blocks to source code
         """
         lines = []
-        codeindent = None # indent of first non-blank code line, set below
+        codeindent = None  # indent of first non-blank code line, set below
+        indent_string = "" # leading whitespace chars ...
+        
+# Iterate over the lines in the input data::
+
         for line in self.data_iterator:
             # print "Code: '%s'"%line
-            # pass on empty lines (no whitespace except newline)
-            if not line.rstrip("\n"):
-                lines.append(line)
+            
+# Pass on blank lines (no test for end of code block needed|possible)::
+
+            if not line.rstrip():
+                lines.append(line.replace(indent_string, "", 1))
                 continue
 
 # Test for end of code block:
@@ -363,7 +378,7 @@ class Text2Code(PyLitConverter):
 # 
 # ::
 
-            if line.lstrip() and self.get_indent(line) <= self._textindent:
+            if self.get_indent(line) <= self._textindent:
                 # push back line
                 self.data_iterator.push(line) 
                 self.state = 'text'
@@ -373,15 +388,27 @@ class Text2Code(PyLitConverter):
                 # reset list of lines
                 lines = []
                 continue
-            
-            # Determine the code indentation from first non-blank code line
+
+# OK, we are sure now that the current line is neither blank nor a text line.
+# 
+# If still unset, determine the code indentation from first non-blank code
+# line::
+
             if codeindent is None and line.lstrip():
                 codeindent = self.get_indent(line)
+                indent_string = line[:codeindent]
             
-            # default action: append unindented line
-            # (in case the line is shorter than codeindent but not totally
-            # empty, append only a newline.)
-            lines.append(line[codeindent:] or "\n")
+# Append unindented line to lines cache (but check if we can safely unindent
+# first)::
+
+            if not line.startswith(indent_string):
+                raise ValueError, "cannot unindent line %r,\n"%line \
+                + "  doesnot start with code indent string %r"%indent_string
+            
+            lines.append(line[codeindent:])
+
+# No more lines in the input data: just return what we have::
+            
         yield lines
                         
 
@@ -601,9 +628,13 @@ class Code2Text(PyLitConverter):
             #     lines.append("\n")
             #     continue
             
-# Test for end of code block: nonindented matching comment string following a
-# blank line. A comment string matche includes whitespace normally but ignores
-# trailing whitespace if the line after the comment is blank. ::
+# Test for end of code block: 
+# 
+# * matching comment string at begin of line,
+# * following a blank line. 
+# 
+# The test includes whitespace in `self.comment_string` normally, but ignores
+# trailing whitespace if the line after the comment string is blank. ::
 
             if (line.startswith(self.comment_string) or
                 line.rstrip() == self.comment_string.rstrip()
@@ -618,9 +649,13 @@ class Code2Text(PyLitConverter):
                 # reset
                 lines = []
                 continue
-            # default action: indent
+            
+# default action: indent by codeindent and append to lines cache::
+
             lines.append(" "*self.codeindent + line)
-        # no more lines in data_iterator
+            
+# no more lines in data_iterator -- return collected lines::
+
         if self.strip:
             yield []
         else:
