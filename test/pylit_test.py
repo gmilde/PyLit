@@ -530,7 +530,17 @@ class test_PylitOptions:
         # set the output (option with argument)
         values = self.options.parse_args(["--outfile", "code.py"])
         assert values.outfile == "code.py"
-        
+
+    def test_parse_args_comment_string(self):
+       # default should appear in options
+        values = self.options.parse_args(["--comment-string=% "])
+        pprint(values.as_dict())
+        assert values.comment_string == "% "
+        # "cmd line arg should appear as option overwriting default"
+        values = self.options.parse_args(["--comment-string=% "], 
+                                         comment_string="##")
+        assert values.comment_string == '% '
+
     def test_get_outfile_name(self):
         """should return a sensible outfile name given an infile name"""
         # return stdout for stdin

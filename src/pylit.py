@@ -24,10 +24,11 @@
 # :2005-07-10: Two state machine (later added 'header' state)
 # :2006-12-04: Start of work on version 0.2 (code restructuring)
 # :2007-01-23: 0.2 published at http://pylit.berlios.de
-# :2007-01-25: 0.2.1: Outsorced non-core documentation to the PyLit pages.
+# :2007-01-25: 0.2.1: Outsourced non-core documentation to the PyLit pages.
 # :2007-01-26: 0.2.2: new behaviour of diff()
 # :2007-01-29: 0.2.3: new `header` methods after suggestion by Riccardo Murri
-# :2007-01-31: 0.2.4: raise Error if code indent is too small 
+# :2007-01-31: 0.2.4: raise Error if code indent is too small
+# :2007-02-05: 0.2.5: new command line option --comment-string
 # 
 # ::
 
@@ -58,6 +59,13 @@ import optparse
 
 from simplestates import SimpleStates  # generic state machine
 
+
+# Classes
+# =======
+# 
+# PushIterator
+# ------------
+# 
 # The PushIterator is a minimal implementation of an iterator with
 # backtracking from the `Effective Python Programming`_ OSCON 2005 tutorial by
 # Anthony Baxter. As the definition is small, it is inlined now. For the full
@@ -82,9 +90,6 @@ class PushIterator:
     def push(self, value):
         self.cache.append(value)
 
-# Classes
-# =======
-# 
 # Converter
 # ---------
 # 
@@ -145,7 +150,7 @@ class PyLitConverter(SimpleStates):
         """
 
 # As the state handlers need backtracking, the data is wrapped in a
-# `PushIterator`::
+# `PushIterator`_::
 
         self.data = PushIterator(data)
         self._textindent = 0
@@ -158,7 +163,7 @@ class PyLitConverter(SimpleStates):
 # The comment string is set to the languages comment string if not given in
 # the keyword arguments::
 
-        if not hasattr(self, "comment_string"):
+        if not hasattr(self, "comment_string") or not self.comment_string:
             self.comment_string = self.comment_strings[self.language]
 
 # .. [1] The most common choice of data is a ``file`` object with the text
@@ -212,10 +217,13 @@ class PyLitConverter(SimpleStates):
 # 
 # Only `indented literal blocks` are extracted. `Quoted literal blocks` and
 # `pydoc blocks` are treated as text. This allows the easy inclusion of
-# examples:
+# examples: [#]_
 # 
 #    >>> 23 + 3
 #    26
+# 
+# .. [#] Mark that there is no double colon before the doctest block in
+#        the text source.
 # 
 # The state handlers are implemented as generators. Iterating over a
 # `Text2Code` instance initializes them to generate iterators for
@@ -269,7 +277,7 @@ class Text2Code(PyLitConverter):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # The 'text' handler processes everything that is not an indented literal
-# comment. Text is quoted with the comment_string or filtered (with
+# comment. Text is quoted with `self.comment_string` or filtered (with
 # strip=True). 
 # 
 # It is implemented as a generator function that acts on the `data` iterator
@@ -754,10 +762,14 @@ class PylitOptions:
         # add the options
         p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
                      help="convert code to reStructured text")
+        p.add_option("--comment-string", dest="comment_string",
+                     help="text block marker (default '# ' (for Python))" )
+        p.add_option("-d", "--diff", action="store_true", 
+                     help="test for differences to existing file")
         p.add_option("--doctest", action="store_true",
                      help="run doctest.testfile() on the text version")
         p.add_option("-e", "--execute", action="store_true",
-                     help="execute code (implies -c, Python only)")
+                     help="execute code (Python only)")
         p.add_option("-f", "--infile",
                      help="input file name ('-' for stdout)" )
         p.add_option("--overwrite", action="store", 
@@ -771,8 +783,6 @@ class PylitOptions:
                      help="strip comments|code")
         p.add_option("-t", "--txt2code", action="store_true",
                      help="convert reStructured text to code")
-        p.add_option("-d", "--diff", action="store_true", 
-                     help="do a round-trip and test for differences")
         self.parser = p
         
         # parse to fill a self.Values instance
@@ -1019,7 +1029,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
     # for diffing, we need a copy of the data as list::
     data = instream.readlines()
     # convert
-    converter = get_converter(data, txt2code)
+    converter = get_converter(data, txt2code, **keyw)
     new = str(converter).splitlines(True)
     
     if outfile != '-':
