@@ -364,7 +364,7 @@ codesamples["ignore trailing whitespace in comment string for blank line"] = (
      "\n", 
      "#\n", # should count as empty even if != "# \n"
      "# more text\n"],
-    [[],                # empty header
+    [# [],                # empty header
      ["::\n",
       "\n"],            # leading text
      ["  block1 = 'first block'\n", 
@@ -388,26 +388,57 @@ codesamples["ignore trailing whitespace in comment string for blank line"] = (
 
 codesamples["comment before code (without blank line)"] = (
     ["# this is text::\n",
+     "\n",
+     "# this is a comment\n",
+     "foo = 'first'\n"],
+    [# [],         # empty header
+     ["this is text::\n", "\n"],  # leading text block
+     ["  # this is a comment\n", "  foo = 'first'\n"]
+    ])
+
+codesamples["comment block before code (without blank line)"] = (
+    ["# no text (watch the comment sign in the next line)::\n",
      "# \n",
      "# this is a comment\n",
      "foo = 'first'\n"],
-    [[],         # empty header
-     ["this is text::\n", 
-      "\n"],  # leading text block
-     ["  # this is a comment\n", 
-      "  foo = 'first'\n"]
-    ])
+    [["..  # no text (watch the comment sign in the next line)::\n",
+      "  # \n",
+      "  # this is a comment\n", 
+      "  foo = 'first'\n"]] # header
+    )
 
 codesamples["comment after code (without blank line)"] = (
     ["# ::\n",
      "\n",
      "block1 = 'first block'\n", 
-     "# commented code"],
-    [[],  # empty header
+     "# commented code\n",
+     "\n",
+     "# text again\n",
+    ],
+    [# [],  # empty header
      ['::\n', 
       '\n'],
      ["  block1 = 'first block'\n",
-      "  # commented code"]
+      "  # commented code\n",
+      "\n"],
+     ["text again\n"]
+    ])
+
+codesamples["comment block after code (without blank line)"] = (
+    ["# ::\n",
+     "\n",
+     "block1 = 'first block'\n", 
+     "# commented code\n",
+     "# \n",
+     "# still comment\n",
+    ],
+    [# [],  # empty header
+     ['::\n', 
+      '\n'],
+     ["  block1 = 'first block'\n",
+      "  # commented code\n",
+      "  # \n",
+      "  # still comment\n"]
     ])
 
 
@@ -428,7 +459,7 @@ codesamples["insert missing double colon after text block"] = (
     ["# text followed by code without double colon\n",
      "\n",
      "foo = 'first'\n"],
-    [[], # empty header
+    [# [], # empty header
      ["text followed by code without double colon\n",
       "\n",
       "::\n", # colons added
@@ -451,7 +482,7 @@ codesamples["empty header (start with matching comment)"] = (
     ["# a classical example without header::\n",
      "\n",
      "print 'hello world'"],
-    [[],
+    [# [], # empty header
      ["a classical example without header::\n",
       "\n"],
      ["  print 'hello world'"]

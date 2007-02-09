@@ -9,24 +9,25 @@ from iterqueue import *
 
 wrappers = [obj for obj in iterqueue.__dict__.values() 
             if is_iterator_wrapper(obj)]
-print "\n".join(repr(wrapper) for wrapper in wrappers)
+# print "\n".join(repr(wrapper) for wrapper in wrappers)
 
-print "Peekables"
 peekables = [obj for obj in wrappers if is_peekable(obj)]
-print "\n".join(repr(peekable) for peekable in peekables)
-
-print "Pushables"
 pushables = [obj for obj in wrappers if is_pushable(obj)]
-print "\n".join(repr(pushable) for pushable in pushables)
-
-print "State Reporters"
 state_reporters = [obj for obj in wrappers if is_state_reporting(obj)]
-print "\n".join(repr(state_reporter) for state_reporter in state_reporters)
-
-print "Iterator Queues"
 iqueues = [obj for obj in wrappers if is_iterator_queue(obj)]
-print "\n".join(repr(iqueue) for iqueue in iqueues)
 
+def print_iterator_lists():
+    print "Peekables"
+    print "\n".join(str(peekable) for peekable in peekables)
+    
+    print "Pushables"
+    print "\n".join(str(pushable) for pushable in pushables)
+    
+    print "State Reporters"
+    print "\n".join(str(state_reporter) for state_reporter in state_reporters)
+    
+    print "Iterator Queues"
+    print "\n".join(str(iqueue) for iqueue in iqueues)
 
 # XLIter Tests
 # ------------
@@ -102,11 +103,9 @@ class TestIQueue(IQtests):
         it = self.IterClass(range(3), [], xrange(2))
         assert list(it) == range(3) + range(2)
     
-class TestIQueue2(IQtests):
-    """Test the optimized iterator queue"""
-    IterClass = XIter
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
+    print_iterator_lists()
     import nose
     nose.configure(["test.py", "--detailed-errors"])
     nose.runmodule() # requires nose 0.9.1
