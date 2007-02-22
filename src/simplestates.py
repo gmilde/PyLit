@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# .. simplestates.py:  generic state machine class using iterators
-# 
-# ===========================================
-# Generic state machine class using iterators
-# ===========================================
+# ============================================================
+# simplestates.py: Generic state machine class using iterators
+# ============================================================
 # 
 # :Version:   0.2
 # :Date:      2006-12-01
@@ -15,7 +13,6 @@
 # 
 # Detailled documentation of this class and the design rationales (including
 # tested variants) is available in the file simplestates-test.py.txt
-# 
 # ::
 
 """Simple generic state machine class using iterators
@@ -114,7 +111,7 @@ class SimpleStates:
 # --------------
 # 
 # * sets the data object to the `data` argument.
-
+# 
 # * remaining keyword arguments are stored as class attributes (or methods, if
 #   they are function objects) overwriting class defaults (a neat little trick
 #   I found somewhere on the net)
@@ -193,7 +190,7 @@ class SimpleStates:
 # Command line usage
 # ==================
 # 
-# running this script directly should do a doctest::
+# running this script does a doctest::
 
 if __name__ == "__main__":
     import doctest

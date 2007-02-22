@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
 
-# .. simplestates_2.py:  generic state machine class using iterators
+# # -*- coding: iso-8859-1 -*-
 # 
-# ===========================================
-# Generic state machine class using iterators
-# ===========================================
+# Test the simplestates.py generic state machine
+# ==============================================
 # 
 # :Status:    draft
 # :Date:      2006-12-01
@@ -15,7 +13,7 @@
 # 
 # .. default-role:: literal
 # .. sectnum::
-
+# 
 # .. contents:: :depth: 2 
 # 
 # 
@@ -459,7 +457,7 @@ def test_Example4():
 # * internal variables are easily saved over subsequent invocations
 # * no function-call overhead (not relevant in this example but maybe for a
 #   state machine that has to process long data lists.
-#   
+# 
 # 
 # Converting all state method generators with a generic function
 # ==============================================================
@@ -627,7 +625,7 @@ def test_Example5():
 # 
 # :_`generator`: A function with a `yield` keyword. Calling this function will
 #                return an iterator_
-#              
+# 
 # :_`iterator`: An object with a `next()` method. Calling `<iterator>.next()`
 #               will (typically) return one data token (list element, line in
 #               a file, ...). If there is no more data the `StopIteration`

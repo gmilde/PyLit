@@ -1,111 +1,207 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# mutable_iterators_test.py: test the easystates StateMachine
+# ===============================================================
+# Test the iterator wrappers from iterqueue.py
+# ===============================================================
+# 
+# .. sectnum::
+# .. contents::
+# 
+# ::
 
 import sys, itertools
 import iterqueue
 from iterqueue import *
 
+# Get and sort the wrapper classes
+# --------------------------------
+# 
+# List all iterator wrapper objects::
+
 wrappers = [obj for obj in iterqueue.__dict__.values() 
             if is_iterator_wrapper(obj)]
 # print "\n".join(repr(wrapper) for wrapper in wrappers)
 
+# List iterator wrappers that provide a `peek` method::
+
 peekables = [obj for obj in wrappers if is_peekable(obj)]
+# print "Peekables"
+# print "\n".join(repr(peekable) for peekable in peekables)
+
+# List iterator wrappers that provide a `push` method::
+
 pushables = [obj for obj in wrappers if is_pushable(obj)]
+# print "Pushables"
+# print "\n".join(repr(pushable) for pushable in pushables)
+
+# List iterator wrappers that provide a test for "values available"::
+
 state_reporters = [obj for obj in wrappers if is_state_reporting(obj)]
+# print "State Reporters"
+# print "\n".join(repr(state_reporter) for state_reporter in state_reporters)
+
+# List iterator wrappers that implement the "queue" methods:: 
+
 iqueues = [obj for obj in wrappers if is_iterator_queue(obj)]
+# print "Iterator Queues"
+# print "\n".join(repr(iqueue) for iqueue in iqueues)
 
-def print_iterator_lists():
-    print "Peekables"
-    print "\n".join(str(peekable) for peekable in peekables)
-    
-    print "Pushables"
-    print "\n".join(str(pushable) for pushable in pushables)
-    
-    print "State Reporters"
-    print "\n".join(str(state_reporter) for state_reporter in state_reporters)
-    
-    print "Iterator Queues"
-    print "\n".join(str(iqueue) for iqueue in iqueues)
 
-# XLIter Tests
-# ------------
+# Test Wrappers
+# -------------
+# 
+# Test the basic iterator features of an iterator wrapper. ::
 
-class IQtests:
-    """Base class for tests of Iteratorqueues"""
-    def setUp(self):
-        self.it = self.IterClass(range(3))
-        
-    def test__init__(self):
-        """initialization returns an iterator object"""
-        assert is_iterator(self.it)
+class Test_Wrappers:
+    """Test the wrapping of iterator wrappers"""
+    def wrap_ok(self, wrapper, base):
+        """iterating over the wrapper should return the same 
+        as iterating over base
+        """
+        print wrapper
+        assert list(wrapper(base)) == list(base)
+        assert [i for i in wrapper(base)] == [i for i in base]
     
-    def test_extend(self):
-        """extend(iterable) shall append `iterable` to iterator"""
-        self.it.extend([9])
-        assert list(self.it) == range(3) + [9]
+    def test_wrappers(self, base=xrange(3)):
+        for wrapper in wrappers:
+            yield self.wrap_ok, wrapper, base
+
+
+# Test Peekables
+# --------------
+# 
+# ::
+
+class Test_Peekables:
+    """Test the peek method of iterator wrappers"""
+    def peek_ok(self, wrapper, base):
+        """peek() should return next value but not advance the iterator"""
+        print wrapper
+        print wrapper.peek
+        it = wrapper(base)
+        it.peek()
+        first = it.peek()
+        print first
+        assert first == 0
+        # peek() must not "use up" values
+        result = list(it)
+        print result
+        assert result == list(base)
     
-    def test_extendleft(self):
-        """extendleft(iterable) shall prepend `iterable` to iterator"""
-        self.it.extendleft([9])
-        assert [i for i in self.it] == [9] + range(3)
+    def test_peekables(self, base=xrange(3)):
+        """Test generator for peekable iterator wrappers"""
+        for wrapper in peekables:
+            yield self.peek_ok, wrapper, base
+
+# Test Pushables
+# --------------
+# 
+# ::
+      
+class Test_Pushables:    
+    """Test the push method of iterator wrappers"""
+
+    def push_ok(self, wrapper, base):
+        """push(value) shall prepend `value` to iterator"""
+        print wrapper.push
+        it = wrapper(base)
+        it.push(9)
+        result = list(it)
+        print result
+        assert result == [9] + list(base)
         
-    def test_append(self):
-        """append(value) shall append `value` to iterator"""
-        self.it.append(9)
-        # print self.it
-        assert [i for i in self.it] == range(3) + [9]
-    
-    def test_appendleft(self):
-        """appendleft(value) shall prepend `value` to iterator"""
-        self.it.appendleft(9)
-        assert [i for i in self.it] == [9] + range(3)
-        
-    def test_appendleft_while_iterating(self):
-        """appendleft shall work even in an iteration loop"""
+    def push_while_iterating_ok(self, wrapper):
+        """push shall work even in an iteration loop"""
+        print wrapper
+        it = wrapper(xrange(3))
         result = []
-        for i in self.it:
+        for i in it:
             if i == 1:
-                self.it.appendleft("xx")
+                it.push("xx")
             result.append(i)
         assert result == [0, 1, 'xx', 2]  
-    
-    def test_peek(self):
-        """peek() should return next value but not advance the iterator"""
-        print self.it.peek()
-        print self.it.peek()
-        assert self.it.peek() == 0
-        # peek() doesnot "use up" values
-        assert list(self.it) == range(3)
-    
-    def test_bool(self):
-        "Empty iterator should evaluate to False"
-        assert bool(self.IterClass([])) == False
-        assert bool(self.IterClass([1])) == True
-        # assert bool(self.IterClass([], [])) == False
-        assert bool(self.IterClass(iter([]))) == False
-        assert bool(self.IterClass(iter([1]))) == True
+
+    def test_pushables(self, base=xrange(3)):
+        """Test generator for pushable iterator wrappers"""
+        for wrapper in pushables:
+            if not hasattr(wrapper, "push"):
+                wrapper.push = wrapper.appendleft
+            yield self.push_ok, wrapper, base
+            yield self.push_while_iterating_ok, wrapper
 
 
-class TestIterQueue(IQtests):
-    """Test the deque with iterator add-ons"""
-    IterClass = IterQueue
+# Test Iterator Queue
+# -------------------
+# 
+# ::
+   
+class TestIteratorQueue:
+    """Test the queueing methods of iterator queues"""
     #
+    def extend_ok(self, wrapper, base):
+        """extend(iterable) shall append `iterable` to iterator"""
+        print wrapper
+        it = wrapper(base)
+        it.extend([9])
+        assert list(it) == list(base) + [9]
     
-class TestIQueue(IQtests):
-    """Test the IQueue mutable iterator queue
-    """
-    IterClass = IQueue
-    #
-    def test__init__chain(self):
-        """initialzation shall put the arguments in the chain"""
-        it = self.IterClass(range(3), [], xrange(2))
-        assert list(it) == range(3) + range(2)
-    
+    def extendleft_ok(self, wrapper, base):
+        """extendleft(iterable) shall prepend `iterable` to iterator"""
+        print wrapper
+        it = wrapper(base)
+        it.extendleft([9])
+        result = [i for i in it]
+        print result
+        assert result == [9] + list(base)
+        
+    def append_ok(self, wrapper, base):
+        """append(value) shall append `value` to iterator"""
+        print wrapper
+        it = wrapper(base)
+        it.append(9)
+        result = list(it)
+        print result
+        assert result == list(base) + [9]
 
-if __name__ == "__main__":
-    print_iterator_lists()
+    def test_iqueues(self, base=xrange(3)):
+        """Test generator for iterator-queue wrappers"""
+        for wrapper in iqueues:
+            yield self.extend_ok, wrapper, base
+            yield self.extendleft_ok, wrapper, base
+            yield self.append_ok, wrapper, base
+
+
+# Test State Reporters
+# --------------------
+# 
+# ::
+
+class Test_StateReporters:
+    """Test the state reporting when converted to bool"""
+    def bool_ok(self, wrapper):
+        """Empty iterator should evaluate to False
+           Non-empty iterator should evaluate to True
+           the evaluation should not advance the iterator
+           """
+        base = xrange(3) # make sure it is not empty!
+        it0 = wrapper([])
+        assert bool(it0) == False
+        assert list(it0) == []
+        it1 = wrapper(base)
+        assert bool(it1) == True
+        assert list(it1) == list(base)
+        assert bool(wrapper(iter([]))) == False
+        assert bool(wrapper(iter([1]))) == True
+
+    def test_iqueues(self):
+        """Test generator for iterator-queue wrappers"""
+        for wrapper in state_reporters:
+            yield self.bool_ok, wrapper
+
+
+if __name__ == "__main__":  
     import nose
+    # this doesnot show any effect :-(
     nose.configure(["test.py", "--detailed-errors"])
     nose.runmodule() # requires nose 0.9.1
