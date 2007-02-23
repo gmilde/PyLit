@@ -1,0 +1,149 @@
+.. -*- rst-mode -*-
+
+Features
+========
+
+`PyLit` (Python-Literate) provides a plain but efficient tool for literate
+programming: a converter between 
+
+* a *text source* (reStructuredText_ with embedded code blocks) and 
+* a *code source* (source code with comment blocks).
+
+It is written in Python_ but should work with any programming language that
+provides a syntax for comment blocks. (Currently, only comments running from
+a comment string to the end of line are accepted.)
+
+The following features set Pylit apart from 
+`existing literate programming frameworks`__
+
+__ ../literate-programming/index.html#existing-frameworks
+
+
+Simplicity
+----------
+
+`Pylit` does not introduce "named chunks". It lets the programmer
+intersperse documentation and code freely but does not provide code
+re-ordering or multiple expansion of definitions. Some call this
+*semi-literate* style.
+
+This restriction was done deliberately. It reduces the complexity and seems
+better suited for a programming language like Python where you would rather
+use packages, modules, classes, and functions to structure the code.
+
+  The computer science and programming pioneers, like Wirth and Knuth, used
+  another programming style than we recommend today. One notable difference
+  is the use of procedure abstractions. When Wirth and Knuth wrote their
+  influential books and programming, procedure calls were used with care,
+  partly because they were relatively expensive. Consequently, they needed
+  an extra level of structuring within a program or procedure. 
+  'Programming by stepwise refinement' as well as 'literate programming' can
+  be seen as techniques and representations to remedy the problem. The use
+  of many small (procedure) abstractions goes in another direction. If you
+  have attempted to use 'literate programming' on a program (maybe an
+  object-oriented program) with lots of small abstractions, you will
+  probably have realized that there is a misfit between, on the one hand,
+  being forced to name literal program fragments (scraps) and on the other,
+  named program abstractions. We do not want to leave the impression that
+  this is a major conceptual problem, but it is the experience of the author
+  that we need a variation of literate programming, which is well-suited to
+  programs with many, small (named) abstractions.
+
+  -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+
+.. _`Literate Programming - Issues and Problems`:
+     http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
+
+
+reStructured Text
+-----------------
+
+`PyLit` uses `reStructured Text`_ from Python docutils_ for text markup.
+
+Most of the time, a programmer will see the source in a "text editor". With
+reStructured Text as documenting language, not only the pretty printed
+documentation, but also both text and code source is a "combination of
+documentation and source together in a fashion suited for reading by human
+beings."[#]_
+
+* reStructuredText is an "ASCII-markup" language. Its syntax is very similar
+  to the usual conventions used to structure "ASCII text" like e.g. emails.
+  Thus it is more easy to read and to edit in a text editor than e.g. TeX,
+  HTML, or XML.
+
+* reStructuredText is well documented, and actively maintained.
+
+* Special editor modes for editing reStructuredText already exist (see
+  `Editor Support for reStructuredText`_.) 
+
+* With docutils_, the text source can be converted to a nice looking,
+  hyperlinked, browsable HTML documentation as well as to a printer-ready
+  PDF manual.
+
+Actually, only the syntax for literal blocks is needed for PyLit to convert
+from text to code. If no pretty-printed or web-ready document is needed, the
+programmer doesnot need to know anything else about reStructured Text.
+
+The tutorial_ and the examples_ show what code and text source look like.
+
+
+.. [#] i.e. a literate program according to the definition in the 
+       
+
+Dual source
+-----------
+
+Text source and code source are considered equal. Both hold the full
+information. 
+
+The `pylit.py` script converts the text source to code source and vice
+versa. Round-trips are possible without loss of information. (It is
+possible, to 'export' to a format by stripping code or text during the
+conversion using the ``--strip`` option)
+
+Advantages
+~~~~~~~~~~
+
+* Work on code or documentation can be done in adapted editor modes or
+  environments providing formatting tools, syntax highlight, outlining, and
+  other conveniences.
+
+* Debugging is straightforward (using the code source). Fixes are easily
+  passed to the text source (just calling pylit.py on the code source).
+
+Limitations
+~~~~~~~~~~~
+
+* The parallel existence of code and text source might lead to confusion on
+  which it the most up to date source.
+
+* While by default, an output file is not overwritten if it is newer than
+  the input file, loss of changes can occur when both formats are edited in
+  parallel.
+
+* PyLit does not allow the specification of a separate output file for
+  individual code blocks like e.g. noweb_. The "dual source" concept limits
+  the choice to one output file per input file. However, this can be
+  compensated by the use of the `include directive`_.
+  See the tutorial_ for an example.
+
+* Only one comment string (including whitespace) can be specified as
+  "text block marker". 
+  
+  (It would be possible to specify a set of matching comment strings (or
+  a regular expression), however as the comment string is not stored in
+  the text source, all text blocks will get one common comment string if
+  (re)converted to code source -- possibly loosing vital information.)
+
+.. _docutils: http://docutils.sourceforge.net/rst.html
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _Python: http://www.python.org
+.. _`Editor Support for reStructuredText`:
+      http://docutils.sourceforge.net/tools/editors/README.html
+.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
+.. _tutorial: ../tutorial/index.html
+.. _examples: ../examples/index.html
+.. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
+.. _include directive:
+     http://docutils.sourceforge.net/docs/ref/rst/directives.html#including-an-external-document-fragment
+

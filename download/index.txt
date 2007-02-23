@@ -1,0 +1,19 @@
+.. -*- rst-mode -*-
+   restindex
+      crumb: Download
+      page-title: PyLit - Download, Installation and Usage 
+      format: rest
+      encoding: iso-8859-1
+      output-encoding: utf-8
+   /restindex
+
+Download, Installation, Usage
+*****************************
+
+.. contents::
+
+.. include:: download.txt
+
+.. include:: installation.txt
+
+.. include:: usage.txt

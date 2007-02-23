@@ -1,0 +1,22 @@
+.. -*- rst-mode -*-
+.. 
+  restindex
+      crumb: Features
+      page-title: Pylit - Features
+  /restindex
+
+
+PyLit Features
+**************
+
+.. sectnum::
+.. contents::
+
+.. include:: features.txt
+
+Open questions
+==============
+
+The pylit source has a `chapter on open questions`__ and ideas.
+
+__ ../examples/pylit.py.html#open-questions

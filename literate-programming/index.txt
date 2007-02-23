@@ -1,0 +1,7 @@
+.. 
+  restindex
+      crumb: Literate Programming
+      page-title: PyLit - Literate Programming: definition and frameworks
+  /restindex
+
+.. include:: literate-programming.txt

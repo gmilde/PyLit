@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+ <title><% title %></title>
+ <meta http-equiv="Content-Type"
+  content="text/html; charset=<% final_encoding %>" />
+ <link rel="stylesheet"
+  href="<% path_to_root %>stylesheets/pylit.css"
+  type="text/css" />
+</head>
+<body>
+ <div id="crumbs">
+  <a class='top-navigation' href="<% path_to_root %>index.html">Home</a>
+  <a class='top-navigation' href="<% path_to_root %>literate-programming/index.html">Literate Programming</a>
+  <a class='top-navigation' href="<% path_to_root %>features/index.html">Features</a>
+  <a class='top-navigation' href="<% path_to_root %>tutorial/index.html">Tutorial</a>
+  <a class='top-navigation' href="<% path_to_root %>examples/index.html">Examples</a>
+  <a class='top-navigation' href="<% path_to_root %>download/index.html">Download</a>
+ </div>
+
+ <div id="Inhalt">
+  <% body %>
+ </div>
+  
+ <p class="thanks">
+  Thanks to 
+  <a href="http://developer.berlios.de">
+    <img src="http://developer.berlios.de/bslogo.php?group_id=0" 
+    width="124" height="32" border="0" alt="BerliOS" />
+  </a>
+  for hosting this site.  
+ </p>
+</body>
+</html>

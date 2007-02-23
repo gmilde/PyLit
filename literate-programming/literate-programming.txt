@@ -1,0 +1,242 @@
+.. -*- rst-mode -*-
+
+   :Copyright: 2006 Guenter Milde.
+               Released under the terms of the GNU General Public License 
+               (v. 2 or later)
+
+Literate Programming
+====================
+
+.. contents::
+
+Definition and Origin
++++++++++++++++++++++
+
+The `Literate Programming FAQ`_ gives the following definition:
+
+   `Literate programming`_ is the combination of documentation and source
+   together in a fashion suited for reading by human beings.
+   
+
+.. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
+
+The term `literate programming` and the first implementation of the concept
+were both the creation of Donald Knuth, the author of `The Art of Computer
+Programming`, the TeX typesetting system, and other works of the programming
+art. 
+
+   I believe that the time is ripe for significantly better documentation of
+   programs, and that we can best achieve this by considering programs to be
+   works of literature. Hence, my title: "Literate Programming."
+
+   Let us change our traditional attitude to the construction of programs:
+   Instead of imagining that our main task is to instruct a computer what to
+   do, let us concentrate rather on explaining to humans what we want the
+   computer to do. 
+
+   -- Donald E. Knuth, `Article from The Computer Journal`_,  1984
+
+.. _`Article from The Computer Journal`: http://tex.loria.fr/litte/knuthweb.pdf
+.. _`literate programming`: http://www.literateprogramming.com
+
+
+Existing Frameworks
++++++++++++++++++++
+
+There are already a lot of literate programming frameworks available, both
+sophisticated and lightweight. This non-comprehensive listing will compare
+them to `PyLit`.
+
+
+WEB and friends
+---------------
+
+The first published literate programming environment was `WEB`, introduced by
+Donald Knuth in 1981 for his TeX typesetting system; it uses Pascal as its
+underlying programming language and TeX for typesetting of the
+documentation. 
+
+CWEB_ is a newer version of WEB for the C programming language. Other
+implementations of the concept are noweb_ and FunnelWeb_.
+
+Literate programming environments of the WEB family failed to gain a strong
+user base. Some of the reasons are:
+
+* The steep learning curve for mastering TeX, the special WEB commands and
+  the actual programming language in parallel discourages potential literate
+  programmers.
+
+* While a printout has the professional look of a TeX-typeset essay, the
+  programmer will spend most time viewing and editing the source. A WEB
+  source in a text editor looks not really elegant:
+
+    In Knuth's work, beautiful literate programs were woven from ugly mixes of
+    markups in combined program and documentation files. The literate program
+    was directly targeted towards paper and books. Of obvious reasons,
+    programmers do not very often print their programs on paper. (And as
+    argued above, few of us intend to publish our programs in a book). Within
+    hours, such a program print out is no longer up-to-date. And furthermore,
+    being based on a paper representation, we cannot use the computers dynamic
+    potentials, such as outlining and searching.
+
+    -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+
+
+.. _`Literate Programming - Issues and Problems`:
+     http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
+
+How does PyLit differ from the web-like literate programming frameworks:
+
+* PyLit is not a complete framework but a simple tool. It supports code
+  embedded in a text document, but no re-arranging of named code chunks.
+  This is what the Wikipedia calles `semi-literate` programming.
+  
+* PyLit is a *bidirectional* text <-> code converter. 
+
+  + You can start a literate program from a "normal" code source by
+    converting to a text source and adding the prosa.  
+  + You can edit code with full support of any decent text editor or IDE.
+  + You can debug code with the standard tools -- the changes will propagate
+    to the text version with the next conversion, line numbers are the same
+    in text and code format.
+  
+  As a consequence, PyLit cannot support export to several code files from
+  one text source.     
+
+* In PyLit, the literate program source is legible in any text editor. Python
+  docutils_ provide the backend for the transformation into both,
+  pretty-printed hardcopy (via LaTeX - PDF) and browsable electronic (HTML)
+  form.
+
+For a full discussion of the PyLit concepts see the Features_ page.
+
+.. _docutils: http://docutils.sourceforge.net/
+.. _Features: /features/index.html
+
+.. _CWEB: http://www-cs-faculty.stanford.edu/~knuth/cweb.html
+.. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
+.. _FunnelWeb: http://www.ross.net/funnelweb/
+
+
+
+SourceBrowser
+-------------
+
+SourceBrowser_ is a complex tool generating a hyper-linked representation of
+complex software projects.
+
+  SourceBrowser is a documentation meta-programming tool that generates a
+  wiki representation of a source tree. 
+
+  It provides a `Source Annotation Language` for writing a documentation
+  meta-program and a tool for generating a static wiki for the host program.
+  
+  -- SourceBrowser_ home page
+
+.. _SourceBrowser: http://web.media.mit.edu/~vyzo/srcb/doc/index.html
+
+
+Interscript
+-----------
+
+Interscript_ is a complex framework that uses Python both for its
+implementation and to supply scripting services to client sourceware.
+
+  Interscript is different, because the fundamental paradigm is extended so
+  that there are three kinds of LP sections in file:
+
+  1. Code sections
+  2. Documentation sections
+  3. Scripting sections
+   
+  where the scripting sections [...] control and possibly generate both
+  documentation and code.
+
+  -- Interscript_ homepage
+
+.. _Interscript: http://interscript.sourceforge.net/
+
+Ly
+--
+
+Ly_, the "lyterate programming thingy." is an engine for Literate Programming.
+The design considerations look very much like the ones for Pylit:
+
+  So why would anybody use Ly instead of the established Literate
+  Programming tools like WEB or noweb? 
+
+    * Elegance. I do not consider the source code of WEB or noweb to be
+      particularly nice. I especially wanted a syntax that allows me to easily
+      write a short paragraph, then two or three lines of code, then another
+      short paragraph. Ly accomplishes this by distinguishing code from text
+      through indentation.
+    * HTML. WEB and CWEB are targeted at outputting TeX. This is a valid
+      choice, but not mine, as I want to create documents with WWW links, and
+      as I want to re-create documents each time I change something-- both of
+      these features don't go well together with a format suited to printout,
+      like TeX is. (Of course you can create HTML from LaTeX, but if my output
+      format is HTML, I want to be able to write HTML directly.)
+    * Python. I originally created Ly for a Python-based project, and
+      therefore I wanted it to run everywhere where Python runs. WEB and noweb
+      are mostly targeted at UNIX-like platforms.
+      
+  -- Ly_ introduction    
+
+Ly introduces its own language with 
+
+* a syntax for code chunks,
+* some special ways for entering HTML tags ("currently undocumented").
+
+whereas `PyLit` use a simpler "semi literate" style and relies on the established
+`reStructuredText`_ for documentation markup and linking.
+
+.. _Ly: http://lyterate.sourceforge.net/intro.html
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+
+
+
+XMLTangle
+---------
+
+XMLTangle_ is an generic tangle  program written in Python. It differs from
+PyLit mainly by its choice of XML as documenting language (making the source
+document harder to read for a human being).
+
+.. _XMLTangle: http://literatexml.sourceforge.net/xmltangle/
+
+
+Lightweight literate programming
+--------------------------------
+
+`Lightweight literate programming`_ is one more example of a Python based
+literate programming framework. One XML source is processed to either text or
+code. The XML source itself is rather hard to read for human beings.
+
+.. _`Lightweight literate programming`: 
+   http://infohost.nmt.edu/~shipman/soft/litprog/
+
+
+pyreport
+--------
+
+Pyreport_ is quite similar to PyLit in its focus on Python and the use of
+reStructuredText. It is a combination of `documentation generator`__
+(processing embedded documentation) and report tool (processing Python
+output).
+
+__ http://en.wikipedia.org/wiki/Documentation_generator
+
+  pyreport is a program that runs a python script and captures its output,
+  compiling it to a pretty report in a pdf or an html file. It can display
+  the output embedded in the code that produced it and can process special
+  comments (literate comments) according to markup languages (rst or LaTeX)
+  to compile a very readable document.
+
+  This allows for extensive literate programming in python, for generating
+  reports out of calculations written in python, and for making nice
+  tutorials.
+
+However, it is not a tool to "write documents that contain programs".
+
+
+.. _pyreport: http://gael-varoquaux.info/computers/pyreport/

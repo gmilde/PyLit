@@ -1,0 +1,33 @@
+
+  restindex
+      crumb: pylit.py
+      target: pylit.py.html
+      file: pylit.py
+      file: pylit.py.txt
+      file: pylit.py.html
+  /restindex
+
+  restindex
+      file: 99bottles.py
+      file: 99bottles.py.txt
+      file: 99bottles.py.html
+      file: simplestates.py
+      file: simplestates.py.txt
+      file: simplestates.py.html
+      file: iterqueue.py
+      file: iterqueue.py.txt
+      file: iterqueue.py.html
+      file: iterqueue_test.py
+      file: iterqueue_test.py.txt
+      file: iterqueue_test.py.html
+      file: pylit_test.py
+      file: pylit_test.py.txt
+      file: pylit_test.py.html
+      file: simplestates_test.py
+      file: simplestates_test.py.txt
+      file: simplestates_test.py.html
+      file: ginac-tutorial.py
+      file: ginac-tutorial.py.html
+      file: ginac-tutorial.py.txt
+  /restindex
+      

@@ -1,0 +1,10 @@
+    <ul id="Navigation">
+    <# 
+        # minibar(sections) # only shows sub-sections and pages
+        for page in sidebar(indextree, div='<div class="sidebar-links">'):
+           val = page['crumb'] or page['link_title'] or page['restindex']
+           link = page['target']
+           if not val == 'Home': # Home is already in the breadcrumbs
+              print '<li><a href="%s">%s</a></li>' % (link, val) 
+    #>
+    </ul>

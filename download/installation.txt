@@ -1,0 +1,28 @@
+.. -*- rst-mode -*-
+
+Installation
+============
+
+1. Put ``simplestates.py`` in your Python `Module Search Path`__
+
+2. Put ``pylit.py`` in any location you prefer (e.g. in the Module Search Path
+   as well).
+
+On Unix systems, easier invocation is possible if you put ``pylit.py`` (or a
+link to it) in your PATH and make it executable or add an alias to your
+shell configuration.
+   
+Alternatively, put `pylit.py` in the `Module Search Path` and put in the
+PATH a small executable script, pylit_::
+
+  #!/usr/bin/env python
+  
+  # call the pylit.py text <--> code converter
+  import pylit
+  pylit.main()
+
+This has the advantage, that Python can preparse ``pylit.py`` for faster
+execution on subsequent calls.
+
+__ http://docs.python.org/tut/node8.html#SECTION008110000000000000000
+.. _pylit: pylit

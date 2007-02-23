@@ -1,0 +1,73 @@
+.. -*- rst-mode -*-
+
+.. 
+  restindex
+      crumb: Usage
+      format: rest
+      encoding: iso-8859-1
+      output-encoding: utf-8
+  /restindex
+
+Usage
+=====
+
+Command line use
+----------------
+
+Using `pylit` from the command line will convert a file according to its
+extension. This default can be overridden by a couple of options_.
+
+Example: Run the converter script on itself::
+
+   #> python pylit.py pylit.py
+   extract written to pylit.py.txt
+
+More examples in the tutorial_.
+
+Instead of defining a new extension for "pylit" literate programms, by
+default ``.txt`` will be appended for text source and stripped by the
+conversion to executable code. i.e. for a program foo:
+
+  * the python source is called ``foo.py``
+  * the literate source is called ``foo.py.txt``
+  * the html rendering is called ``foo.py.html``
+
+With the ``-h`` (or ``--help``) argument, the script prints a usage info::
+
+   #> python pylit.py -h
+   
+   usage: pylit [options] FILE [OUTFILE]
+    
+    Convert between reStructured Text with embedded code, and
+    Source code with embedded text comment blocks
+
+.. _tutorial: ../tutorial/index.html
+
+    
+Options
+~~~~~~~
+
+     --version             show program's version number and exit
+     -h, --help            show this help message and exit
+     -c, --code2txt        convert code to reStructured text
+     --doctest             run doctest.testfile() on the text version
+     -e, --execute         execute code (implies -c, Python only)
+     -f INFILE, --infile=INFILE
+                           input file name ('-' for stdout)
+     --overwrite=OVERWRITE
+                           overwrite output file (default 'update')
+     -o OUTFILE, --outfile=OUTFILE
+                           output file name ('-' for stdout)
+     --replace             move infile to a backup copy (appending '~')
+     -s, --strip           strip comments|code
+     -t, --txt2code        convert reStructured text to code
+     -d, --diff            do a round-trip and test for differences
+
+
+Use as module
+-------------
+
+If pylit.py is in the Python Module Path, it can be imported and used from
+other Python programs. The `literate source`__ explains the details.
+
+__ ../examples/pylit.py.html

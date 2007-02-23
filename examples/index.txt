@@ -1,0 +1,181 @@
+.. -*- rst-mode -*-
+.. 
+  restindex
+      crumb: Examples
+      page-title: Pylit - Examples
+  /restindex
+
+Examples
+========
+
+The following examples illustrate use cases for "literate programming with
+PyLit".
+
+.. contents::
+
+User scripts
+------------
+
+Generally, the literate source will not substitute a user guide, but can
+serve as base documentation as well as a reference.
+
+The text parts can be used to structure the script, for additional
+explanations, documentation of variants and discussion why a specific
+approach was chosen.
+
+`pylit.py`__
+  is a script intended for the "end user". Both, command line
+  and programmatic use is possible. 
+  
+  Sources: `pylit.py`__, `pylit.py.txt`__
+
+__ pylit.py.html
+__ pylit.py
+__ pylit.py.txt
+  
+
+`99bottles.py`__
+  This is used as an introductory example to literate programming
+  in the `LiteratePrograms.org Wiki`_. Riccardo Murri wrote a Python
+  implementation.
+  
+  Sources: `99bottles.py`__, `99bottles.py.txt`__
+
+__ 99bottles.py.html
+__ 99bottles.py
+__ 99bottles.py.txt
+  
+  
+Python modules
+--------------
+
+Typically, most of a Python modules's documentation is in docstrings as it
+should be available by pydoc_ (the Python help and module browser utility).
+Currently, docstrings are treated as code parts by PyLit.
+
+However, literate comments can be used to add structure and documentation
+that is not intended for the end user of a module but for people trying to
+maintain or extend it (including the original author). Switching to the
+"text source" representation of the module greatly facilitates the writing
+of such "literate comments".
+
+.. _pydoc: http://docs.python.org/lib/module-pydoc.html
+
+`simplestates.py`__
+  is the module providing the state machine used in PyLit.
+
+  Sources: `simplestates.py`__, `simplestates.py.txt`__
+
+__ simplestates.py.html
+__ simplestates.py
+__ simplestates.py.txt
+
+Articles
+--------
+  
+`iterqueue.py`__
+  is a survey over the various options and attempts to extend
+  an iterator with methods for `peek`, `pushback` or `test of emptiness`.
+
+  It is also a Python module defining several examples of such rich
+  iterators.
+
+  BTW: Running ``doctest`` on the code source will only run doctests within
+  docstrings. In contrast, ``pylit --doctest`` will detect all doctests, in
+  docstrings as well as in text blocks.
+
+  Sources: `iterqueue.py`__, `iterqueue.py.txt`__.
+
+__ iterqueue.py.html
+__ iterqueue.py
+__ iterqueue.py.txt
+
+Test suites
+-----------
+
+Test suites are a good example for the advantages of literate programming.
+Documenting the rationale and design as well as test considerations can help
+a lot when maintaining and extending the suite.
+
+The following unit test modules are tested using the nose_ unit
+test discovery & execution framework. (They should be compatible to
+`py.test`_.)
+
+.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+.. _py.test: http://codespeak.net/py/current/doc/test.html
+
+
+`simplestates_test.py`__
+  is not only the unit test module for simplestates.py,
+  it also defines and tests variants of the state machine class.
+
+  Sources: `simplestates_test.py`__, `simplestates_test.py.txt`__.
+
+__ simplestates_test.py.html
+__ simplestates_test.py
+__ simplestates_test.py.txt
+
+`pylit_test.py`__
+  contains the unit tests for the ``pylit.py`` text <--> code converter
+
+  Sources: `pylit_test.py`__, and `pylit_test.py.txt`__.
+   
+__ pylit_test.py.html
+__ pylit_test.py
+__ pylit_test.py.txt
+
+
+`iterqueue_test.py`__
+  tests the functionality of the iterator wrapper classes defined in
+  `iterqueue.py`
+  
+  Sources: `iterqueue_test.py`__, `iterqueue_test.py.txt`__.
+
+__ iterqueue_test.py.html
+__ iterqueue_test.py
+__ iterqueue_test.py.txt
+
+   
+`iterqueue_speed_test.py`__
+  Profiling of the iterator wrapper classes defined in
+  `iterqueue.py`
+  
+  Sources: `iterqueue_speed_test.py`__, `iterqueue_speed_test.py.txt`__
+
+__ iterqueue_speed_test.py.html
+__ iterqueue_speed_test.py
+__ iterqueue_speed_test.py.txt
+
+
+Tutorials
+---------
+
+A tutorial is clearly more of a text document than a program. But usually, a
+lot of example code gets included. Converting the text source to commented
+code, it is easier to copy or paste code examples to and from scripts or an
+interactive program session. Re-converting indents the code snippets
+correctly so they will be literal blocks in the pretty print.
+
+`ginac-tutorial.py`__
+  is an adaption of the `GiNaC tutorial`_ for doing Computer algebra with
+  GiNaC_ and the Python_ programming language using the swiginac_ wrapper
+  package.
+  
+  It is a work in progress, not completed yet.
+
+  Sources: `ginac-tutorial.py`__, `ginac-tutorial.py.txt`__
+
+__ ginac-tutorial.py.html
+__ ginac-tutorial.pyr2w
+__ ginac-tutorial.py.txt
+
+.. _`GiNaC tutorial`: http://www.ginac.de/tutorial/
+.. _GiNaC: http://www.ginac.de
+.. _Python: http://www.python.org
+.. _swiginac: http://swiginac.berlios.de
+.. _LiteratePrograms.org Wiki: 
+     http://en.literateprograms.org/LiteratePrograms:Welcome
+
+
+
+
