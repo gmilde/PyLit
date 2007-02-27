@@ -25,7 +25,7 @@ from pylit import *
 ## Test strings
 ## ------------
 ##
-## First, a longer text, code and stripped code to "get the main picture"::
+## Example of text, code and stripped code with typical features"::
 
 text = """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
@@ -66,29 +66,31 @@ Trailing text.
 
 ## The code corresponding to the text test string.
 ##
-## using a triple-quoted string for the code (and stripped_code) would create
-## problems with the conversion of this test by pylit
-## (as the text parts would be converted to text)
-## ::
+## Using a triple-quoted string for the code (and stripped_code) can create
+## problems with the conversion of this test by pylit (as the text parts
+## would be converted to text). This is catered for by using a different
+## comment string for the text blocks in this file: convert to text with
+## ``pylit --comment-string='## ' pylit_test.py``::
 
-codedata = ['#!/usr/bin/env python\n',
-            '# -*- coding: iso-8859-1 -*-\n',
-            '\n',
-            '# Leading text\n',
-            '# \n',
-            '# in several paragraphs followed by a literal block::\n',
-            '\n',
-            "block1 = 'first block'\n",
-            '\n',
-            '# Some more text and the next block. ::\n',
-            '\n',
-            "block2 = 'second block'\n",
-            'print block1, block2\n',
-            '\n',
-            '# Trailing text.\n']
+code = """#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 
-code = "".join(codedata)
+# Leading text
+# 
+# in several paragraphs followed by a literal block::
+
+block1 = 'first block'
+
+# Some more text and the next block. ::
+
+block2 = 'second block'
+print block1, block2
+
+# Trailing text.
+"""
 # print code
+
+codedata = code.splitlines(True)
 
 ## Converting the text teststring with the `strip` option leads to::
 
@@ -711,13 +713,13 @@ class test_Streams(IOTests):
         print __file__, os.path.getmtime(__file__)
         print self.codepath, os.path.getmtime(self.codepath)
         #
-        assert is_newer(self.codepath, __file__), "file1 is newer"
-        assert is_newer(__file__, self.codepath) == False, "file2 is newer"
-        assert is_newer(__file__, "fffo"), "file2 doesnot exist"
-        assert is_newer("fflo", __file__) == False, "file1 doesnot exist"
+        assert is_newer(self.codepath, __file__) is True, "file1 is newer"
+        assert is_newer(__file__, self.codepath) is False, "file2 is newer"
+        assert is_newer(__file__, "fffo") is True, "file2 doesnot exist"
+        assert is_newer("fflo", __file__) is False, "file1 doesnot exist"
         #
-        assert is_newer(__file__, __file__) == False, "equal is not newer"
-        assert is_newer("fflo", "fffo") == False, "no file exists"
+        assert is_newer(__file__, __file__) is None, "equal is not newer"
+        assert is_newer("fflo", "fffo") is None, "no file exists -> equal"
 
     def test_open_streams(self):
         # default should return stdin and -out:

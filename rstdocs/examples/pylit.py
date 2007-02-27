@@ -37,6 +37,7 @@
 # :2007-02-19: 0.2.7 simplify `Code2Text.header,`
 #                    new `iter_strip` method replacing a lot of ``if``-s
 # :2007-02-22: 0.2.8 set `mtime` of outfile to the one of infile
+#                    customization doc for `main`
 # 
 # ::
 
@@ -67,63 +68,6 @@ import optparse
 # ::
 
 from simplestates import SimpleStates  # generic state machine
-
-
-# Option defaults
-# ===============
-# 
-# Module-level option defaults for the conversion can be stored in a
-# dictionary that is passed as keyword arguments to `main`_. 
-
-# `option_defaults` will be updated by command line options and extended with
-# "intelligent guesses" by `PylitOptions` and passed on to helper functions
-# and the converter instantiation.
-
-# This allows easy customization for programmatic use -- just overwrite the
-# defaults after importing `pylit` but before calling `main` (or call `main`
-# with a custom `option_values` dictionary.)
-# 
-# ::
-
-option_defaults = {}
- 
-# Default language and language specific defaults::
-
-option_defaults['language'] = "python"
-option_defaults['comment_strings'] = {"python": '# ',
-                                      "slang": '% ', 
-                                      "c++": '// '}
-option_defaults['code_languages']  = {".py": "python", 
-                                      ".sl": "slang", 
-                                      ".c": "c++"}
-option_defaults['code_extensions'] = option_defaults['code_languages'].keys()
-option_defaults['text_extensions'] = [".txt"]
-
-# Number of spaces to indent code blocks in the code -> text conversion.[#]_
-# 
-# .. [#] For the text -> code conversion, the codeindent is determined by the
-#        first recognized code line (leading comment or first indented literal
-#        block).
-# 
-# ::
-
-option_defaults['codeindent'] = 2
-
-# Marker string for the first code block. (Should be a valid rst directive
-# that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
-# trailing whitespace needed as indented code follows. ::
-
-option_defaults['header_string'] = '..'
-
-# Export to the output format stripping text or code blocks::
-
-option_defaults['strip'] = False
-
-# Execute code (Python only)")::
-
-option_defaults['execute'] = False
-
-
 
  
 # Classes
@@ -195,15 +139,40 @@ class PyLitConverter(SimpleStates):
 # 
 # `get_converter`_ and `main`_ pass on unused keyword arguments to
 # the instantiation of a converter class. This way, keyword arguments
-# to these functions can be used to customize the converter. ::
+# to these functions can be used to customize the converter. 
 
-    language =        option_defaults['language']
-    comment_strings = option_defaults['comment_strings']
-    strip =           option_defaults['strip']
-    codeindent =      option_defaults['codeindent']
-    header_string =   option_defaults['header_string']
+# Default language and language specific defaults::
+
+    language =        "python"        
+    comment_strings = {"python": '# ',
+                       "slang": '% ', 
+                       "c++": '// '}  
+
+# Number of spaces to indent code blocks in the code -> text conversion.[#]_
+# 
+# .. [#] For the text -> code conversion, the codeindent is determined by the
+#        first recognized code line (leading comment or first indented literal
+#        block of the text source).
+# 
+# ::
+
+    codeindent =  2
+
+# Marker string for the first code block. (Should be a valid rst directive
+# that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
+# trailing whitespace needed as indented code follows. Default is a comment
+# marker::
+
+    header_string = '..'
+
+# Export to the output format stripping text or code blocks::
+
+    strip =           False
     
-    state = 'header' # initial state
+# Initial state::
+
+    state = 'header' 
+
 
 # Instantiation
 # ~~~~~~~~~~~~~
@@ -908,10 +877,12 @@ class PylitOptions(object):
 
 # Recognized file extensions for text and code versions of the source:: 
 
-    code_languages =  option_defaults['code_languages'] 
-    code_extensions = option_defaults['code_extensions']
-    text_extensions = option_defaults['text_extensions']
-                      
+    code_languages  = {".py": "python", 
+                       ".sl": "slang", 
+                       ".c": "c++"}
+    code_extensions = code_languages.keys()
+    text_extensions = [".txt"]
+
 # Instantiation       
 # ~~~~~~~~~~~~~
 # 
@@ -1240,7 +1211,28 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # ----
 # 
 # If this script is called from the command line, the `main` function will
-# convert the input (file or stdin) between text and code formats::
+# convert the input (file or stdin) between text and code formats.
+
+# Customization
+# ~~~~~~~~~~~~~
+# 
+# Option defaults for the conversion can be as keyword arguments to `main`_. 
+# The option defaults will be updated by command line options and extended
+# with "intelligent guesses" by `PylitOptions` and passed on to helper
+# functions and the converter instantiation.
+
+# This allows easy customization for programmatic use -- just or call `main`
+# with the appropriate keyword options (or with a `option_defaults`
+# dictionary.), e.g.:
+
+# >>> option_defaults = {'language': "c++",
+# ...                    'codeindent': 4,
+# ...                    'header_string': '..admonition::'
+# ...                   }
+#
+# >>> main(**option_defaults)
+#
+# ::
 
 def main(args=sys.argv[1:], **option_defaults):
     """%prog [options] FILE [OUTFILE]

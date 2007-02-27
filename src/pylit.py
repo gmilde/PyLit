@@ -24,20 +24,20 @@
 # :2005-07-01: object orientated script using generators
 # :2005-07-10: Two state machine (later added 'header' state)
 # :2006-12-04: Start of work on version 0.2 (code restructuring)
-# :2007-01-23: 0.2 published at http://pylit.berlios.de
-# :2007-01-25: 0.2.1: Outsourced non-core documentation to the PyLit pages.
-# :2007-01-26: 0.2.2: new behaviour of diff()
-# :2007-01-29: 0.2.3: new `header` methods after suggestion by Riccardo Murri
-# :2007-01-31: 0.2.4: raise Error if code indent is too small
-# :2007-02-05: 0.2.5: new command line option --comment-string
-# :2007-02-09: 0.2.6: add section with open questions,
-#                     Code2Text: let only "true" blank lines (no comment str)
-#                     separate text and code blocks,
-#                     fix Code2Text.header() for the case of leading comments 
-#                     attached to code (now, if there is no leading code,
-#                     no empty header block is returned)
-# :2007-02-19: 0.2.7: simplify Code2Text.header,
-#                     new `iter_strip` method replacing a lot of `if`-s
+# :2007-01-23: 0.2   published at http://pylit.berlios.de
+# :2007-01-25: 0.2.1 Outsourced non-core documentation to the PyLit pages.
+# :2007-01-26: 0.2.2 new behaviour of `diff` function
+# :2007-01-29: 0.2.3 new `header` methods after suggestion by Riccardo Murri
+# :2007-01-31: 0.2.4 raise Error if code indent is too small
+# :2007-02-05: 0.2.5 new command line option --comment-string
+# :2007-02-09: 0.2.6 add section with open questions,
+#                    Code2Text: let only blank lines (no comment str)
+#                    separate text and code,
+#                    fix `Code2Text.header`
+# :2007-02-19: 0.2.7 simplify `Code2Text.header,`
+#                    new `iter_strip` method replacing a lot of ``if``-s
+# :2007-02-22: 0.2.8 set `mtime` of outfile to the one of infile
+#                    customization doc for `main`
 # 
 # ::
 
@@ -69,7 +69,7 @@ import optparse
 
 from simplestates import SimpleStates  # generic state machine
 
-
+ 
 # Classes
 # =======
 # 
@@ -137,19 +137,42 @@ class PyLitConverter(SimpleStates):
 # The data attributes are class default values. They will be overridden by
 # matching keyword arguments during class instantiation.
 # 
-# `get_converter()` and `pylit.main()` pass on unused keyword arguments to
-# the instantiation of a converter class. This way, matching keyword arguments
-# to these functions can be used to customize the converter. ::
+# `get_converter`_ and `main`_ pass on unused keyword arguments to
+# the instantiation of a converter class. This way, keyword arguments
+# to these functions can be used to customize the converter. 
 
+# Default language and language specific defaults::
+
+    language =        "python"        
     comment_strings = {"python": '# ',
                        "slang": '% ', 
-                       "c++": '// '}
-    language = "python"
-    strip = False
-    keep_lines = False
-    state = 'header'   # initial state
-    codeindent = 2
-    header_string = '..' # no whitespace needed as indented code follows
+                       "c++": '// '}  
+
+# Number of spaces to indent code blocks in the code -> text conversion.[#]_
+# 
+# .. [#] For the text -> code conversion, the codeindent is determined by the
+#        first recognized code line (leading comment or first indented literal
+#        block of the text source).
+# 
+# ::
+
+    codeindent =  2
+
+# Marker string for the first code block. (Should be a valid rst directive
+# that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
+# trailing whitespace needed as indented code follows. Default is a comment
+# marker::
+
+    header_string = '..'
+
+# Export to the output format stripping text or code blocks::
+
+    strip =           False
+    
+# Initial state::
+
+    state = 'header' 
+
 
 # Instantiation
 # ~~~~~~~~~~~~~
@@ -757,8 +780,37 @@ class Code2Text(PyLitConverter):
 # Using this script from the command line will convert a file according to its
 # extension. This default can be overridden by a couple of options.
 # 
+# Dual source handling
+# --------------------
+# 
+# How to determine which source is up-to-date?
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# - set modification date of `oufile` to the one of `infile` 
+# 
+#   Points out that the source files are 'synchronized'. 
+#   
+#   * Are there problems to expect from "backdating" a file? Which?
+# 
+#     Looking at http://www.unix.com/showthread.php?t=20526, it seems
+#     perfectly legal to set `mtime` (while leaving `ctime`) as `mtime` is a
+#     description of the "actuality" of the data in the file.
+# 
+#   * Should this become a default or an option?
+# 
+# - alternatively move input file to a backup copy (with option: `--replace`)
+#   
+# - check modification date before overwriting 
+#   (with option: `--overwrite=update`)
+#   
+# - check modification date before editing (implemented as `Jed editor`_
+#   function `pylit_check()` in `pylit.sl`_)
+# 
+# .. _Jed editor: http://www.jedsoft.org/jed/
+# .. _pylit.sl: http://jedmodes.sourceforge.net/mode/pylit/
+# 
 # Recognised Filename Extensions
-# ------------------------------
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # Finding an easy to remember, unused filename extension is not easy.
 # 
@@ -794,6 +846,8 @@ class Code2Text(PyLitConverter):
 # * the html rendering is called ``foo.py.html``
 # * the python source is called ``foo.py``
 # 
+# 
+# 
 # OptionValues
 # ------------
 # 
@@ -817,17 +871,19 @@ class OptionValues(optparse.Values):
 # arguments)  This scheme allows easy customization by code importing the
 # `pylit` module. ::
 
-class PylitOptions:
+class PylitOptions(object):
     """Storage and handling of program options
     """
 
 # Recognized file extensions for text and code versions of the source:: 
 
-    code_languages = {".py": "python", ".sl": "slang", ".c": "c++"}
+    code_languages  = {".py": "python", 
+                       ".sl": "slang", 
+                       ".c": "c++"}
     code_extensions = code_languages.keys()
     text_extensions = [".txt"]
 
-# Instantiation
+# Instantiation       
 # ~~~~~~~~~~~~~
 # 
 # Instantiation sets up an OptionParser and initializes it with pylit's
@@ -861,7 +917,7 @@ class PylitOptions:
         p.add_option("--replace", action="store_true",
                      help="move infile to a backup copy (appending '~')")
         p.add_option("-s", "--strip", action="store_true",
-                     help="strip comments|code")
+                     help="export by stripping text or code")
         p.add_option("-t", "--txt2code", action="store_true",
                      help="convert reStructured text to code")
         self.parser = p
@@ -1027,21 +1083,35 @@ def open_streams(infile = '-', outfile = '-', overwrite='update', **keyw):
         out_stream = file(outfile, 'w')
     return (in_stream, out_stream)
 
+# is_newer
+# ~~~~~~~~
+# 
+# ::  
 
 def is_newer(path1, path2):
     """Check if `path1` is newer than `path2` (using mtime)
     
-    Non-existing files are considered oldest
+    Compare modification time of files at path1 and path2.
+    
+    Non-existing files are considered oldest: Return False if path1 doesnot
+    exist and True if path2 doesnot exist.
+    
+    Return None for equal modification time. (This evaluates to False in a
+    boolean context but allows a test for equality.)
+    
     """
     try:
         mtime1 = os.path.getmtime(path1)
     except OSError:
-        return False
+        mtime1 = -1
     try:
         mtime2 = os.path.getmtime(path2)
     except OSError:
-        return True
-    # print "mtime of path %d, mtime of self %d" % (mtime1, mtime2)
+        mtime2 = -1
+    # print "mtime1", mtime1, path1, "\n", "mtime2", mtime2, path2
+    
+    if mtime1 == mtime2:
+        return None
     return mtime1 > mtime2
 
 
@@ -1076,7 +1146,7 @@ def run_doctest(infile="-", txt2code=True,
 # doctest::
     
     if txt2code is False: 
-        converter = Code2Text(data, keep_lines=True, **keyw)
+        converter = Code2Text(data, **keyw)
         docstring = str(converter)
     else: 
         docstring = data.read()
@@ -1141,9 +1211,30 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # ----
 # 
 # If this script is called from the command line, the `main` function will
-# convert the input (file or stdin) between text and code formats::
+# convert the input (file or stdin) between text and code formats.
 
-def main(args=sys.argv[1:], **default_values):
+# Customization
+# ~~~~~~~~~~~~~
+# 
+# Option defaults for the conversion can be as keyword arguments to `main`_. 
+# The option defaults will be updated by command line options and extended
+# with "intelligent guesses" by `PylitOptions` and passed on to helper
+# functions and the converter instantiation.
+
+# This allows easy customization for programmatic use -- just or call `main`
+# with the appropriate keyword options (or with a `option_defaults`
+# dictionary.), e.g.:
+
+# >>> option_defaults = {'language': "c++",
+# ...                    'codeindent': 4,
+# ...                    'header_string': '..admonition::'
+# ...                   }
+#
+# >>> main(**option_defaults)
+#
+# ::
+
+def main(args=sys.argv[1:], **option_defaults):
     """%prog [options] FILE [OUTFILE]
     
     Convert between reStructured Text with embedded code, and
@@ -1151,7 +1242,7 @@ def main(args=sys.argv[1:], **default_values):
 
 # Parse and complete the options::
 
-    options = PylitOptions(args, **default_values).values
+    options = PylitOptions(args, **option_defaults).values
 
 # Run doctests if ``--doctest`` option is set::
 
@@ -1170,7 +1261,7 @@ def main(args=sys.argv[1:], **default_values):
     except IOError, ex:
         print "IOError: %s %s" % (ex.filename, ex.strerror)
         sys.exit(ex.errno)
-
+    
 # Get a converter instance::
 
     converter = get_converter(data, **options.as_dict())
@@ -1186,21 +1277,40 @@ def main(args=sys.argv[1:], **default_values):
         exec code
         return
 
-# Default action::
+# Default action: Convert and write to out_stream::
 
     out_stream.write(str(converter))
+    
     if out_stream is not sys.stdout:
         print "extract written to", out_stream.name
+        out_stream.close()
         
-# Rename the infile to a backup copy if ``--replace`` is set
-# 
-# ::
-
+# Rename the infile to a backup copy if ``--replace`` is set::
+ 
     if options.ensure_value("replace", None):
         os.rename(options.infile, options.infile + "~")
+        
+# If not (and input and output are from files), set the modification time
+# (`mtime`) of the output file to the one of the input file to indicate that
+# the contained information is equal.[#]_ ::
 
-    return
+    else:
+        try:
+            os.utime(options.outfile, (os.path.getatime(options.outfile),
+                                       os.path.getmtime(options.infile))
+                    )
+        except OSError:
+            pass
 
+    ## print "mtime", os.path.getmtime(options.infile),  options.infile 
+    ## print "mtime", os.path.getmtime(options.outfile), options.outfile
+
+
+# .. [#] Make sure the corresponding file object (here `out_stream`) is
+#        closed, as otherwise the change will be overwritten when `close` is 
+#        called afterwards (either explicitely or at program exit).
+# 
+# Run main, if called from the command line::
 
 if __name__ == '__main__':
     main()
@@ -1211,33 +1321,23 @@ if __name__ == '__main__':
 # 
 # Open questions and ideas for further development
 # 
-# * option defaults:
+# Options
+# -------
 # 
-#   Collect option defaults in a dictionary (on module level)
+# * Collect option defaults in a dictionary (on module level)
+# 
+#   Facilitates the setting of options in programmatic use
 #   
 #   Use templates for the "intelligent guesses" (with Python syntax for string
 #   replacement with dicts: ``"hello %(what)s" % {'what': 'world'}``)
 # 
-# * header handling: `header_string` argument for the first code block marker
-#   (default '..', but e.g. '.. admonition::' would be possible as well)
-#   
-#   - Is it sensible to offer choice also as command line option?)
-#   
-# * dual source handling: How to mark which source is up-to-date?
+# * Is it sensible to offer the `header_string` option also as command line
+#   option?
 # 
-#   - move input file to a backup copy (implemented: ``--replace``)
+# * Configurable 
 #   
-#   - check modification date before overwriting (implemented: ``--overwrite``)
-#   
-#   - check modification date before editing (implemented as Jed editor
-#     function `pylit_check()`)
-#   
-#   - set modification date of the `oufile` to the one of `infile`
-#     (would make the point that the source files are now 'in sync' and both
-#     valid. Nice in combination with the `pylit_check()` function.)
-#   
-#     + Are there problems to expect from "backdating" a file? Which?
-#     + Should this become a default or an option?
+# Parsing Problems
+# ----------------------
 #     
 # * How can I include a literal block that should not be in the
 #   executable code (e.g. an example, an earlier version or variant)?
@@ -1259,21 +1359,24 @@ if __name__ == '__main__':
 #   (would need a specific detection algorithm for every language that
 #   supports multi-line literal strings (C++, PHP, Python)
 # 
-# * code syntax highlight
+# * Warn if a comment in code will become text after round-trip?
+# 
+# code syntax highlight
+# ---------------------
 #   
-#   use `listing` package in LaTeX->PDF
-#   
-#   in html, see 
-#   
-#   * the syntax highlight support in rest2web
-#     (uses the Moin-Moin Python colorizer, see a version at
-#     http://www.standards-schmandards.com/2005/fangs-093/)
-#   * Pygments (pure Python, many languages, rst integration recipe):
-#     http://pygments.org/docs/rstdirective/
-#   * Silvercity, enscript, ...  
-#   
-#   Some plug-ins require a special "code block" directive instead of the
-#   `::`-literal block. TODO: make this an option
+# use `listing` package in LaTeX->PDF
+# 
+# in html, see 
+# 
+# * the syntax highlight support in rest2web
+#   (uses the Moin-Moin Python colorizer, see a version at
+#   http://www.standards-schmandards.com/2005/fangs-093/)
+# * Pygments (pure Python, many languages, rst integration recipe):
+#   http://pygments.org/docs/rstdirective/
+# * Silvercity, enscript, ...  
+# 
+# Some plug-ins require a special "code block" directive instead of the
+# `::`-literal block. TODO: make this an option
 # 
 # Ask at docutils users|developers
 # 
