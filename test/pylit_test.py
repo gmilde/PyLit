@@ -29,18 +29,18 @@ from pylit import *
 
 text = """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 Leading text
 
 in several paragraphs followed by a literal block::
 
   block1 = 'first block'
-
+  
 Some more text and the next block. ::
 
   block2 = 'second block'
   print block1, block2
-
+  
 Trailing text.
 """
 # print text
@@ -115,7 +115,7 @@ print block1, block2
 
 textsamples = {}
 
-## 2. Code2Txt samples
+## 2. Code2Text samples
 ## ``codesamples["what"] = (<code data>, <output>, <output (with `strip`)``
 ## ::
 
@@ -128,8 +128,8 @@ def check_converter(key, converter, output):
     extract = converter()
     pprint(extract)
     outstr = "".join(["".join(block) for block in extract])
-    print "ist: ", repr(outstr)
     print "soll:", repr(output)
+    print "ist: ", repr(outstr)
     assert output == outstr
 
 ## Test generator for textsample tests::
@@ -169,8 +169,8 @@ def test_Text2Code():
 def test_Text2Code_strip():
     """strip=True should strip text parts"""
     outstr = str(Text2Code(textdata, strip=True))
-    print "soll", repr(stripped_code)
     print "ist ", repr(outstr)
+    print "soll", repr(stripped_code)
     # pprint(outstr)
     assert stripped_code == outstr
 
@@ -308,65 +308,96 @@ print 'hello world'
 ## Code2Text
 ## ---------
 
+class test_Code2Text(object):
+    
+    def setUp(self):
+        self.converter = Code2Text(codedata)
+    
 ## Code2Text.strip_literal_marker
 
 ## * strip `::`-line as well as preceding blank line if on a line on its own
 ## * strip `::` if it is preceded by whitespace. 
 ## * convert `::` to a single colon if preceded by text
 
-def test_Code2Text_strip_literal_marker():
-    c2t_instance = Code2Text(codedata)
-    samples = ((["text\n", "\n", "::\n", "\n"], ["text\n", "\n"]),
-               (["text ::\n", "\n"], ["text\n", "\n"]),
-               (["text::\n", "\n"], ["text:\n", "\n"]))
-    for (ist, soll) in samples:
-        c2t_instance.strip_literal_marker(ist)
-        print ist, soll
-        assert ist == soll
+    def test_strip_literal_marker(self):
+        samples = (("text\n\n::\n\n", "text\n\n"),
+                   ("text\n::\n\n", "text\n\n"),
+                   ("text ::\n\n", "text\n\n"),
+                   ("text::\n\n", "text:\n\n"),
+                   ("text:\n\n", "text:\n\n"),
+                   ("text\n\n", "text\n\n"),
+                   ("text\n", "text\n")
+                   )
+        for (ist, soll) in samples:
+            ist = ist.splitlines(True)
+            soll = soll.splitlines(True)
+            print "before", ist
+            self.converter.strip_literal_marker(ist)
+            print "soll:", repr(soll)
+            print "ist: ", repr(ist)
+            assert ist == soll
+
+## Code2Text.normalize_line
+
+# Missing whitespace in the `comment_string` is not significant for otherwise
+# blank lines. Add it::
+
+    def test_block_is_text(self):
+        samples = ((["code\n"], False),
+                   (["#code\n"], False),
+                   (["## code\n"], False),
+                   (["# text\n"], True),
+                   (["#  text\n"], True),
+                   (["# \n"], True),
+                   (["#\n"], True),
+                   (["\n"], True))
+        for (line, soll) in samples:
+            result = self.converter.block_is_text(line)
+            print repr(line), "soll", soll, "result", result
+            assert result == soll
 
 ## base tests on the "long" test strings ::
 
-def test_Code2Text():
-    """Test Code2Text class converting code->text"""
-    outstr = str(Code2Text(codedata))
-    # print text
-    print repr(text)
-    print repr(outstr)
-    assert text == outstr
-
-def test_Code2Text_strip():
-    """Test Code2Text class converting code->rst with strip=True
-
-    Should strip code blocks
-    """
-    pprint(Code2Text(codedata, strip=True)())
-    outstr = str(Code2Text(codedata, strip=True))
-    print repr(stripped_text)
-    print repr(outstr)
-    assert stripped_text == outstr
-
-def test_Code2Text_different_comment_string():
-    """Convert only comments with the specified comment string to text
-    """
-    outstr = str(Code2Text(codedata, comment_string="##", strip=True))
-    print outstr
-    assert outstr == ""
-    data = ["# ::\n",
-            "\n",
-            "block1 = 'first block'\n",
-            "\n",
-            "## more text"]
-    soll = [['..'],
-            ['  # ::\n',
-             '\n',
-             "  block1 = 'first block'\n",
-             '\n'],                # leading code block as header
-            [' more text']         # keep space (not part of comment string)
-           ]
-    output = Code2Text(data, comment_string="##")()
-    print "ist ", output
-    print "soll", soll
-    assert output == soll
+    def test_str(self):
+        """Test Code2Text class converting code->text"""
+        outstr = str(Code2Text(codedata))
+        # print text
+        print "soll:", repr(text)
+        print "ist: ", repr(outstr)
+        assert text == outstr
+    
+    def test_str_strip(self):
+        """Test Code2Text class converting code->rst with strip=True
+    
+        Should strip code blocks
+        """
+        pprint(Code2Text(codedata, strip=True)())
+        outstr = str(Code2Text(codedata, strip=True))
+        print repr(stripped_text)
+        print repr(outstr)
+        assert stripped_text == outstr
+    
+    def test_str_different_comment_string(self):
+        """Convert only comments with the specified comment string to text
+        """
+        outstr = str(Code2Text(codedata, comment_string="##", strip=True))
+        print outstr
+        assert outstr == ""
+        data = ["# ::\n",
+                "\n",
+                "block1 = 'first block'\n",
+                "\n",
+                "## more text"]
+        soll = "\n".join(['..  # ::',  # leading code block as header
+                          '  ',
+                          "  block1 = 'first block'",
+                          '  ',
+                          ' more text']   # keep space (not part of comment string)
+                        )
+        outstr = str(Code2Text(data, comment_string="##"))
+        print "soll:", repr(soll)
+        print "ist: ", repr(outstr)
+        assert outstr == soll
 
 ## Special cases
 ## ~~~~~~~~~~~~~
@@ -391,7 +422,7 @@ block1 = 'first block'
 """::
 
   block1 = 'first block'
-
+  
 
 more text
 """)
@@ -430,7 +461,7 @@ codesamples["comment block before code (without blank line)"] = (
 foo = 'first'
 """,
 """..  # no text (watch the comment sign in the next line)::
-  # 
+  #
   # this is a comment
   foo = 'first'
 """,
@@ -448,7 +479,7 @@ block1 = 'first block'
 
   block1 = 'first block'
   # commented code
-
+  
 text again
 """,
 """
@@ -532,7 +563,7 @@ print 'hello world'
 """,
 """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 a classical example with header::
 
   print 'hello world'
@@ -547,7 +578,7 @@ codesamples["standard header, followed by code"] = (
 print 'hello world'
 """,
 """..  #!/usr/bin/env python
-
+  
   print 'hello world'
 """,
 "")

@@ -37,7 +37,7 @@
 # :2007-02-19: 0.2.7 simplify `Code2Text.header,`
 #                    new `iter_strip` method replacing a lot of ``if``-s
 # :2007-02-22: 0.2.8 set `mtime` of outfile to the one of infile
-#                    customization doc for `main`
+# :2007-02-27: 0.3   new `Code2Text` converter after an idea by Riccardo Murri
 # 
 # ::
 
@@ -59,6 +59,7 @@ __docformat__ = 'restructuredtext'
 # 
 # ::
 
+import re
 import os
 import sys
 import optparse
@@ -88,7 +89,7 @@ from simplestates import SimpleStates  # generic state machine
 # 
 # ::
 
-class PushIterator:
+class PushIterator(object):
     def __init__(self, iterable):
         self.it = iter(iterable)
         self.cache = []
@@ -207,12 +208,6 @@ class PyLitConverter(SimpleStates):
         if not hasattr(self, "comment_string") or not self.comment_string:
             self.comment_string = self.comment_strings[self.language]
             
-# If the `strip` argument is true, replace the `__iter_` method
-# with a special one that drops "spurious" blocks::
-
-        if getattr(self, "strip", False):
-            self.__iter__ = self.iter_strip
-
 # .. [1] The most common choice of data is a `file` object with the text
 #        or code source.
 # 
@@ -253,6 +248,25 @@ class PyLitConverter(SimpleStates):
             lines.append("\n")
 
 
+# Converter.collect_blocks
+
+# ::
+
+    def collect_blocks(self): 
+        """collect lines in a list 
+        
+        return list for each block of lines (paragraph) seperated by a 
+        blank line (whitespace only)
+        """
+        block = []
+        for line in self.data:
+            block.append(line)
+            if not line.rstrip():
+                yield block
+                block = []
+        yield block
+                
+
 # Text2Code
 # ---------
 # 
@@ -279,6 +293,16 @@ class PyLitConverter(SimpleStates):
 class Text2Code(PyLitConverter):
     """Convert a (reStructured) text source to code source
     """
+
+# INIT: call the parent classes init method. 
+#
+# If the `strip` argument is true, replace the `__iter_` method
+# with a special one that drops "spurious" blocks::
+
+    def __init__(self, data, **keyw):
+        PyLitConverter.__init__(self, data, **keyw)
+        if getattr(self, "strip", False):
+            self.__iter__ = self.iter_strip
 
 # Text2Code.header
 # ~~~~~~~~~~~~~~~~
@@ -517,7 +541,47 @@ class Code2Text(PyLitConverter):
     """Convert code source to text source
     """
 
-# Code2Text.header
+# Code2Text.__iter__
+
+    def __iter__(self):
+
+# If the last text block doesnot end with a code marker (by default, the
+# literal-block marker ``::``), the `text` method will set `code marker` to
+# a paragraph that will start the next code block. It is yielded if non-empty
+# at a text-code transition. If there is no preceding text block, `code_marker`
+# contains the  `header_string`::
+
+        if self.strip:
+            self.code_marker = []
+        else:
+            self.code_marker = [self.header_string]
+        
+        for block in self.collect_blocks():
+            
+# Test the state of the block, return it processed with the right handler::
+
+            if self.block_is_text(block):
+                self.state = "text"
+            else:
+                if self.state != "code" and self.code_marker:
+                    yield self.code_marker
+                self.state = "code"
+            yield getattr(self, self.state)(block)
+
+
+# A paragraph is a text block, if every non-blank line starts with a matching
+# comment string  (test includes whitespace except for commented blank lines!)
+# ::
+
+    def block_is_text(self, block):
+        for line in block:
+            if (line.rstrip() 
+                and not line.startswith(self.comment_string)
+                and line.rstrip() != self.comment_string.rstrip()):
+                return False
+        return True
+
+# "header" state
 # ~~~~~~~~~~~~~~~~
 # 
 # Sometimes code needs to remain on the first line(s) of the document to be
@@ -564,185 +628,60 @@ class Code2Text(PyLitConverter):
 # 
 #   |  ``#!/usr/bin/env python``
 #   |  ``# -*- coding: iso-8859-1 -*-``
-# 
-# ::
+#
+# The current implementation represents the header state by the setting of
+# `code_marker` to ``[self.header_string]``. The first non-empty text block
+# will overwrite this setting.
 
-    def header(self):
-        """Convert leading code to rst comment"""
-
-# Parse with the `text` method. If there is no leading text, return the 
-# `header_string` (by default the rst comment marker)::
-
-        lines = self.text()
-        if lines:
-            return lines
-        return [self.header_string]
-
-
-# Code2Text.text_handler_generator
+# Code2Text.text
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The text handler converts a comment to a text block if it matches the
-# following requirements:
-# 
-# * every line starts with a matching comment string (test includes whitespace!)
-# * comment is separated from code by a blank line (the paragraph separator in
-#   reStructuredText)
-# 
-# It is implemented as a generator function that acts on the `data` iterator
-# and yields text blocks.
-# 
-# Text is uncommented. A literal block marker is appended, if not already
-# present ::
+# The *text state handler* converts a comment to a text block 
+# Strip the leading comment string::
 
-    def text_handler_generator(self):
+    def text(self, lines):
         """Uncomment text blocks in source code
         """
         
-# Set up an output cache and iterate over the data lines (remember, code lines
-# are processed by the code handler and not seen here). ::
-          
-        lines = []
-        for line in self.data_iterator:
-              # print "Text: " + line
-              
-# Pass on blank lines. Strip comment string from otherwise blank lines
-# Continue with the next line, as there is no need to test blank lines
-# for the end of text. ::
+        lines = [line.replace(self.comment_string, "", 1) for line in lines]
 
-            if not line.lstrip():
-                lines.append(line)
-                continue
+        lines = [re.sub("^"+self.comment_string.rstrip(), "", line)
+                 for line in lines]
+        
+        if self.strip:
+            self.strip_literal_marker(lines)
+            self.code_marker = []
 
-# Test for end of text block: the first line that doesnot start with a
-# matching comment string. This tests also whitespace that is part of the
-# comment string! ::
+# Check for code block marker (double colon) at the end of the text block
+# Update the `code_marker` argument. The current `code marker` is 'prepended'
+# to the next code block by `Code2Text.code`_ ::
 
-            if not line.startswith(self.comment_string):
+        elif len(lines)>1:
+            if lines[-2].rstrip().endswith("::"):
+                self.code_marker = []
+            else:
+                self.code_marker = ["::\n", "\n"]
 
-# Missing whitespace in the `comment_string` is not significant for otherwise
-# blank lines. Add the whitespace and continue::
+# Return the text block to the calling function::
 
-                if line.rstrip() == self.comment_string.rstrip():
-                    lines.append(line.replace(self.comment_string.rstrip(), 
-                                              self.comment_string, 1))
-                    continue
-    
-# End of text block: Push back the line and let the "code" handler handle it
-# (and subsequent lines)::
-              
-                self.state = 'code'
-                self.data_iterator.push(line)
-
-# Also restore and push back lines that precede the next code line without a
-# blank line (paragraph separator) inbetween::
-                  
-                while lines and lines[-1].lstrip():
-                    self.data_iterator.push(lines.pop())
-
-# Strip the leading comment string::
-
-                lines = [line.replace(self.comment_string, "", 1)
-                         for line in lines]
-                
-# Ensure literal block marker (double colon) at the end of the text block::
-
-                if len(lines)>1 and not lines[-2].rstrip().endswith("::"):
-                    lines.extend(["::\n", "\n"])
+        return lines
                      
-# Yield the text block (process following lines with `code_handler`.
-# When the state is again set to "text", reset the cache and continue with 
-# next text line ::
-                       
-                yield lines
-                lines = []
-                continue
-                
-# Test passed: It's text line. Append to the `lines` cache::
-
-            lines.append(line)
-            
-# No more lines: Just return the remaining lines::
-              
-        yield [line.replace(self.comment_string, "", 1) for line in lines]
-
     
-# Code2Text.code_handler_generator
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Code2Text.code
+# ~~~~~~~~~~~~~~
 # 
 # The `code` method is called on non-commented code. Code is returned as
-# indented literal block (or filtered, if ``strip=True``). The amount of the
-# code indentation is controled by `self.codeindent` (default 2). 
-# 
+# indented literal block (or filtered, if ``self.strip == True``). The amount
+# of the code indentation is controled by `self.codeindent` (default 2). 
 # ::
 
-    def code_handler_generator(self):
-        """Convert source code to indented literal blocks.
+    def code(self, lines):
+        """Indent lines or strip if `strip` == `True`
         """
-        lines = []
-        for line in self.data_iterator:
-            # yield "Code: " + line
-            # pass on empty lines (only newline)
-            if line == "\n":
-                lines.append(line)
-                continue
-            # # strip comment string from blank lines
-            # if line.rstrip() == self.comment_string.rstrip():
-            #     lines.append("\n")
-            #     continue
-            
-# Test for end of code block: 
-# 
-# * matching comment string at begin of line,
-# * following a blank line. 
-# 
-# The test includes whitespace in `self.comment_string` normally, but ignores
-# trailing whitespace if the line after the comment string is blank. ::
+        if self.strip == True:
+            return []
 
-            if (line.startswith(self.comment_string) or
-                line.rstrip() == self.comment_string.rstrip()
-               ) and lines and not lines[-1].strip():
-                    
-                self.data_iterator.push(line)
-                self.state = 'text'
-                # self.ensure_trailing_blank_line(lines, line)
-                yield lines
-                # reset
-                lines = []
-                continue
-            
-# default action: indent by codeindent and append to lines cache::
-
-            lines.append(" "*self.codeindent + line)
-            
-# no more lines in data_iterator -- return collected lines::
-
-        yield lines
-        
-
-# Code2Text.iter_strip
-# ~~~~~~~~~~~~~~~~~~~~
-# 
-# Modification of the `simplestates.__iter__` method that will replace it when
-# the `strip` keyword argument is `True` during class instantiation: 
-# 
-# Iterate over class instances dropping the header block and code blocks::
-
-    def iter_strip(self):
-        """Generate and return an iterator dropping code|text blocks
-        """
-        self.data_iterator = self.data
-        self._initialize_state_generators()
-        textblock = self.header() # drop the header
-        if textblock != [self.header_string]:
-            self.strip_literal_marker(textblock)
-            yield textblock
-        while True:
-            getattr(self, self.state)() # drop code blocks
-            textblock = getattr(self, self.state)()
-            self.strip_literal_marker(textblock)
-            yield textblock
-
+        return [" "*self.codeindent + line for line in lines]
 
 # Code2Text.strip_literal_marker
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -751,7 +690,7 @@ class Code2Text(PyLitConverter):
 # when the text is converted with docutils. Replace it with the equivalent of
 # docutils replace rules
 # 
-# * strip `::`-line as well as preceding blank line if on a line on its own
+# * strip `::`-line (and preceding blank line) if on a line on its own
 # * strip `::` if it is preceded by whitespace. 
 # * convert `::` to a single colon if preceded by text
 # 
@@ -759,18 +698,30 @@ class Code2Text(PyLitConverter):
 # It is modified in-place::
 
     def strip_literal_marker(self, lines):
-        if len(lines) < 2:
+        try:
+            line = lines[-2]
+        except IndexError:  # len(lines < 2)
             return
-        parts = lines[-2].rsplit('::', 1)
-        if lines[-2].strip() == '::':
+        
+        # split at rightmost '::'
+        try:
+            (head, tail) = line.rsplit('::', 1)
+        except ValueError:  # only one part (no '::')
+            return
+        
+        # '::' on an extra line
+        if not head.strip():            
             del(lines[-2])
+            # delete preceding line if it is blank
             if len(lines) >= 2 and not lines[-2].lstrip():
                 del(lines[-2])
-        elif parts[0].rstrip() < parts[0]:
-            parts[0] = parts[0].rstrip()
-            lines[-2] = "".join(parts)
+        # '::' follows whitespace                
+        elif head.rstrip() < head:      
+            head = head.rstrip()
+            lines[-2] = "".join((head, tail))
+        # '::' follows text        
         else:
-            lines[-2] = ":".join(parts)
+            lines[-2] = ":".join((head, tail))
 
 
 
