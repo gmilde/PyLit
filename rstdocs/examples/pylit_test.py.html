@@ -354,7 +354,7 @@ from pylit import *
 <h1><a class="toc-backref" href="#id4" id="text-code-conversion" name="text-code-conversion">Text &lt;-&gt; Code conversion</a></h1>
 <div class="section">
 <h2><a class="toc-backref" href="#id5" id="test-strings" name="test-strings">Test strings</a></h2>
-<p>First, a longer text, code and stripped code to &quot;get the main picture&quot;:</p>
+<p>Example of text, code and stripped code with typical features&quot;:</p>
 <pre class="literal-block">
 text = &quot;&quot;&quot;..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
@@ -365,7 +365,7 @@ in several paragraphs followed by a literal block::
 
   block1 = 'first block'
 
-Some more text and the next block::
+Some more text and the next block. ::
 
   block2 = 'second block'
   print block1, block2
@@ -386,58 +386,61 @@ are extracted, which leads to:</p>
 <pre class="literal-block">
 stripped_text = &quot;&quot;&quot;Leading text
 
-in several paragraphs followed by a literal block::
+in several paragraphs followed by a literal block:
 
-Some more text and the next block::
+Some more text and the next block.
 
 Trailing text.
 &quot;&quot;&quot;
 </pre>
 <p>The code corresponding to the text test string.</p>
-<p>using a triple-quoted string for the code (and stripped_code) would create
-problems with the conversion of this test by pylit
-(as the text parts would be converted to text)</p>
+<p>Using a triple-quoted string for the code (and stripped_code) can create
+problems with the conversion of this test by pylit (as the text parts
+would be converted to text). This is catered for by using a different
+comment string for the text blocks in this file: convert to text with
+<tt class="docutils literal"><span class="pre">pylit</span> <span class="pre">--comment-string='##</span> <span class="pre">'</span> <span class="pre">pylit_test.py</span></tt>:</p>
 <pre class="literal-block">
-codedata = ['#!/usr/bin/env python\n',
-            '# -*- coding: iso-8859-1 -*-\n',
-            '\n',
-            '# Leading text\n',
-            '# \n',
-            '# in several paragraphs followed by a literal block::\n',
-            '\n',
-            &quot;block1 = 'first block'\n&quot;,
-            '\n',
-            '# Some more text and the next block::\n',
-            '\n',
-            &quot;block2 = 'second block'\n&quot;,
-            'print block1, block2\n',
-            '\n',
-            '# Trailing text.\n']
+code = &quot;&quot;&quot;#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 
-code = &quot;&quot;.join(codedata)
+# Leading text
+#
+# in several paragraphs followed by a literal block::
+
+block1 = 'first block'
+
+# Some more text and the next block. ::
+
+block2 = 'second block'
+print block1, block2
+
+# Trailing text.
+&quot;&quot;&quot;
 # print code
+
+codedata = code.splitlines(True)
 </pre>
 <p>Converting the text teststring with the <cite>strip</cite> option leads to:</p>
 <pre class="literal-block">
-stripped_code = &quot;&quot;.join(['#!/usr/bin/env python\n',
-                         '# -*- coding: iso-8859-1 -*-\n',
-                         '\n',
-                         &quot;block1 = 'first block'\n&quot;,
-                         '\n',
-                         &quot;block2 = 'second block'\n&quot;,
-                         'print block1, block2\n',
-                         '\n'])
+stripped_code = &quot;&quot;&quot;#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 
-## pprint(textdata)
-## pprint(stripped_code.splitlines(True))
+block1 = 'first block'
+
+block2 = 'second block'
+print block1, block2
+
+&quot;&quot;&quot;
 </pre>
+<p>pprint(textdata)
+pprint(stripped_code.splitlines(True))</p>
 <p>Containers for special case examples:</p>
 <p>1. Text2Code samples
 <tt class="docutils literal"><span class="pre">textsamples[&quot;what&quot;]</span> <span class="pre">=</span> <span class="pre">(&lt;text</span> <span class="pre">data&gt;,</span> <span class="pre">&lt;output&gt;,</span> <span class="pre">&lt;output</span> <span class="pre">(with</span> <span class="pre">`strip`)</span></tt></p>
 <pre class="literal-block">
 textsamples = {}
 </pre>
-<p>2. Code2Txt samples
+<p>2. Code2Text samples
 <tt class="docutils literal"><span class="pre">codesamples[&quot;what&quot;]</span> <span class="pre">=</span> <span class="pre">(&lt;code</span> <span class="pre">data&gt;,</span> <span class="pre">&lt;output&gt;,</span> <span class="pre">&lt;output</span> <span class="pre">(with</span> <span class="pre">`strip`)</span></tt></p>
 <pre class="literal-block">
 codesamples = {}
@@ -445,30 +448,35 @@ codesamples = {}
 <p>Auxiliary function to test the textsamples and codesamples:</p>
 <pre class="literal-block">
 def check_converter(key, converter, output):
-    print &quot;failed:&quot;, key
+    print &quot;E:&quot;, key
     extract = converter()
-    # print &quot;&quot;.join(data)
-    print &quot;ist: &quot;, extract
-    print &quot;soll:&quot;, output
-    assert output == extract
+    pprint(extract)
+    outstr = &quot;&quot;.join([&quot;&quot;.join(block) for block in extract])
+    print &quot;soll:&quot;, repr(output)
+    print &quot;ist: &quot;, repr(outstr)
+    assert output == outstr
 </pre>
 <p>Test generator for textsample tests:</p>
 <pre class="literal-block">
 def test_Text2Code_samples():
     for key, sample in textsamples.iteritems():
-        yield check_converter, key, Text2Code(sample[0]), sample[1]
+        yield (check_converter, key,
+               Text2Code(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
             yield (check_converter, key,
-                   Text2Code(sample[0], strip=True), sample[2])
+                   Text2Code(sample[0].splitlines(True), strip=True),
+                   sample[2])
 </pre>
 <p>Test generator for codesample tests:</p>
 <pre class="literal-block">
 def test_Code2Text_samples():
     for key, sample in codesamples.iteritems():
-        yield check_converter, key, Code2Text(sample[0]), sample[1]
+        yield (check_converter, key,
+               Code2Text(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
             yield (check_converter, key,
-                   Code2Text(sample[0], strip=True), sample[2])
+                   Code2Text(sample[0].splitlines(True), strip=True),
+                   sample[2])
 </pre>
 </div>
 <div class="section">
@@ -485,17 +493,17 @@ def test_Text2Code():
 def test_Text2Code_strip():
     &quot;&quot;&quot;strip=True should strip text parts&quot;&quot;&quot;
     outstr = str(Text2Code(textdata, strip=True))
-    print stripped_code
-    print outstr
+    print &quot;ist &quot;, repr(outstr)
+    print &quot;soll&quot;, repr(stripped_code)
     # pprint(outstr)
     assert stripped_code == outstr
 
 def test_Text2Code_malindented_code_line():
     &quot;&quot;&quot;raise error if code line is less indented than code-indent&quot;&quot;&quot;
-    data1 = [&quot;..    #!/usr/bin/env python\n&quot;,  # indent == 4 * &quot; &quot;
+    data1 = [&quot;..    #!/usr/bin/env python\n&quot;, # indent == 4 * &quot; &quot;
             &quot;\n&quot;,
             &quot;  print 'hello world'&quot;]          # indent == 2 * &quot; &quot;
-    data2 = [&quot;..\t#!/usr/bin/env python\n&quot;,  # indent == 4 * &quot; &quot;
+    data2 = [&quot;..\t#!/usr/bin/env python\n&quot;,   # indent == 4 * &quot; &quot;
             &quot;\n&quot;,
             &quot;  print 'hello world'&quot;]          # indent == 2 * &quot; &quot;
     for data in (data1, data2):
@@ -516,13 +524,14 @@ marker&quot; is not followed by a blank line.</p>
 <p>Assuming that no double colon at end of line occures accidentially,
 pylit will fix this and issue a warning:</p>
 <pre class="literal-block">
-textsamples[&quot;insert missing blank line after text&quot;] = (
-    ['text followed by a literal block::\n',
-     &quot;  block1 = 'first block'\n&quot;],
-    [[], # empty header
-     [&quot;# text followed by a literal block::\n&quot;, &quot;\n&quot;],
-     [&quot;block1 = 'first block'\n&quot;]
-    ])
+textsamples[&quot;ensure blank line after text&quot;] = (
+&quot;&quot;&quot;text followed by a literal block::
+  block1 = 'first block'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;# text followed by a literal block::
+
+block1 = 'first block'
+&quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -534,16 +543,18 @@ it.</p>
 <p>Assuming that the unindent is not accidential, pylit fixes this and issues a
 warning:</p>
 <pre class="literal-block">
-textsamples[&quot;insert missing blank line after code&quot;] = (
-    ['::\n',
-     '\n',
-     &quot;  block1 = 'first block'\n&quot;,
-     &quot;more text&quot;],
-    [[], # empty header
-     [&quot;# ::\n&quot;, &quot;\n&quot;],
-     [&quot;block1 = 'first block'\n&quot;, &quot;\n&quot;], # added newline
-     [&quot;# more text&quot;]
-    ])
+textsamples[&quot;ensure blank line after code&quot;] = (
+&quot;&quot;&quot;::
+
+  block1 = 'first block'
+more text
+&quot;&quot;&quot;,
+&quot;&quot;&quot;# ::
+
+block1 = 'first block'
+
+# more text
+&quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -555,15 +566,15 @@ to keep the source small and pretty.</p>
 which is bad for error reporting, failing doctests, and the <cite>pylit_buffer()</cite>
 function in <a class="reference" href="http://jedmodes.sf.net/mode/pylit.sl">http://jedmodes.sf.net/mode/pylit.sl</a></p>
 <pre class="literal-block">
-## textsamples[&quot;should remove single double colon&quot;] = (
-##     [&quot;text followed by a literal block\n&quot;,
-##      &quot;\n&quot;,
-##      &quot;::\n&quot;,
-##      &quot;\n&quot;,
-##      &quot;  foo = 'first'\n&quot;]
-##     [&quot;&quot;, # empty header
-##      &quot;# text followed by a literal block\n\n&quot;,
-##      &quot;foo = 'first'\n&quot;]
+# textsamples[&quot;remove single double colon&quot;] = (
+#    [&quot;text followed by a literal block\n&quot;,
+#     &quot;\n&quot;,
+#     &quot;::\n&quot;,
+#     &quot;\n&quot;,
+#     &quot;  foo = 'first'\n&quot;]
+#    [&quot;&quot;, # empty header
+#     &quot;# text followed by a literal block\n\n&quot;,
+#     &quot;foo = 'first'\n&quot;]
 </pre>
 </div>
 <div class="section">
@@ -572,72 +583,122 @@ function in <a class="reference" href="http://jedmodes.sf.net/mode/pylit.sl">htt
 content on the first line) to a leading code block.  Return an empty list,
 if there is no header.</p>
 <pre class="literal-block">
-textsamples[&quot;simple header&quot;] = (
-    [&quot;..  print 'hello world'&quot;],
-    [[&quot;print 'hello world'&quot;]
-    ])
+textsamples[&quot;simple header&quot;] = (&quot;..  print 'hello world'&quot;,
+                                &quot;print 'hello world'&quot;)
 
 textsamples[&quot;no header (start with text)&quot;] = (
-    [&quot;a classical example without header::\n&quot;,
-     &quot;\n&quot;,
-     &quot;  print 'hello world'&quot;],
-    [[],
-     [&quot;# a classical example without header::\n&quot;,
-      &quot;\n&quot;],
-     [&quot;print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;a classical example without header::
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;# a classical example without header::
+
+print 'hello world'
+&quot;&quot;&quot;)
 
 textsamples[&quot;standard header, followed by text&quot;] = (
-    [&quot;..  #!/usr/bin/env python\n&quot;,
-     &quot;  # -*- coding: iso-8859-1 -*-\n&quot;,
-     &quot;\n&quot;,
-     &quot;a classical example with header::\n&quot;,
-     &quot;\n&quot;,
-     &quot;  print 'hello world'&quot;],
-    [[&quot;#!/usr/bin/env python\n&quot;,
-      &quot;# -*- coding: iso-8859-1 -*-\n&quot;,
-      &quot;\n&quot;],
-     [&quot;# a classical example with header::\n&quot;,
-      &quot;\n&quot;],
-     [&quot;print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;..  #!/usr/bin/env python
+  # -*- coding: iso-8859-1 -*-
+
+a classical example with header::
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
+
+# a classical example with header::
+
+print 'hello world'
+&quot;&quot;&quot;)
 
 textsamples[&quot;standard header, followed by code&quot;] = (
-    [&quot;..  #!/usr/bin/env python\n&quot;,
-     &quot;\n&quot;,
-     &quot;  print 'hello world'&quot;],
-    [[&quot;#!/usr/bin/env python\n&quot;,
-      &quot;\n&quot;,
-      &quot;print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;..  #!/usr/bin/env python
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;#!/usr/bin/env python
+
+print 'hello world'
+&quot;&quot;&quot;)
 </pre>
 </div>
 </div>
 </div>
 <div class="section">
 <h2><a class="toc-backref" href="#id12" id="code2text" name="code2text">Code2Text</a></h2>
+<pre class="literal-block">
+class test_Code2Text(object):
+
+    def setUp(self):
+        self.converter = Code2Text(codedata)
+</pre>
+<p>Code2Text.strip_literal_marker</p>
+<ul class="simple">
+<li>strip <cite>::</cite>-line as well as preceding blank line if on a line on its own</li>
+<li>strip <cite>::</cite> if it is preceded by whitespace.</li>
+<li>convert <cite>::</cite> to a single colon if preceded by text</li>
+</ul>
+<pre class="literal-block">
+def test_strip_literal_marker(self):
+    samples = ((&quot;text\n\n::\n\n&quot;, &quot;text\n\n&quot;),
+               (&quot;text\n::\n\n&quot;, &quot;text\n\n&quot;),
+               (&quot;text ::\n\n&quot;, &quot;text\n\n&quot;),
+               (&quot;text::\n\n&quot;, &quot;text:\n\n&quot;),
+               (&quot;text:\n\n&quot;, &quot;text:\n\n&quot;),
+               (&quot;text\n\n&quot;, &quot;text\n\n&quot;),
+               (&quot;text\n&quot;, &quot;text\n&quot;)
+               )
+    for (ist, soll) in samples:
+        ist = ist.splitlines(True)
+        soll = soll.splitlines(True)
+        print &quot;before&quot;, ist
+        self.converter.strip_literal_marker(ist)
+        print &quot;soll:&quot;, repr(soll)
+        print &quot;ist: &quot;, repr(ist)
+        assert ist == soll
+</pre>
+<p>Code2Text.normalize_line</p>
+<pre class="literal-block">
+# Missing whitespace in the `comment_string` is not significant for otherwise
+# blank lines. Add it::
+
+    def test_block_is_text(self):
+        samples = (([&quot;code\n&quot;], False),
+                   ([&quot;#code\n&quot;], False),
+                   ([&quot;## code\n&quot;], False),
+                   ([&quot;# text\n&quot;], True),
+                   ([&quot;#  text\n&quot;], True),
+                   ([&quot;# \n&quot;], True),
+                   ([&quot;#\n&quot;], True),
+                   ([&quot;\n&quot;], True))
+        for (line, soll) in samples:
+            result = self.converter.block_is_text(line)
+            print repr(line), &quot;soll&quot;, soll, &quot;result&quot;, result
+            assert result == soll
+</pre>
 <p>base tests on the &quot;long&quot; test strings</p>
 <pre class="literal-block">
-def test_Code2Text():
+def test_str(self):
     &quot;&quot;&quot;Test Code2Text class converting code-&gt;text&quot;&quot;&quot;
     outstr = str(Code2Text(codedata))
     # print text
-    print repr(text)
-    print repr(outstr)
+    print &quot;soll:&quot;, repr(text)
+    print &quot;ist: &quot;, repr(outstr)
     assert text == outstr
 
-def test_Code2Text_strip():
+def test_str_strip(self):
     &quot;&quot;&quot;Test Code2Text class converting code-&gt;rst with strip=True
 
     Should strip code blocks
     &quot;&quot;&quot;
+    pprint(Code2Text(codedata, strip=True)())
     outstr = str(Code2Text(codedata, strip=True))
     print repr(stripped_text)
     print repr(outstr)
-    print outstr
     assert stripped_text == outstr
 
-def test_Code2Text_different_comment_string():
+def test_str_different_comment_string(self):
     &quot;&quot;&quot;Convert only comments with the specified comment string to text
     &quot;&quot;&quot;
     outstr = str(Code2Text(codedata, comment_string=&quot;##&quot;, strip=True))
@@ -648,16 +709,16 @@ def test_Code2Text_different_comment_string():
             &quot;block1 = 'first block'\n&quot;,
             &quot;\n&quot;,
             &quot;## more text&quot;]
-    soll = [['..  # ::\n',
-             '\n',
-             &quot;  block1 = 'first block'\n&quot;,
-             '\n'],                # leading code block as header
-            [' more text']         # keep space (not part of comment string)
-           ]
-    output = Code2Text(data, comment_string=&quot;##&quot;)()
-    print &quot;ist &quot;, output
-    print &quot;soll&quot;, soll
-    assert output == soll
+    soll = &quot;\n&quot;.join(['..  # ::',  # leading code block as header
+                      '  ',
+                      &quot;  block1 = 'first block'&quot;,
+                      '  ',
+                      ' more text']   # keep space (not part of comment string)
+                    )
+    outstr = str(Code2Text(data, comment_string=&quot;##&quot;))
+    print &quot;soll:&quot;, repr(soll)
+    print &quot;ist: &quot;, repr(outstr)
+    assert outstr == soll
 </pre>
 <div class="section">
 <h3><a class="toc-backref" href="#id13" id="id1" name="id1">Special cases</a></h3>
@@ -669,20 +730,20 @@ def test_Code2Text_different_comment_string():
 string should be ignored, i.e. &quot;#n&quot; is recognized as a blank text line:</p>
 <pre class="literal-block">
 codesamples[&quot;ignore trailing whitespace in comment string for blank line&quot;] = (
-    [&quot;# ::\n&quot;,
-     &quot;\n&quot;,
-     &quot;block1 = 'first block'\n&quot;,
-     &quot;\n&quot;,
-     &quot;#\n&quot;, # should count as empty even if != &quot;# \n&quot;
-     &quot;# more text\n&quot;],
-    [[],                # empty header
-     [&quot;::\n&quot;,
-      &quot;\n&quot;],            # leading text
-     [&quot;  block1 = 'first block'\n&quot;,
-      &quot;\n&quot;],
-     [&quot;\n&quot;,
-      &quot;more text\n&quot;]
-    ])
+&quot;&quot;&quot;# ::
+
+block1 = 'first block'
+
+#
+# more text
+&quot;&quot;&quot;,
+&quot;&quot;&quot;::
+
+  block1 = 'first block'
+
+
+more text
+&quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -695,28 +756,69 @@ will also keep blocks together where one commented line doesnot match the
 comment string (the whole block will be kept as commented code)</p>
 <pre class="literal-block">
 codesamples[&quot;comment before code (without blank line)&quot;] = (
-    [&quot;# this is text::\n&quot;,
-     &quot;# \n&quot;,
-     &quot;# this is a comment\n&quot;,
-     &quot;foo = 'first'\n&quot;],
-    [[],         # empty header
-     [&quot;this is text::\n&quot;,
-      &quot;\n&quot;],  # leading text block
-     [&quot;  # this is a comment\n&quot;,
-      &quot;  foo = 'first'\n&quot;]
-    ])
+&quot;&quot;&quot;# this is text::
+
+# this is a comment
+foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;this is text::
+
+  # this is a comment
+  foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;this is text:
+
+&quot;&quot;&quot;)
+
+codesamples[&quot;comment block before code (without blank line)&quot;] = (
+&quot;&quot;&quot;# no text (watch the comment sign in the next line)::
+#
+# this is a comment
+foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;..  # no text (watch the comment sign in the next line)::
+  #
+  # this is a comment
+  foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;)
 
 codesamples[&quot;comment after code (without blank line)&quot;] = (
-    [&quot;# ::\n&quot;,
-     &quot;\n&quot;,
-     &quot;block1 = 'first block'\n&quot;,
-     &quot;# commented code&quot;],
-    [[],  # empty header
-     ['::\n',
-      '\n'],
-     [&quot;  block1 = 'first block'\n&quot;,
-      &quot;  # commented code&quot;]
-    ])
+&quot;&quot;&quot;# ::
+
+block1 = 'first block'
+# commented code
+
+# text again
+&quot;&quot;&quot;,
+&quot;&quot;&quot;::
+
+  block1 = 'first block'
+  # commented code
+
+text again
+&quot;&quot;&quot;,
+&quot;&quot;&quot;
+text again
+&quot;&quot;&quot;)
+
+codesamples[&quot;comment block after code (without blank line)&quot;] = (
+&quot;&quot;&quot;# ::
+
+block1 = 'first block'
+# commented code
+#
+# still comment
+&quot;&quot;&quot;,
+&quot;&quot;&quot;::
+
+  block1 = 'first block'
+  # commented code
+  #
+  # still comment
+&quot;&quot;&quot;,
+&quot;&quot;&quot;
+&quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -731,61 +833,70 @@ e.g. after a section header or a list. Therefore the automatic insertion
 will use the save form, feel free to correct this by hand.):</p>
 <pre class="literal-block">
 codesamples[&quot;insert missing double colon after text block&quot;] = (
-    [&quot;# text followed by code without double colon\n&quot;,
-     &quot;\n&quot;,
-     &quot;foo = 'first'\n&quot;],
-    [[], # empty header
-     [&quot;text followed by code without double colon\n&quot;,
-      &quot;\n&quot;,
-      &quot;::\n&quot;, # colons added
-      &quot;\n&quot;],
-     [&quot;  foo = 'first'\n&quot;]
-    ])
+&quot;&quot;&quot;# text followed by code without double colon
+
+foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;text followed by code without double colon
+
+::
+
+  foo = 'first'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;text followed by code without double colon
+
+&quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
 <h4><a class="toc-backref" href="#id17" id="id2" name="id2">header samples</a></h4>
-<p>Convert a header (leading code block) to a reStructured text comment. Return
-an empty list, if there is no leading code.</p>
+<p>Convert a header (leading code block) to a reStructured text comment.</p>
 <pre class="literal-block">
-codesamples[&quot;no matching comment, just code&quot;] = (
-    [&quot;print 'hello world'&quot;],
-    [[&quot;..  print 'hello world'&quot;]
-    ])
+codesamples[&quot;no matching comment, just code&quot;] = (&quot;print 'hello world'&quot;,
+                                                 &quot;..  print 'hello world'&quot;)
 
 codesamples[&quot;empty header (start with matching comment)&quot;] = (
-    [&quot;# a classical example without header::\n&quot;,
-     &quot;\n&quot;,
-     &quot;print 'hello world'&quot;],
-    [[],
-     [&quot;a classical example without header::\n&quot;,
-      &quot;\n&quot;],
-     [&quot;  print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;# a classical example without header::
+
+print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;a classical example without header::
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;a classical example without header:
+
+&quot;&quot;&quot;)
 
 codesamples[&quot;standard header, followed by text&quot;] = (
-    [&quot;#!/usr/bin/env python\n&quot;,
-     &quot;# -*- coding: iso-8859-1 -*-\n&quot;,
-     &quot;\n&quot;,
-     &quot;# a classical example with header::\n&quot;,
-     &quot;\n&quot;,
-     &quot;print 'hello world'&quot;],
-    [[&quot;..  #!/usr/bin/env python\n&quot;,
-      &quot;  # -*- coding: iso-8859-1 -*-\n&quot;,
-      &quot;\n&quot;],
-     [&quot;a classical example with header::\n&quot;,
-      &quot;\n&quot;],
-     [&quot;  print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;#!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
+
+# a classical example with header::
+
+print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;..  #!/usr/bin/env python
+  # -*- coding: iso-8859-1 -*-
+
+a classical example with header::
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;a classical example with header:
+
+&quot;&quot;&quot;)
 
 codesamples[&quot;standard header, followed by code&quot;] = (
-    [&quot;#!/usr/bin/env python\n&quot;,
-     &quot;\n&quot;,
-     &quot;print 'hello world'&quot;],
-    [[&quot;..  #!/usr/bin/env python\n&quot;,
-      &quot;\n&quot;,
-      &quot;  print 'hello world'&quot;]
-    ])
+&quot;&quot;&quot;#!/usr/bin/env python
+
+print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;..  #!/usr/bin/env python
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;)
 </pre>
 </div>
 </div>
@@ -804,8 +915,6 @@ def test_Values():
     assert values.a1 == 1
     assert values.a2 == False
     assert values.as_dict() == defaults
-
-
 
 class test_PylitOptions:
     &quot;&quot;&quot;Test the PylitOption class&quot;&quot;&quot;
@@ -837,6 +946,16 @@ class test_PylitOptions:
         # set the output (option with argument)
         values = self.options.parse_args([&quot;--outfile&quot;, &quot;code.py&quot;])
         assert values.outfile == &quot;code.py&quot;
+
+    def test_parse_args_comment_string(self):
+       # default should appear in options
+        values = self.options.parse_args([&quot;--comment-string=% &quot;])
+        pprint(values.as_dict())
+        assert values.comment_string == &quot;% &quot;
+        # &quot;cmd line arg should appear as option overwriting default&quot;
+        values = self.options.parse_args([&quot;--comment-string=% &quot;],
+                                         comment_string=&quot;##&quot;)
+        assert values.comment_string == '% '
 
     def test_get_outfile_name(self):
         &quot;&quot;&quot;should return a sensible outfile name given an infile name&quot;&quot;&quot;
@@ -935,20 +1054,19 @@ class IOTests:
         except OSError:
             pass
 
-
 class test_Streams(IOTests):
     def test_is_newer(self):
         # this __file__ is older, than code file
         print __file__, os.path.getmtime(__file__)
         print self.codepath, os.path.getmtime(self.codepath)
         #
-        assert is_newer(self.codepath, __file__), &quot;file1 is newer&quot;
-        assert is_newer(__file__, self.codepath) == False, &quot;file2 is newer&quot;
-        assert is_newer(__file__, &quot;fffo&quot;), &quot;file2 doesnot exist&quot;
-        assert is_newer(&quot;fflo&quot;, __file__) == False, &quot;file1 doesnot exist&quot;
+        assert is_newer(self.codepath, __file__) is True, &quot;file1 is newer&quot;
+        assert is_newer(__file__, self.codepath) is False, &quot;file2 is newer&quot;
+        assert is_newer(__file__, &quot;fffo&quot;) is True, &quot;file2 doesnot exist&quot;
+        assert is_newer(&quot;fflo&quot;, __file__) is False, &quot;file1 doesnot exist&quot;
         #
-        assert is_newer(__file__, __file__) == False, &quot;equal is not newer&quot;
-        assert is_newer(&quot;fflo&quot;, &quot;fffo&quot;) == False, &quot;no file exists&quot;
+        assert is_newer(__file__, __file__) is None, &quot;equal is not newer&quot;
+        assert is_newer(&quot;fflo&quot;, &quot;fffo&quot;) is None, &quot;no file exists -&gt; equal&quot;
 
     def test_open_streams(self):
         # default should return stdin and -out:
@@ -1051,8 +1169,6 @@ class test_Main(IOTests):
     def test_main_execute_code(self):
         result = main(infile=self.codepath, execute=True)
 
-
-
 import nose
 nose.runmodule() # requires nose 0.9.1
 sys.exit()
@@ -1062,7 +1178,7 @@ sys.exit()
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2007-01-31.
+Generated on: 2007-03-01.
 
 </div>
 </body>

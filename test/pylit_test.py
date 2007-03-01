@@ -3,15 +3,15 @@
 
 ## Test the pylit.py literal python module
 ## =======================================
-##
+## 
 ## :Version:   0.2
 ## :Date:      2005-09-02
 ## :Copyright: 2006 Guenter Milde.
 ##             Released under the terms of the GNU General Public License
 ##             (v. 2 or later)
-##
+## 
 ## .. contents::
-##
+## 
 ## ::
 
 """pylit_test.py: test the "literal python" module"""
@@ -21,10 +21,10 @@ from pylit import *
 
 ## Text <-> Code conversion
 ## ========================
-##
+## 
 ## Test strings
 ## ------------
-##
+## 
 ## Example of text, code and stripped code with typical features"::
 
 text = """..  #!/usr/bin/env python
@@ -65,7 +65,7 @@ Trailing text.
 """
 
 ## The code corresponding to the text test string.
-##
+## 
 ## Using a triple-quoted string for the code (and stripped_code) can create
 ## problems with the conversion of this test by pylit (as the text parts
 ## would be converted to text). This is catered for by using a different
@@ -106,9 +106,9 @@ print block1, block2
 
 ## pprint(textdata)
 ## pprint(stripped_code.splitlines(True))
-
+## 
 ## Containers for special case examples:
-##
+## 
 ## 1. Text2Code samples
 ## ``textsamples["what"] = (<text data>, <output>, <output (with `strip`)``
 ## ::
@@ -156,7 +156,7 @@ def test_Code2Text_samples():
 
 ## Text2Code
 ## ---------
-##
+## 
 ## base tests on the "long" test data ::
 
 def test_Text2Code():
@@ -191,16 +191,16 @@ def test_Text2Code_malindented_code_line():
 
 ## Special Cases
 ## ~~~~~~~~~~~~~
-##
+## 
 ## Code follows text block without blank line
 ## ''''''''''''''''''''''''''''''''''''''''''
-##
+## 
 ## End of text block detected ('::') but no paragraph separator (blank line)
 ## follows
-##
+## 
 ## It is an reStructuredText syntax error, if a "literal block
 ## marker" is not followed by a blank line.
-##
+## 
 ## Assuming that no double colon at end of line occures accidentially,
 ## pylit will fix this and issue a warning::
 
@@ -215,13 +215,13 @@ block1 = 'first block'
 
 ## Text follows code block without blank line
 ## ''''''''''''''''''''''''''''''''''''''''''
-##
+## 
 ## End of code block detected (a line not more indented than the preceding text
 ## block)
-##
+## 
 ## reStructuredText syntax demands a paragraph separator (blank line) before
 ## it.
-##
+## 
 ## Assuming that the unindent is not accidential, pylit fixes this and issues a
 ## warning::
 
@@ -240,28 +240,28 @@ block1 = 'first block'
 
 ## A double colon on a line on its own
 ## '''''''''''''''''''''''''''''''''''
-##
+## 
 ## As a double colon is added by the Code2Text conversion after a text block
 ## (if not already present), it could be removed by the Text2Code conversion
 ## to keep the source small and pretty.
-##
+## 
 ## However, this would put the text and code source line numbers out of sync,
 ## which is bad for error reporting, failing doctests, and the `pylit_buffer()`
 ## function in http://jedmodes.sf.net/mode/pylit.sl ::
 
-## textsamples["should remove single double colon"] = (
-##     ["text followed by a literal block\n",
-##      "\n",
-##      "::\n",
-##      "\n",
-##      "  foo = 'first'\n"]
-##     ["", # empty header
-##      "# text followed by a literal block\n\n",
-##      "foo = 'first'\n"]
+# textsamples["remove single double colon"] = (
+#    ["text followed by a literal block\n",
+#     "\n",
+#     "::\n",
+#     "\n",
+#     "  foo = 'first'\n"]
+#    ["", # empty header
+#     "# text followed by a literal block\n\n",
+#     "foo = 'first'\n"]
 
 ## header samples
 ## ''''''''''''''
-##
+## 
 ## Convert a leading reStructured text comment  (variant: only if there is
 ## content on the first line) to a leading code block.  Return an empty list,
 ## if there is no header. ::
@@ -307,6 +307,8 @@ print 'hello world'
 
 ## Code2Text
 ## ---------
+## 
+## ::
 
 class test_Code2Text(object):
     
@@ -314,10 +316,12 @@ class test_Code2Text(object):
         self.converter = Code2Text(codedata)
     
 ## Code2Text.strip_literal_marker
-
+## 
 ## * strip `::`-line as well as preceding blank line if on a line on its own
 ## * strip `::` if it is preceded by whitespace. 
 ## * convert `::` to a single colon if preceded by text
+## 
+## ::
 
     def test_strip_literal_marker(self):
         samples = (("text\n\n::\n\n", "text\n\n"),
@@ -338,6 +342,8 @@ class test_Code2Text(object):
             assert ist == soll
 
 ## Code2Text.normalize_line
+## 
+## ::
 
 # Missing whitespace in the `comment_string` is not significant for otherwise
 # blank lines. Add it::
@@ -401,13 +407,13 @@ class test_Code2Text(object):
 
 ## Special cases
 ## ~~~~~~~~~~~~~
-##
+## 
 ## blank comment line
 ## ''''''''''''''''''''
-##
+## 
 ## Normally, whitespace in the comment string is significant, i.e. with
 ## `comment_string = "# "`, a line "#something\n" will count as code.
-##
+## 
 ## However, if a comment line is blank, trailing whitespace in the comment
 ## string should be ignored, i.e. "#\n" is recognized as a blank text line::
 
@@ -429,11 +435,11 @@ more text
 
 ## No blank line after text
 ## ''''''''''''''''''''''''
-##
+## 
 ## If a matching comment precedes oder follows a code line (i.e. any line
 ## without matching comment) without a blank line inbetween, it counts as code
 ## line.
-##
+## 
 ## This will keep small inline comments close to the code they comment on. It
 ## will also keep blocks together where one commented line doesnot match the
 ## comment string (the whole block will be kept as commented code)
@@ -506,11 +512,11 @@ block1 = 'first block'
 
 ## missing literal block marker
 ## ''''''''''''''''''''''''''''
-##
+## 
 ## If text (with matching comment string) is followed by code (line(s) without
 ## matching comment string), but there is no double colon at the end, back
 ## conversion would not recognize the end of text!
-##
+## 
 ## Therefore, pylit adds a paragraph containing only "::" -- the literal block
 ## marker in expanded form. (While it would in many cases be nicer to add the
 ## double colon to the last text line, this is not always valid rst syntax,
@@ -534,7 +540,7 @@ foo = 'first'
 
 ## header samples
 ## ''''''''''''''
-##
+## 
 ## Convert a header (leading code block) to a reStructured text comment. ::
 
 codesamples["no matching comment, just code"] = ("print 'hello world'",
@@ -585,7 +591,7 @@ print 'hello world'
 
 ## Command line use
 ## ================
-##
+## 
 ## Test the option parsing::
 
 def test_Values():
@@ -707,7 +713,7 @@ class test_PylitOptions:
 
 ## Input and Output streams
 ## ------------------------
-##
+## 
 ## ::
 
 class IOTests:
@@ -800,7 +806,7 @@ class test_Run_Doctest(IOTests):
         assert (failures, tests) == (0, 0)
 
 ## The main() function is called if the script is run from the command line
-##
+## 
 ## ::
 
 class test_Main(IOTests):

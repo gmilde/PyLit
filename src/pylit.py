@@ -141,7 +141,7 @@ class PyLitConverter(SimpleStates):
 # `get_converter`_ and `main`_ pass on unused keyword arguments to
 # the instantiation of a converter class. This way, keyword arguments
 # to these functions can be used to customize the converter. 
-
+# 
 # Default language and language specific defaults::
 
     language =        "python"        
@@ -249,7 +249,8 @@ class PyLitConverter(SimpleStates):
 
 
 # Converter.collect_blocks
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# 
 # ::
 
     def collect_blocks(self): 
@@ -295,7 +296,7 @@ class Text2Code(PyLitConverter):
     """
 
 # INIT: call the parent classes init method. 
-#
+# 
 # If the `strip` argument is true, replace the `__iter_` method
 # with a special one that drops "spurious" blocks::
 
@@ -542,6 +543,9 @@ class Code2Text(PyLitConverter):
     """
 
 # Code2Text.__iter__
+# ~~~~~~~~~~~~~~~~~~
+# 
+# ::
 
     def __iter__(self):
 
@@ -558,7 +562,8 @@ class Code2Text(PyLitConverter):
         
         for block in self.collect_blocks():
             
-# Test the state of the block, return it processed with the right handler::
+# Test the state of the block with `Code2Text.block_is_text`_, return it
+# processed with the matching handler::
 
             if self.block_is_text(block):
                 self.state = "text"
@@ -567,19 +572,6 @@ class Code2Text(PyLitConverter):
                     yield self.code_marker
                 self.state = "code"
             yield getattr(self, self.state)(block)
-
-
-# A paragraph is a text block, if every non-blank line starts with a matching
-# comment string  (test includes whitespace except for commented blank lines!)
-# ::
-
-    def block_is_text(self, block):
-        for line in block:
-            if (line.rstrip() 
-                and not line.startswith(self.comment_string)
-                and line.rstrip() != self.comment_string.rstrip()):
-                return False
-        return True
 
 # "header" state
 # ~~~~~~~~~~~~~~~~
@@ -628,16 +620,16 @@ class Code2Text(PyLitConverter):
 # 
 #   |  ``#!/usr/bin/env python``
 #   |  ``# -*- coding: iso-8859-1 -*-``
-#
+# 
 # The current implementation represents the header state by the setting of
 # `code_marker` to ``[self.header_string]``. The first non-empty text block
 # will overwrite this setting.
-
-# Code2Text.text
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The *text state handler* converts a comment to a text block 
-# Strip the leading comment string::
+# Code2Text.text
+# ~~~~~~~~~~~~~~
+# 
+# The *text state handler* converts a comment to a text block by stripping
+# the leading `comment string` from every line::
 
     def text(self, lines):
         """Uncomment text blocks in source code
@@ -647,14 +639,18 @@ class Code2Text(PyLitConverter):
 
         lines = [re.sub("^"+self.comment_string.rstrip(), "", line)
                  for line in lines]
-        
+
+# If the code block is stripped, the literal marker would lead to an error
+# when the text is converted with docutils. Replace it with
+# `Code2Text.strip_literal_marker`_::
+          
         if self.strip:
             self.strip_literal_marker(lines)
             self.code_marker = []
 
 # Check for code block marker (double colon) at the end of the text block
-# Update the `code_marker` argument. The current `code marker` is 'prepended'
-# to the next code block by `Code2Text.code`_ ::
+# Update the `code_marker` argument. (The `code marker` is yielded by
+# `Code2Text.__iter__`_ at a text -> code transition if it is not empty)::
 
         elif len(lines)>1:
             if lines[-2].rstrip().endswith("::"):
@@ -666,7 +662,7 @@ class Code2Text(PyLitConverter):
 
         return lines
                      
-    
+  
 # Code2Text.code
 # ~~~~~~~~~~~~~~
 # 
@@ -683,12 +679,25 @@ class Code2Text(PyLitConverter):
 
         return [" "*self.codeindent + line for line in lines]
 
+# Code2Text.block_is_text
+# ~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# A paragraph is a text block, if every non-blank line starts with a matching
+# comment string  (test includes whitespace except for commented blank lines!)
+# ::
+
+    def block_is_text(self, block):
+        for line in block:
+            if (line.rstrip() 
+                and not line.startswith(self.comment_string)
+                and line.rstrip() != self.comment_string.rstrip()):
+                return False
+        return True
+  
 # Code2Text.strip_literal_marker
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# If the code block is stripped, the literal marker would lead to an error
-# when the text is converted with docutils. Replace it with the equivalent of
-# docutils replace rules
+# Replace the literal marker with the equivalent of docutils replace rules
 # 
 # * strip `::`-line (and preceding blank line) if on a line on its own
 # * strip `::` if it is preceded by whitespace. 
@@ -1163,7 +1172,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # 
 # If this script is called from the command line, the `main` function will
 # convert the input (file or stdin) between text and code formats.
-
+# 
 # Customization
 # ~~~~~~~~~~~~~
 # 
@@ -1171,18 +1180,18 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # The option defaults will be updated by command line options and extended
 # with "intelligent guesses" by `PylitOptions` and passed on to helper
 # functions and the converter instantiation.
-
+# 
 # This allows easy customization for programmatic use -- just or call `main`
 # with the appropriate keyword options (or with a `option_defaults`
 # dictionary.), e.g.:
-
+# 
 # >>> option_defaults = {'language': "c++",
 # ...                    'codeindent': 4,
 # ...                    'header_string': '..admonition::'
 # ...                   }
-#
+# 
 # >>> main(**option_defaults)
-#
+# 
 # ::
 
 def main(args=sys.argv[1:], **option_defaults):

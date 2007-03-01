@@ -1,6 +1,6 @@
 ..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 ===============================================================
 pylit.py: Literate programming with Python and reStructuredText
 ===============================================================
@@ -37,6 +37,7 @@ Changelog
 :2007-02-19: 0.2.7 simplify `Code2Text.header,`
                    new `iter_strip` method replacing a lot of ``if``-s
 :2007-02-22: 0.2.8 set `mtime` of outfile to the one of infile
+:2007-02-27: 0.3   new `Code2Text` converter after an idea by Riccardo Murri
 
 ::
 
@@ -47,9 +48,9 @@ Changelog
      * a (reStructured) text source with embedded code, and
      * a code source with embedded text blocks (comments)
   """
-
+  
   __docformat__ = 'restructuredtext'
-
+  
 
 Requirements
 ------------
@@ -58,65 +59,18 @@ Requirements
 
 ::
 
+  import re
   import os
   import sys
   import optparse
-
+  
 * non-standard extensions
 
 ::
 
   from simplestates import SimpleStates  # generic state machine
-
-
-Option defaults
-===============
-
-Module-level option defaults for the conversion can be stored in a dictionary
-that is passed as default value to `main`_. This allows easy customization
-for programmatic use -- just overwrite the defaults after importing `pylit`
-but before calling `main` (or call `main` with a custom option dictionary.)
-
-::
-
-  option_defaults = {}
-   
-`option_defaults` will be updated by command line options and extended with
-"intelligent guesses" by `PylitOptions` and passed on to helper functions
-and the converter instantiation.
-
-Default language and language specific defaults::
-
-  option_defaults['language'] = "python"
-  option_defaults['comment_strings'] = {"python": '# ',
-                                        "slang": '% ', 
-                                        "c++": '// '}
-
-  option_defaults['code_languages'] = {".py": "python", ".sl": "slang", ".c": "c++"}
-  option_defaults['code_extensions'] = code_languages.keys()
-  option_defaults['text_extensions'] = [".txt"]
-
-Number of spaces to indent code blocks in the code -> text conversion.[#]_
-
-::
-
-  option_defaults['codeindent'] = 2
-
-.. [#] For the text -> code conversion, the codeindent is determined by the
-       first recognized code line (leading comment or first indented literal
-       block).
-
-Marker string for the first code block marker. (Must accept first code line
-on the same line, e.g. ``'.. admonition::'`` would be possible.)  No trailing
-whitespace needed as indented code follows. ::
-
-  option_defaults['header_string'] = '..'
-
-Export to the output format stripping text or code blocks::
-
-  option_defaults['strip'] = False
-
-   
+  
+ 
 Classes
 =======
 
@@ -135,7 +89,7 @@ reasoning and documentation see `iterqueue.py`_.
 
 ::
 
-  class PushIterator:
+  class PushIterator(object):
       def __init__(self, iterable):
           self.it = iter(iterable)
           self.cache = []
@@ -146,7 +100,7 @@ reasoning and documentation see `iterqueue.py`_.
           return (self.cache and self.cache.pop()) or self.it.next()
       def push(self, value):
           self.cache.append(value)
-
+  
 Converter
 ---------
 
@@ -177,7 +131,7 @@ configuration attributes (options). ::
       """parent class for `Text2Code` and `Code2Text`, the state machines
       converting between text source and code source of a literal program.
       """
-
+  
 Data attributes
 ~~~~~~~~~~~~~~~
 
@@ -186,16 +140,40 @@ matching keyword arguments during class instantiation.
 
 `get_converter`_ and `main`_ pass on unused keyword arguments to
 the instantiation of a converter class. This way, keyword arguments
-to these functions can be used to customize the converter. ::
+to these functions can be used to customize the converter. 
 
+Default language and language specific defaults::
+
+      language =        "python"        
       comment_strings = {"python": '# ',
                          "slang": '% ', 
-                         "c++": '// '}
-      language = "python"
-      strip = False
-      state = 'header'   # initial state
-      codeindent = 2
-      header_string = '..' # no whitespace needed as indented code follows
+                         "c++": '// '}  
+  
+Number of spaces to indent code blocks in the code -> text conversion.[#]_
+
+.. [#] For the text -> code conversion, the codeindent is determined by the
+       first recognized code line (leading comment or first indented literal
+       block of the text source).
+
+::
+
+      codeindent =  2
+  
+Marker string for the first code block. (Should be a valid rst directive
+that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
+trailing whitespace needed as indented code follows. Default is a comment
+marker::
+
+      header_string = '..'
+  
+Export to the output format stripping text or code blocks::
+
+      strip =           False
+      
+Initial state::
+
+      state = 'header' 
+  
 
 Instantiation
 ~~~~~~~~~~~~~
@@ -209,7 +187,7 @@ lines of the source to convert.[1]_   ::
              **keyw --  all remaining keyword arguments are 
                         stored as class attributes 
           """
-
+  
 As the state handlers need backtracking, the data is wrapped in a
 `PushIterator`_ if it doesnot already have a `push` method::
 
@@ -218,7 +196,7 @@ As the state handlers need backtracking, the data is wrapped in a
           else:
               self.data = PushIterator(data)
           self._textindent = 0
-
+  
 Additional keyword arguments are stored as data attributes, overwriting the
 class defaults::
 
@@ -230,12 +208,6 @@ the keyword arguments::
           if not hasattr(self, "comment_string") or not self.comment_string:
               self.comment_string = self.comment_strings[self.language]
               
-If the `strip` argument is true, replace the `__iter_` method
-with a special one that drops "spurious" blocks::
-
-          if getattr(self, "strip", False):
-              self.__iter__ = self.iter_strip
-
 .. [1] The most common choice of data is a `file` object with the text
        or code source.
 
@@ -250,7 +222,7 @@ Return converted data as string::
       def __str__(self):
           blocks = ["".join(block) for block in self()]
           return "".join(blocks)
-
+  
 Converter.get_indent
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -261,7 +233,7 @@ Return the number of leading spaces in `string` after expanding tabs ::
           """
           line = string.expandtabs()
           return len(line) - len(line.lstrip())
-
+  
 Converter.ensure_trailing_blank_line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -274,7 +246,27 @@ Ensure there is a blank line as last element of the list `lines`::
               sys.stderr.write("\nWarning: inserted blank line between\n %s %s"
                                %(lines[-1], next_line))
               lines.append("\n")
+  
 
+Converter.collect_blocks
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+      def collect_blocks(self): 
+          """collect lines in a list 
+          
+          return list for each block of lines (paragraph) seperated by a 
+          blank line (whitespace only)
+          """
+          block = []
+          for line in self.data:
+              block.append(line)
+              if not line.rstrip():
+                  yield block
+                  block = []
+          yield block
+                  
 
 Text2Code
 ---------
@@ -302,7 +294,17 @@ the respective states (see ``simplestates.py``).
   class Text2Code(PyLitConverter):
       """Convert a (reStructured) text source to code source
       """
+  
+INIT: call the parent classes init method. 
 
+If the `strip` argument is true, replace the `__iter_` method
+with a special one that drops "spurious" blocks::
+
+      def __init__(self, data, **keyw):
+          PyLitConverter.__init__(self, data, **keyw)
+          if getattr(self, "strip", False):
+              self.__iter__ = self.iter_strip
+  
 Text2Code.header
 ~~~~~~~~~~~~~~~~
 
@@ -311,7 +313,7 @@ Convert the header (leading rst comment block) to code::
       def header(self):
           """Convert header (comment) to code"""
           line = self.data_iterator.next()
-
+  
 Test first line for rst comment: (We need to do this explicitely here, as
 the code handler will only recognize the start of a text block if a line
 starting with "matching comment" is preceded by an empty line. However, we
@@ -323,7 +325,7 @@ Which variant is better?
    something behind the comment on the first line::
 
           # if line.startswith("..") and len(line.rstrip()) > 2:
-
+  
 2. Convert any leading comment to code::
 
           if line.startswith(self.header_string):
@@ -340,7 +342,7 @@ No header code found: Push back first non-header line and set state to
           self.data_iterator.push(line)
           self.state = 'text'
           return []
-
+  
 Text2Code.text_handler_generator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -393,7 +395,7 @@ not blank, push it back (it should be code) and add a line by calling the
                       self.ensure_trailing_blank_line(lines, line)
                   else:
                       lines.append(line)
-
+  
 Now yield and reset the lines. (There was a function call to remove a
 literal marker (if on a line on itself) to shorten the comment. However,
 this behaviour was removed as the resulting difference in line numbers leads
@@ -407,7 +409,7 @@ End of data: if we "fall of" the iteration loop, just join and return the
 lines::
 
           yield lines
-
+  
 
 Text2Code.code_handler_generator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -439,7 +441,7 @@ Pass on blank lines (no test for end of code block needed|possible)::
               if not line.rstrip():
                   lines.append(line.replace(indent_string, "", 1))
                   continue
-
+  
 Test for end of code block:
 
 A literal block ends with the first less indented, nonblank line.
@@ -462,7 +464,7 @@ indentation (i.e. replaced by 8 spaces, by default).
                   # reset list of lines
                   lines = []
                   continue
-
+  
 OK, we are sure now that the current line is neither blank nor a text line.
 
 If still unset, determine the code indentation from first non-blank code
@@ -480,7 +482,7 @@ first)::
                   + "  doesnot start with code indent string %r"%indent_string
               
               lines.append(line[codeindent:])
-
+  
 No more lines in the input data: just return what we have::
             
           yield lines
@@ -503,7 +505,7 @@ differ. ::
                   del(lines[-3:-1])
           except IndexError:
               pass
-
+  
 Text2Code.iter_strip
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -520,7 +522,7 @@ Iterate over class instances dropping text blocks::
           while True:
               yield getattr(self, self.state)()
               getattr(self, self.state)() # drop text block
-
+  
 
 
 Code2Text
@@ -539,8 +541,39 @@ for the three states "header", "text", and "code". ::
   class Code2Text(PyLitConverter):
       """Convert code source to text source
       """
+  
+Code2Text.__iter__
+~~~~~~~~~~~~~~~~~~
 
-Code2Text.header
+::
+
+      def __iter__(self):
+  
+If the last text block doesnot end with a code marker (by default, the
+literal-block marker ``::``), the `text` method will set `code marker` to
+a paragraph that will start the next code block. It is yielded if non-empty
+at a text-code transition. If there is no preceding text block, `code_marker`
+contains the  `header_string`::
+
+          if self.strip:
+              self.code_marker = []
+          else:
+              self.code_marker = [self.header_string]
+          
+          for block in self.collect_blocks():
+              
+Test the state of the block with `Code2Text.block_is_text`_, return it
+processed with the matching handler::
+
+              if self.block_is_text(block):
+                  self.state = "text"
+              else:
+                  if self.state != "code" and self.code_marker:
+                      yield self.code_marker
+                  self.state = "code"
+              yield getattr(self, self.state)(block)
+
+"header" state
 ~~~~~~~~~~~~~~~~
 
 Sometimes code needs to remain on the first line(s) of the document to be
@@ -548,7 +581,7 @@ valid. The most common example is the "shebang" line that tells a POSIX
 shell how to process an executable file::
 
   #!/usr/bin/env python
-
+  
 In Python, the ``# -*- coding: iso-8859-1 -*-`` line must occure before any
 other comment or code.
 
@@ -588,193 +621,85 @@ after) the first text block, e.g. with a `line block` in a `block quote`:
   |  ``#!/usr/bin/env python``
   |  ``# -*- coding: iso-8859-1 -*-``
 
-::
+The current implementation represents the header state by the setting of
+`code_marker` to ``[self.header_string]``. The first non-empty text block
+will overwrite this setting.
 
-      def header(self):
-          """Convert leading code to rst comment"""
+Code2Text.text
+~~~~~~~~~~~~~~
 
-Parse with the `text` method. If there is no leading text, return the 
-`header_string` (by default the rst comment marker)::
+The *text state handler* converts a comment to a text block by stripping
+the leading `comment string` from every line::
 
-          lines = self.text()
-          if lines:
-              return lines
-          return [self.header_string]
-
-
-Code2Text.text_handler_generator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The text handler converts a comment to a text block if it matches the
-following requirements:
-
-* every line starts with a matching comment string (test includes whitespace!)
-* comment is separated from code by a blank line (the paragraph separator in
-  reStructuredText)
-
-It is implemented as a generator function that acts on the `data` iterator
-and yields text blocks.
-
-Text is uncommented. A literal block marker is appended, if not already
-present ::
-
-      def text_handler_generator(self):
+      def text(self, lines):
           """Uncomment text blocks in source code
           """
           
-Set up an output cache and iterate over the data lines (remember, code lines
-are processed by the code handler and not seen here). ::
+          lines = [line.replace(self.comment_string, "", 1) for line in lines]
+  
+          lines = [re.sub("^"+self.comment_string.rstrip(), "", line)
+                   for line in lines]
+
+If the code block is stripped, the literal marker would lead to an error
+when the text is converted with docutils. Replace it with
+`Code2Text.strip_literal_marker`_::
           
-          lines = []
-          for line in self.data_iterator:
-                # print "Text: " + line
-                
-Pass on blank lines. Strip comment string from otherwise blank lines
-Continue with the next line, as there is no need to test blank lines
-for the end of text. ::
+          if self.strip:
+              self.strip_literal_marker(lines)
+              self.code_marker = []
+  
+Check for code block marker (double colon) at the end of the text block
+Update the `code_marker` argument. (The `code marker` is yielded by
+`Code2Text.__iter__`_ at a text -> code transition if it is not empty)::
 
-              if not line.lstrip():
-                  lines.append(line)
-                  continue
+          elif len(lines)>1:
+              if lines[-2].rstrip().endswith("::"):
+                  self.code_marker = []
+              else:
+                  self.code_marker = ["::\n", "\n"]
+  
+Return the text block to the calling function::
 
-Test for end of text block: the first line that doesnot start with a
-matching comment string. This tests also whitespace that is part of the
-comment string! ::
-
-              if not line.startswith(self.comment_string):
-
-Missing whitespace in the `comment_string` is not significant for otherwise
-blank lines. Add the whitespace and continue::
-
-                  if line.rstrip() == self.comment_string.rstrip():
-                      lines.append(line.replace(self.comment_string.rstrip(), 
-                                                self.comment_string, 1))
-                      continue
-      
-End of text block: Push back the line and let the "code" handler handle it
-(and subsequent lines)::
-              
-                  self.state = 'code'
-                  self.data_iterator.push(line)
-
-Also restore and push back lines that precede the next code line without a
-blank line (paragraph separator) inbetween::
-                  
-                  while lines and lines[-1].lstrip():
-                      self.data_iterator.push(lines.pop())
-
-Strip the leading comment string::
-
-                  lines = [line.replace(self.comment_string, "", 1)
-                           for line in lines]
-                  
-Ensure literal block marker (double colon) at the end of the text block::
-
-                  if len(lines)>1 and not lines[-2].rstrip().endswith("::"):
-                      lines.extend(["::\n", "\n"])
+          return lines
                        
-Yield the text block (process following lines with `code_handler`.
-When the state is again set to "text", reset the cache and continue with 
-next text line ::
-                       
-                  yield lines
-                  lines = []
-                  continue
-                  
-Test passed: It's text line. Append to the `lines` cache::
-
-              lines.append(line)
-              
-No more lines: Just return the remaining lines::
-              
-          yield [line.replace(self.comment_string, "", 1) for line in lines]
-
-      
-Code2Text.code_handler_generator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+Code2Text.code
+~~~~~~~~~~~~~~
 
 The `code` method is called on non-commented code. Code is returned as
-indented literal block (or filtered, if ``strip=True``). The amount of the
-code indentation is controled by `self.codeindent` (default 2). 
-
+indented literal block (or filtered, if ``self.strip == True``). The amount
+of the code indentation is controled by `self.codeindent` (default 2). 
 ::
 
-      def code_handler_generator(self):
-          """Convert source code to indented literal blocks.
+      def code(self, lines):
+          """Indent lines or strip if `strip` == `True`
           """
-          lines = []
-          for line in self.data_iterator:
-              # yield "Code: " + line
-              # pass on empty lines (only newline)
-              if line == "\n":
-                  lines.append(line)
-                  continue
-              # # strip comment string from blank lines
-              # if line.rstrip() == self.comment_string.rstrip():
-              #     lines.append("\n")
-              #     continue
-              
-Test for end of code block: 
+          if self.strip == True:
+              return []
+  
+          return [" "*self.codeindent + line for line in lines]
 
-* matching comment string at begin of line,
-* following a blank line. 
+Code2Text.block_is_text
+~~~~~~~~~~~~~~~~~~~~~~~
 
-The test includes whitespace in `self.comment_string` normally, but ignores
-trailing whitespace if the line after the comment string is blank. ::
+A paragraph is a text block, if every non-blank line starts with a matching
+comment string  (test includes whitespace except for commented blank lines!)
+::
 
-              if (line.startswith(self.comment_string) or
-                  line.rstrip() == self.comment_string.rstrip()
-                 ) and lines and not lines[-1].strip():
-                      
-                  self.data_iterator.push(line)
-                  self.state = 'text'
-                  # self.ensure_trailing_blank_line(lines, line)
-                  yield lines
-                  # reset
-                  lines = []
-                  continue
-              
-default action: indent by codeindent and append to lines cache::
-
-              lines.append(" "*self.codeindent + line)
-              
-no more lines in data_iterator -- return collected lines::
-
-          yield lines
-          
-
-Code2Text.iter_strip
-~~~~~~~~~~~~~~~~~~~~
-
-Modification of the `simplestates.__iter__` method that will replace it when
-the `strip` keyword argument is `True` during class instantiation: 
-
-Iterate over class instances dropping the header block and code blocks::
-
-      def iter_strip(self):
-          """Generate and return an iterator dropping code|text blocks
-          """
-          self.data_iterator = self.data
-          self._initialize_state_generators()
-          textblock = self.header() # drop the header
-          if textblock != [self.header_string]:
-              self.strip_literal_marker(textblock)
-              yield textblock
-          while True:
-              getattr(self, self.state)() # drop code blocks
-              textblock = getattr(self, self.state)()
-              self.strip_literal_marker(textblock)
-              yield textblock
-
-
+      def block_is_text(self, block):
+          for line in block:
+              if (line.rstrip() 
+                  and not line.startswith(self.comment_string)
+                  and line.rstrip() != self.comment_string.rstrip()):
+                  return False
+          return True
+    
 Code2Text.strip_literal_marker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the code block is stripped, the literal marker would lead to an error
-when the text is converted with docutils. Replace it with the equivalent of
-docutils replace rules
+Replace the literal marker with the equivalent of docutils replace rules
 
-* strip `::`-line as well as preceding blank line if on a line on its own
+* strip `::`-line (and preceding blank line) if on a line on its own
 * strip `::` if it is preceded by whitespace. 
 * convert `::` to a single colon if preceded by text
 
@@ -782,19 +707,31 @@ docutils replace rules
 It is modified in-place::
 
       def strip_literal_marker(self, lines):
-          if len(lines) < 2:
+          try:
+              line = lines[-2]
+          except IndexError:  # len(lines < 2)
               return
-          parts = lines[-2].rsplit('::', 1)
-          if lines[-2].strip() == '::':
+          
+          # split at rightmost '::'
+          try:
+              (head, tail) = line.rsplit('::', 1)
+          except ValueError:  # only one part (no '::')
+              return
+          
+          # '::' on an extra line
+          if not head.strip():            
               del(lines[-2])
+              # delete preceding line if it is blank
               if len(lines) >= 2 and not lines[-2].lstrip():
                   del(lines[-2])
-          elif parts[0].rstrip() < parts[0]:
-              parts[0] = parts[0].rstrip()
-              lines[-2] = "".join(parts)
+          # '::' follows whitespace                
+          elif head.rstrip() < head:      
+              head = head.rstrip()
+              lines[-2] = "".join((head, tail))
+          # '::' follows text        
           else:
-              lines[-2] = ":".join(parts)
-
+              lines[-2] = ":".join((head, tail))
+  
 
 
 Command line use
@@ -894,17 +831,19 @@ It is initialized with default values and parsed command line options (and
 arguments)  This scheme allows easy customization by code importing the
 `pylit` module. ::
 
-  class PylitOptions:
+  class PylitOptions(object):
       """Storage and handling of program options
       """
-
+  
 Recognized file extensions for text and code versions of the source:: 
 
-      code_languages = {".py": "python", ".sl": "slang", ".c": "c++"}
+      code_languages  = {".py": "python", 
+                         ".sl": "slang", 
+                         ".c": "c++"}
       code_extensions = code_languages.keys()
       text_extensions = [".txt"]
-
-Instantiation
+  
+Instantiation       
 ~~~~~~~~~~~~~
 
 Instantiation sets up an OptionParser and initializes it with pylit's
@@ -947,7 +886,7 @@ on command line options and sensible defaults::
           self.values = self.parse_args(args)
           # complete with context-sensitive defaults
           self.values = self.complete_values(self.values)
-
+  
 Calling
 ~~~~~~~
 
@@ -960,7 +899,7 @@ arguments and default values and does a completion of the options based on
           """
           values = self.parse_args(args, **default_values)
           return self.complete_values(values)
-
+  
 
 PylitOptions.parse_args
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -988,7 +927,7 @@ instance.  Defaults can be provided as keyword arguments::
           except IndexError:
               pass
           return values
-
+  
 PylitOptions.complete_values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1026,9 +965,9 @@ to sensible defaults (if possible).
           
           # Set the default overwrite mode
           values.ensure_value("overwrite", 'update')
-
+  
           return values
-
+  
 PylitOptions.get_outfile_name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1061,7 +1000,7 @@ constructed from `infile` by the following rules:
               return infile + self.text_extensions[0]
           # give up
           return infile + ".out"
-
+  
 
 
 Helper functions
@@ -1103,7 +1042,7 @@ if (s)he just tries the script without any arguments) ::
       else:
           out_stream = file(outfile, 'w')
       return (in_stream, out_stream)
-
+  
 is_newer
 ~~~~~~~~
 
@@ -1134,7 +1073,7 @@ is_newer
       if mtime1 == mtime2:
           return None
       return mtime1 > mtime2
-
+  
 
 get_converter
 ~~~~~~~~~~~~~
@@ -1146,7 +1085,7 @@ Get an instance of the converter state machine::
           return Text2Code(data, **keyw)
       else:
           return Code2Text(data, **keyw)
-
+  
 
 Use cases
 ---------
@@ -1182,7 +1121,7 @@ Use the doctest Advanced API to do all doctests in a given string::
       if not runner.failures:
           print "%d failures in %d tests"%(runner.failures, runner.tries)
       return runner.failures, runner.tries
-
+  
 
 diff
 ~~~~
@@ -1232,28 +1171,49 @@ main
 ----
 
 If this script is called from the command line, the `main` function will
-convert the input (file or stdin) between text and code formats::
+convert the input (file or stdin) between text and code formats.
+
+Customization
+~~~~~~~~~~~~~
+
+Option defaults for the conversion can be as keyword arguments to `main`_. 
+The option defaults will be updated by command line options and extended
+with "intelligent guesses" by `PylitOptions` and passed on to helper
+functions and the converter instantiation.
+
+This allows easy customization for programmatic use -- just or call `main`
+with the appropriate keyword options (or with a `option_defaults`
+dictionary.), e.g.:
+
+>>> option_defaults = {'language': "c++",
+...                    'codeindent': 4,
+...                    'header_string': '..admonition::'
+...                   }
+
+>>> main(**option_defaults)
+
+::
 
   def main(args=sys.argv[1:], **option_defaults):
       """%prog [options] FILE [OUTFILE]
       
       Convert between reStructured Text with embedded code, and
       Source code with embedded text comment blocks"""
-
+  
 Parse and complete the options::
 
       options = PylitOptions(args, **option_defaults).values
-
+  
 Run doctests if ``--doctest`` option is set::
 
       if options.ensure_value("doctest", None):
           return run_doctest(**options.as_dict())
-
+  
 Do a round-trip and report differences if the ``--diff`` opton is set::
 
       if options.ensure_value("diff", None):
           return diff(**options.as_dict())
-
+  
 Open in- and output streams::
 
       try:
@@ -1276,7 +1236,7 @@ Execute if the ``-execute`` option is set::
               code = data
           exec code
           return
-
+  
 Default action: Convert and write to out_stream::
 
       out_stream.write(str(converter))
@@ -1301,10 +1261,10 @@ the contained information is equal.[#]_ ::
                       )
           except OSError:
               pass
-
+  
       ## print "mtime", os.path.getmtime(options.infile),  options.infile 
       ## print "mtime", os.path.getmtime(options.outfile), options.outfile
-
+  
 
 .. [#] Make sure the corresponding file object (here `out_stream`) is
        closed, as otherwise the change will be overwritten when `close` is 
