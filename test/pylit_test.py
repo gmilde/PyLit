@@ -612,10 +612,10 @@ class test_PylitOptions:
     def test_languages_and_extensions(self):
         """dictionary of programming languages and extensions"""
         for ext in [".py", ".sl", ".c"]:
-            assert ext in self.options.code_extensions
-        assert self.options.code_languages[".py"] == "python"
-        assert self.options.code_languages[".sl"] == "slang"
-        assert self.options.code_languages[".c"] == "c++"
+            assert ext in self.options.values.code_extensions
+        assert self.options.values.code_languages[".py"] == "python"
+        assert self.options.values.code_languages[".sl"] == "slang"
+        assert self.options.values.code_languages[".c"] == "c++"
 
     def test_parse_args(self):
         """parse cmd line args"""

@@ -38,8 +38,12 @@
 #                    new `iter_strip` method replacing a lot of ``if``-s
 # :2007-02-22: 0.2.8 set `mtime` of outfile to the one of infile
 # :2007-02-27: 0.3   new `Code2Text` converter after an idea by Riccardo Murri
+#                    a new `Text2Code` will follow soon
+#                    explicite `option_defaults` dict for easier customization
 # 
 # ::
+
+_version = "0.3"
 
 """pylit: Literate programming with Python and reStructuredText
    
@@ -69,6 +73,40 @@ import optparse
 # ::
 
 from simplestates import SimpleStates  # generic state machine
+
+# Customization
+# =============
+
+option_defaults = {}
+
+# Default language and language specific defaults::
+
+option_defaults["language"] =        "python"        
+option_defaults["comment_strings"] = {"python": '# ',
+                                      "slang":  '% ', 
+                                      "c++":    '// ',
+                                      "elisp":  ';; '}  
+
+# Recognized file extensions for text and code versions of the source.
+# Used to guess the language from the filename. :: 
+
+option_defaults["code_languages"]  = {".py": "python", 
+                                      ".sl": "slang", 
+                                      ".c": "c++",
+                                      ".el":"elisp"}
+option_defaults["code_extensions"] = option_defaults["code_languages"].keys()
+option_defaults["text_extensions"] = [".txt"]
+
+# Number of spaces to indent code blocks in the code -> text conversion.[#]_
+# 
+# .. [#] For the text -> code conversion, the codeindent is determined by the
+#        first recognized code line (leading comment or first indented literal
+#        block of the text source).
+# 
+# ::
+
+option_defaults["codeindent"] =  2
+
 
  
 # Classes
@@ -144,20 +182,12 @@ class PyLitConverter(SimpleStates):
 # 
 # Default language and language specific defaults::
 
-    language =        "python"        
-    comment_strings = {"python": '# ',
-                       "slang": '% ', 
-                       "c++": '// '}  
+    language = option_defaults["language"]
+    comment_strings = option_defaults["comment_strings"]
+    
+# Number of spaces to indent code blocks in the code -> text conversion::
 
-# Number of spaces to indent code blocks in the code -> text conversion.[#]_
-# 
-# .. [#] For the text -> code conversion, the codeindent is determined by the
-#        first recognized code line (leading comment or first indented literal
-#        block of the text source).
-# 
-# ::
-
-    codeindent =  2
+    codeindent =  option_defaults["codeindent"]
 
 # Marker string for the first code block. (Should be a valid rst directive
 # that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
@@ -202,7 +232,7 @@ class PyLitConverter(SimpleStates):
 
         self.__dict__.update(keyw)
             
-# The comment string is set to the languages comment string if not given in
+# The comment string is set to the language's comment string if not given in
 # the keyword arguments::
 
         if not hasattr(self, "comment_string") or not self.comment_string:
@@ -532,11 +562,8 @@ class Text2Code(PyLitConverter):
 # valid source code, extracts comments, and puts non-commented code in literal
 # blocks. 
 # 
-# Only lines starting with a comment string matching the one in the
-# `comment_string` data attribute are considered text lines.
-# 
-# The class is derived from the PyLitConverter state machine and adds handlers
-# for the three states "header", "text", and "code". ::
+# The class is derived from the PyLitConverter state machine and adds  an
+# `__iter__` method as well as handlers for "text", and "code" states. ::
 
 class Code2Text(PyLitConverter):
     """Convert code source to text source
@@ -588,7 +615,7 @@ class Code2Text(PyLitConverter):
 # If we want to keep the line numbers in sync for text and code source, the
 # reStructured Text markup for these header lines must start at the same line
 # as the first header line. Therfore, header lines could not be marked as
-# literal block (this would require the "::" and an empty line above the code).
+# literal block (this would require the ``::`` and an empty line above the code).
 # 
 # OTOH, a comment may start at the same line as the comment marker and it
 # includes subsequent indented lines. Comments are visible in the reStructured
@@ -835,14 +862,6 @@ class PylitOptions(object):
     """Storage and handling of program options
     """
 
-# Recognized file extensions for text and code versions of the source:: 
-
-    code_languages  = {".py": "python", 
-                       ".sl": "slang", 
-                       ".c": "c++"}
-    code_extensions = code_languages.keys()
-    text_extensions = [".txt"]
-
 # Instantiation       
 # ~~~~~~~~~~~~~
 # 
@@ -850,12 +869,14 @@ class PylitOptions(object):
 # command line options and `default_values`. It then updates the values based
 # on command line options and sensible defaults::
 
-    def __init__(self, args=sys.argv[1:], **default_values):
+    def __init__(self, args=sys.argv[1:], **keyw):
         """Set up an `OptionParser` instance and parse and complete arguments
         """
-        p = optparse.OptionParser(usage=main.__doc__, version="0.2")
-        # set defaults
-        p.set_defaults(**default_values)
+        p = optparse.OptionParser(usage=main.__doc__, version=_version)
+        # set defaults (from modules option_defaults dict and keyword args)
+        defaults = dict(option_defaults) # copy module-level defaults
+        defaults.update(keyw)
+        p.set_defaults(**defaults)
         # add the options
         p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
                      help="convert code to reStructured text")
@@ -869,6 +890,9 @@ class PylitOptions(object):
                      help="execute code (Python only)")
         p.add_option("-f", "--infile",
                      help="input file name ('-' for stdout)" )
+        p.add_option("--language", action="store", 
+                     choices = option_defaults["code_languages"].values(),
+                     help="use LANGUAGE native comment style")
         p.add_option("--overwrite", action="store", 
                      choices = ["yes", "update", "no"],
                      help="overwrite output file (default 'update')")
@@ -943,9 +967,9 @@ class PylitOptions(object):
         # Guess conversion direction from infile filename
         if values.ensure_value("txt2code", None) is None:
             in_extension = os.path.splitext(values.infile)[1]
-            if in_extension in self.text_extensions:
+            if in_extension in self.values.text_extensions:
                 values.txt2code = True
-            elif in_extension in self.code_extensions:
+            elif in_extension in self.values.code_extensions:
                 values.txt2code = False
         # Auto-determine the output file name
         values.ensure_value("outfile", self.get_outfile_name(values.infile, 
@@ -953,7 +977,7 @@ class PylitOptions(object):
         # Guess conversion direction from outfile filename or set to default
         if values.txt2code is None:
             out_extension = os.path.splitext(values.outfile)[1]
-            values.txt2code = not (out_extension in self.text_extensions)
+            values.txt2code = not (out_extension in self.values.text_extensions)
         
         # Set the language of the code (default "python")
         if values.txt2code is True:
@@ -961,8 +985,7 @@ class PylitOptions(object):
         elif values.txt2code is False:
             code_extension = os.path.splitext(values.infile)[1]
         values.ensure_value("language", 
-                            self.code_languages.get(code_extension, "python"))
-        
+                            self.values.code_languages.get(code_extension, "python"))
         # Set the default overwrite mode
         values.ensure_value("overwrite", 'update')
 
@@ -993,11 +1016,11 @@ class PylitOptions(object):
         #       if it exists?
         
         # strip text extension
-        if ext in self.text_extensions: 
+        if ext in self.values.text_extensions: 
             return base
         # add (first) text extension for code files
-        if ext in self.code_extensions or txt2code == False:
-            return infile + self.text_extensions[0]
+        if ext in self.values.code_extensions or txt2code == False:
+            return infile + self.values.text_extensions[0]
         # give up
         return infile + ".out"
 
