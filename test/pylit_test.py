@@ -179,7 +179,7 @@ def test_Text2Code_malindented_code_line():
     data1 = ["..    #!/usr/bin/env python\n", # indent == 4 * " "
             "\n",
             "  print 'hello world'"]          # indent == 2 * " "
-    data2 = ["..\t#!/usr/bin/env python\n",   # indent == 4 * " "
+    data2 = ["..\t#!/usr/bin/env python\n",   # indent == 8 * " "
             "\n",
             "  print 'hello world'"]          # indent == 2 * " "
     for data in (data1, data2):
@@ -204,14 +204,15 @@ def test_Text2Code_malindented_code_line():
 ## Assuming that no double colon at end of line occures accidentially,
 ## pylit will fix this and issue a warning::
 
-textsamples["ensure blank line after text"] = (
-"""text followed by a literal block::
-  block1 = 'first block'
-""",
-"""# text followed by a literal block::
-
-block1 = 'first block'
-""")
+# Do we need this feature? (Complicates code a lot)
+# textsamples["ensure blank line after text"] = (
+# """text followed by a literal block::
+#   block1 = 'first block'
+# """,
+# """# text followed by a literal block::
+# 
+# block1 = 'first block'
+# """)
 
 ## Text follows code block without blank line
 ## ''''''''''''''''''''''''''''''''''''''''''
@@ -225,18 +226,19 @@ block1 = 'first block'
 ## Assuming that the unindent is not accidential, pylit fixes this and issues a
 ## warning::
 
-textsamples["ensure blank line after code"] = (
-"""::
-
-  block1 = 'first block'
-more text
-""",
-"""# ::
-
-block1 = 'first block'
+# Do we need this feature? (Complicates code a lot)
+# textsamples["ensure blank line after code"] = (
+# """::
+# 
+#   block1 = 'first block'
+# more text
+# """,
+# """# ::
+# 
+# block1 = 'first block'
 
 # more text
-""")
+# """)
 
 ## A double colon on a line on its own
 ## '''''''''''''''''''''''''''''''''''

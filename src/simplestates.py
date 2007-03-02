@@ -115,7 +115,7 @@ class SimpleStates:
 # * remaining keyword arguments are stored as class attributes (or methods, if
 #   they are function objects) overwriting class defaults (a neat little trick
 #   I found somewhere on the net)
-#
+# 
 #   ..note: This is the same as `self.__dict__.update(keyw)`. However,
 #           the "Tutorial" advises to confine the direct use of `__dict__`
 #           to post-mortem analysis or the like...
@@ -133,8 +133,8 @@ class SimpleStates:
             setattr(self, key, value)
 
 
-#
-#
+
+
 
 # Iteration over class instances
 # ------------------------------
