@@ -4,7 +4,7 @@ Features
 ========
 
 `PyLit` (Python-Literate) provides a plain but efficient tool for literate
-programming: a converter between 
+programming: a bidirectional converter between 
 
 * a *text source* (reStructuredText_ with embedded code blocks) and 
 * a *code source* (source code with comment blocks).
@@ -17,6 +17,52 @@ The following features set Pylit apart from
 `existing literate programming frameworks`__
 
 __ ../literate-programming/index.html#existing-frameworks
+
+
+Dual source
+-----------
+
+Text source and code source are considered equal. Both hold the full
+information. 
+
+The `pylit.py` script converts the text source to code source and vice
+versa. Round-trips are possible without loss of information. (It is
+possible, to 'export' to a format by stripping code or text during the
+conversion using the ``--strip`` option)
+
+Advantages
+~~~~~~~~~~
+
+* Work on code or documentation can be done in adapted editor modes or
+  environments providing formatting tools, syntax highlight, outlining, and
+  other conveniences.
+
+* Debugging is straightforward (using the code source). Fixes are easily
+  passed to the text source (just calling pylit.py on the code source).
+
+Limitations
+~~~~~~~~~~~
+
+* The parallel existence of code and text source might lead to confusion on
+  which it the most up to date source.
+
+* While by default, an output file is not overwritten if it is newer than
+  the input file, loss of changes can occur when both formats are edited in
+  parallel.
+
+* PyLit does not allow the specification of a separate output file for
+  individual code blocks like e.g. noweb_. The "dual source" concept limits
+  the choice to one output file per input file. However, this can be
+  compensated by the use of the `include directive`_.
+  See the tutorial_ for an example.
+
+* Only one comment string (including whitespace) can be specified as
+  "text block marker". 
+  
+  It would be possible to specify a list of matching comment strings (or
+  a regular expression), however as the comment string is not stored in
+  the text source, all text blocks will get one common comment string if
+  (re)converted to code source -- possibly loosing vital information.
 
 
 Simplicity
@@ -62,9 +108,9 @@ reStructured Text
 
 Most of the time, a programmer will see the source in a "text editor". With
 reStructured Text as documenting language, not only the pretty printed
-documentation, but also both text and code source is a "combination of
-documentation and source together in a fashion suited for reading by human
-beings."[#]_
+documentation, but also the source (be it in "text" or "code" format) is a
+"combination of documentation and source together in a fashion suited for
+reading by human beings."[#]_
 
 * reStructuredText is an "ASCII-markup" language. Its syntax is very similar
   to the usual conventions used to structure "ASCII text" like e.g. emails.
@@ -81,69 +127,25 @@ beings."[#]_
   PDF manual.
 
 Actually, only the syntax for literal blocks is needed for PyLit to convert
-from text to code. If no pretty-printed or web-ready document is needed, the
+from text to code. If no pretty-printed or web-ready document is desired, the
 programmer doesnot need to know anything else about reStructured Text.
 
 The tutorial_ and the examples_ show what code and text source look like.
 
 
 .. [#] i.e. a literate program according to the definition in the 
+       `Literate Programming FAQ`_
        
-
-Dual source
------------
-
-Text source and code source are considered equal. Both hold the full
-information. 
-
-The `pylit.py` script converts the text source to code source and vice
-versa. Round-trips are possible without loss of information. (It is
-possible, to 'export' to a format by stripping code or text during the
-conversion using the ``--strip`` option)
-
-Advantages
-~~~~~~~~~~
-
-* Work on code or documentation can be done in adapted editor modes or
-  environments providing formatting tools, syntax highlight, outlining, and
-  other conveniences.
-
-* Debugging is straightforward (using the code source). Fixes are easily
-  passed to the text source (just calling pylit.py on the code source).
-
-Limitations
-~~~~~~~~~~~
-
-* The parallel existence of code and text source might lead to confusion on
-  which it the most up to date source.
-
-* While by default, an output file is not overwritten if it is newer than
-  the input file, loss of changes can occur when both formats are edited in
-  parallel.
-
-* PyLit does not allow the specification of a separate output file for
-  individual code blocks like e.g. noweb_. The "dual source" concept limits
-  the choice to one output file per input file. However, this can be
-  compensated by the use of the `include directive`_.
-  See the tutorial_ for an example.
-
-* Only one comment string (including whitespace) can be specified as
-  "text block marker". 
-  
-  (It would be possible to specify a set of matching comment strings (or
-  a regular expression), however as the comment string is not stored in
-  the text source, all text blocks will get one common comment string if
-  (re)converted to code source -- possibly loosing vital information.)
 
 .. _docutils: http://docutils.sourceforge.net/rst.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Python: http://www.python.org
 .. _`Editor Support for reStructuredText`:
       http://docutils.sourceforge.net/tools/editors/README.html
+.. _Literate Programming FAQ: http://www.literateprogramming.com/lpfaq.pdf
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/
 .. _tutorial: ../tutorial/index.html
 .. _examples: ../examples/index.html
 .. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
 .. _include directive:
      http://docutils.sourceforge.net/docs/ref/rst/directives.html#including-an-external-document-fragment
-

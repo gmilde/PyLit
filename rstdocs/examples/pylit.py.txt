@@ -5,7 +5,9 @@
 pylit.py: Literate programming with Python and reStructuredText
 ===============================================================
 
-:Date:      2007-01-31
+:Date:      $Date: 2007-03-06$
+:Version:   Subversion-Revision $Revision$
+:URL:       $URL$
 :Copyright: 2005, 2007 Guenter Milde.
             Released under the terms of the GNU General Public License 
             (v. 2 or later)
@@ -98,14 +100,14 @@ Used to guess the language from the filename. ::
                                         ".el":"elisp"}
   option_defaults["code_extensions"] = option_defaults["code_languages"].keys()
   option_defaults["text_extensions"] = [".txt"]
-
+  
 Marker string for the first code block. (Should be a valid rst directive
 that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
 trailing whitespace needed as indented code follows. Default is a comment
 marker::
   
   option_defaults["header_string"] = '..'
-
+  
 Export to the output format stripping text or code blocks::
 
   option_defaults["strip"] = False
@@ -114,7 +116,7 @@ Number of spaces to indent code blocks in the code -> text conversion. [#]_
 ::
 
   option_defaults["codeindent"] =  2
-
+  
 .. [#] For the text -> code conversion, the codeindent is determined by the
        first recognized code line (leading comment or first indented literal
        block of the text source).
@@ -137,7 +139,7 @@ parent class: `Text2Code`_ converts a text source to executable code, while
       """parent class for `Text2Code` and `Code2Text`, the state machines
       converting between text source and code source of a literal program.
       """
-
+  
 The converter classes implement a simple state machine to separate and
 transform documentation and code blocks. For this task, only a very limited
 parsing is needed. PyLit's parser assumes:
@@ -164,7 +166,7 @@ the instantiation of a converter class. ::
       codeindent =  option_defaults["codeindent"]
       header_string = option_defaults["header_string"]
       strip = option_defaults["strip"]
-
+  
 Initial state (do not overwrite)::
 
       state = 'header' 
@@ -341,15 +343,15 @@ At start, the check for "text" or "code" needs to check for the
           
           Strip `self.header_string` if present."""
           
-          
+        
           self.set_state = self.code_test
           
           if lines[0].startswith(self.header_string):
               lines[0] = lines[0].replace(self.header_string, "", 1)
               return "code"
           return "text"
-
   
+
 Code2Text.code_test
 ~~~~~~~~~~~~~~~~~~~
 
@@ -388,28 +390,27 @@ strip=True). ::
                   
 Test for the end of the text block: does the second last line end with
 `::` but is neither a comment nor a directive?
+If end-of-text marker is detected, 
+
+* set state to 'code'
+* set the current text indent level (needed by the code handler to find the
+  end of code block)::
+* remove the comment from the last line again (it's a separator between text
+  and code blocks).
+
 TODO: allow different code marking directives (for syntax color etc)
 ::
 
           try:
               line = lines[-2]
           except IndexError:  # len(lines < 2)
-              line = ""
-          if (line.rstrip().endswith("::") 
-              and not line.lstrip().startswith("..")):
-              self.state = "code"
-   
-set the current text indent level (needed by the code handler to find the
-end of code block)::
-
-              self._textindent = self.get_indent(line)
-  
-remove the comment from the last line again (it's a separator between text
-and code blocks).
-
-::
-
-              lines[-1] = lines[-1].replace(self.comment_string, "", 1)
+              pass
+          else:
+              if (line.rstrip().endswith("::") 
+                  and not line.lstrip().startswith("..")):
+                  self.state = "code"
+                  self._textindent = self.get_indent(line)
+                  lines[-1] = lines[-1].replace(self.comment_string, "", 1)
   
           if self.strip:
               return []
@@ -1220,6 +1221,12 @@ Open questions
 ==============
 
 Open questions and ideas for further development
+
+Clean code
+----------
+
+* can we gain from using "shutils" over "os.path" and "os"?
+* use pylint or pyChecker to enfoce a consistent style? 
 
 Options
 -------

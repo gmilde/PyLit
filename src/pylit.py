@@ -5,7 +5,9 @@
 # pylit.py: Literate programming with Python and reStructuredText
 # ===============================================================
 # 
-# :Date:      2007-01-31
+# :Date:      $Date: 2007-03-06$
+# :Version:   Subversion-Revision $Revision$
+# :URL:       $URL$
 # :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
@@ -341,7 +343,7 @@ class Text2Code(PyLitConverter):
         
         Strip `self.header_string` if present."""
         
-        
+      
         self.set_state = self.code_test
         
         if lines[0].startswith(self.header_string):
@@ -388,28 +390,27 @@ class Text2Code(PyLitConverter):
                 
 # Test for the end of the text block: does the second last line end with
 # `::` but is neither a comment nor a directive?
+# If end-of-text marker is detected, 
+# 
+# * set state to 'code'
+# * set the current text indent level (needed by the code handler to find the
+#   end of code block)::
+# * remove the comment from the last line again (it's a separator between text
+#   and code blocks).
+# 
 # TODO: allow different code marking directives (for syntax color etc)
 # ::
 
         try:
             line = lines[-2]
         except IndexError:  # len(lines < 2)
-            line = ""
-        if (line.rstrip().endswith("::") 
-            and not line.lstrip().startswith("..")):
-            self.state = "code"
- 
-# set the current text indent level (needed by the code handler to find the
-# end of code block)::
-
-            self._textindent = self.get_indent(line)
-
-# remove the comment from the last line again (it's a separator between text
-# and code blocks).
-# 
-# ::
-
-            lines[-1] = lines[-1].replace(self.comment_string, "", 1)
+            pass
+        else:
+            if (line.rstrip().endswith("::") 
+                and not line.lstrip().startswith("..")):
+                self.state = "code"
+                self._textindent = self.get_indent(line)
+                lines[-1] = lines[-1].replace(self.comment_string, "", 1)
 
         if self.strip:
             return []
@@ -1220,6 +1221,12 @@ if __name__ == '__main__':
 # ==============
 # 
 # Open questions and ideas for further development
+# 
+# Clean code
+# ----------
+# 
+# * can we gain from using "shutils" over "os.path" and "os"?
+# * use pylint or pyChecker to enfoce a consistent style? 
 # 
 # Options
 # -------

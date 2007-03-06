@@ -88,8 +88,8 @@ Textblocks and Comments
 
 Comment lines are only transformed to a text block,
 
-* if they start with a matching `comment string` (Python default ``'# '``),
-  and
+* if they start with a matching `comment string` (Python default ``'# '``,
+  whitespace counts!), and
 * if they are separated from non-text lines by at least one blank[#]_ line
 
 Otherwise, they are kept as commented code.
@@ -109,19 +109,41 @@ is mapped to text as::
 
   99bottles.py -- print the famous "99 bottles of beer" song lyrics::
 
+    # This is used as an introductory example to literate programming
+    # in the literateprograms.org Wiki.
+    #
     # count down from 99 to 1
     for bottles in range(99,0,-1):
         ....
 
+The comment in the 5th line marks the "secondary documentation" as part of
+the code block.
 
+However, ::
 
+  # 99bottles.py -- print the famous "99 bottles of beer" song lyrics
+  #
+  # This is used as an introductory example to literate programming
+  # in the literateprograms.org Wiki.
+  
+  # count down from 99 to 1
+  for bottles in range(99,0,-1):
+      ....
 
+is mapped to text as::
 
+  99bottles.py -- print the famous "99 bottles of beer" song lyrics::
 
+  This is used as an introductory example to literate programming
+  in the literateprograms.org Wiki.
+  
+  ::
+  
+    # count down from 99 to 1
+    for bottles in range(99,0,-1):
+        ....
 
-
-
-
+The comment in the 2nd line is removed, as it is inside a text block.
 
 .. [#] a line is considered blank, if it contains only whitespace
 
