@@ -6,7 +6,7 @@ pylit.py: Literate programming with Python and reStructuredText
 ===============================================================
 
 :Date:      $Date: 2007-03-06$
-:Version:   Subversion-Revision $Revision$
+:Version:   SVN-Revision $Revision$
 :URL:       $URL$
 :Copyright: 2005, 2007 Guenter Milde.
             Released under the terms of the GNU General Public License 
@@ -44,6 +44,8 @@ Changelog
 :2007-03-02: 0.3.1 expand hard-tabs to prevent errors in indentation,
                    `Text2Code` now also works on blocks,
                    removed dependency on SimpleStates module
+:2007-03-06: 0.3.2 bugfix: do not set `language` in `option_defaults`
+                   renamed `code_languages` to `languages`
 
 ::
 
@@ -83,22 +85,23 @@ the setting of options in programmatic use ::
 
   option_defaults = {}
   
-Default language and language specific defaults::
+Language specific defaults::
 
-  option_defaults["language"] =        "python"        
   option_defaults["comment_strings"] = {"python": '# ',
                                         "slang":  '% ', 
                                         "c++":    '// ',
                                         "elisp":  ';; '}  
   
-Recognized file extensions for text and code versions of the source.
-Used to guess the language from the filename. :: 
+The default language is set from file extensions (if not given as
+command line option). Setting it in `option_defaults` would override this
+auto-setting feature::
 
-  option_defaults["code_languages"]  = {".py": "python", 
+  ## option_defaults["language"]        = "python"        
+  option_defaults["languages"]  = {".py": "python", 
                                         ".sl": "slang", 
                                         ".c": "c++",
                                         ".el":"elisp"}
-  option_defaults["code_extensions"] = option_defaults["code_languages"].keys()
+  option_defaults["code_extensions"] = option_defaults["languages"].keys()
   option_defaults["text_extensions"] = [".txt"]
   
 Marker string for the first code block. (Should be a valid rst directive
@@ -161,8 +164,9 @@ arguments during class instantiation. Keyword arguments to `get_converter`_
 and `main`_ can be used to customize the converter, as they are passed on to
 the instantiation of a converter class. ::
 
-      language = option_defaults["language"]
+      language = "python"
       comment_strings = option_defaults["comment_strings"]
+      comment_string = None # set in __init__
       codeindent =  option_defaults["codeindent"]
       header_string = option_defaults["header_string"]
       strip = option_defaults["strip"]
@@ -189,7 +193,7 @@ string::
           """
           self.data = data
           self.__dict__.update(keyw)
-          if not hasattr(self, "comment_string") or not self.comment_string:
+          if not self.comment_string:
               self.comment_string = self.comment_strings[self.language]
               
 .. [1] The most common choice of data is a `file` object with the text
@@ -343,7 +347,7 @@ At start, the check for "text" or "code" needs to check for the
           
           Strip `self.header_string` if present."""
           
-        
+    
           self.set_state = self.code_test
           
           if lines[0].startswith(self.header_string):
@@ -394,7 +398,7 @@ If end-of-text marker is detected,
 
 * set state to 'code'
 * set the current text indent level (needed by the code handler to find the
-  end of code block)::
+  end of code block)
 * remove the comment from the last line again (it's a separator between text
   and code blocks).
 
@@ -809,7 +813,7 @@ on command line options and sensible defaults::
           p.add_option("-f", "--infile",
                        help="input file name ('-' for stdout)" )
           p.add_option("--language", action="store", 
-                       choices = option_defaults["code_languages"].values(),
+                       choices = option_defaults["languages"].values(),
                        help="use LANGUAGE native comment style")
           p.add_option("--overwrite", action="store", 
                        choices = ["yes", "update", "no"],
@@ -895,7 +899,8 @@ to sensible defaults (if possible).
           # Guess conversion direction from outfile filename or set to default
           if values.txt2code is None:
               out_extension = os.path.splitext(values.outfile)[1]
-              values.txt2code = not (out_extension in self.values.text_extensions)
+              values.txt2code = not (out_extension 
+                                     in self.values.text_extensions)
           
           # Set the language of the code (default "python")
           if values.txt2code is True:
@@ -903,7 +908,7 @@ to sensible defaults (if possible).
           elif values.txt2code is False:
               code_extension = os.path.splitext(values.infile)[1]
           values.ensure_value("language", 
-                              self.values.code_languages.get(code_extension, "python"))
+                              self.values.languages.get(code_extension, "python"))
           # Set the default overwrite mode
           values.ensure_value("overwrite", 'update')
   
@@ -1279,9 +1284,10 @@ in html, see
 * Silvercity, enscript, ...  
 
 Some plug-ins require a special "code block" directive instead of the
-`::`-literal block. TODO: make this an option
+``::``-literal block. TODO: make this an option
 
-Ask at docutils users|developers
+Doctstrings
+-----------
 
 * How to handle docstrings in code blocks? (it would be nice to convert them
   to rst-text if ``__docformat__ == restructuredtext``)

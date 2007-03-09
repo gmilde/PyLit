@@ -545,8 +545,15 @@ foo = 'first'
 ## 
 ## Convert a header (leading code block) to a reStructured text comment. ::
 
-codesamples["no matching comment, just code"] = ("print 'hello world'",
-                                                 "..  print 'hello world'")
+codesamples["no matching comment, just code"] = (
+"""print 'hello world'
+
+print 'ende'
+""",
+"""..  print 'hello world'
+  
+  print 'ende'
+""")
 
 codesamples["empty header (start with matching comment)"] = (
 """# a classical example without header::
@@ -615,9 +622,9 @@ class test_PylitOptions:
         """dictionary of programming languages and extensions"""
         for ext in [".py", ".sl", ".c"]:
             assert ext in self.options.values.code_extensions
-        assert self.options.values.code_languages[".py"] == "python"
-        assert self.options.values.code_languages[".sl"] == "slang"
-        assert self.options.values.code_languages[".c"] == "c++"
+        assert self.options.values.languages[".py"] == "python"
+        assert self.options.values.languages[".sl"] == "slang"
+        assert self.options.values.languages[".c"] == "c++"
 
     def test_parse_args(self):
         """parse cmd line args"""

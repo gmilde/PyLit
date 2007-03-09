@@ -14,7 +14,7 @@ Definition and Origin
 
 The `Literate Programming FAQ`_ gives the following definition:
 
-   `Literate programming`_ is the combination of documentation and source
+   `Literate programming` is the combination of documentation and source
    together in a fashion suited for reading by human beings.
    
 
@@ -34,10 +34,45 @@ art.
    do, let us concentrate rather on explaining to humans what we want the
    computer to do. 
 
-   -- Donald E. Knuth, `Article from The Computer Journal`_,  1984
+   -- Donald E. Knuth, `Literate Programming`_,  1984
 
-.. _`Article from The Computer Journal`: http://tex.loria.fr/litte/knuthweb.pdf
-.. _`literate programming`: http://www.literateprogramming.com
+.. _Literate Programming: WEB_
+
+
+A more specific definition is given in `POD is not Literate Programming`_
+by Mark-Jason Dominus:
+
+  Literate programming systems have the following properties:
+
+  1. Code and extended, detailed comments are intermingled. 
+  
+  2. The code sections can be written in whatever order is best for people
+     to understand, and are re-ordered automatically when the computer needs
+     to run the program. 
+  
+  3. The program and its documentation can be handsomely typeset into a
+     single article that explains the program and how it works. Indices and
+     cross-references are generated automatically. 
+
+  POD only does task 1, but the other tasks are much more important. 
+
+This is why the `Wikipedia entry on literate programming`_ classifies POD as
+`embedded documentation`. 
+
+PyLit also fails this narrow definition but, according to the Wikipedia,
+qualifies as `semi-literate`:
+
+  It is the fact that documentation can be written freely whereas code must
+  be marked in a special way that makes the difference between semi-literate
+  programming and excessive documenting, where the documentation is embedded
+  into the code as comments.
+
+For a full discussion of the PyLit concepts see the Features_ page.
+
+.. _POD is not Literate Programming: 
+    http://www.perl.com/pub/a/tchrist/litprog.html
+.. _Wikipedia entry on literate programming: 
+    http://en.wikipedia.org/wiki/Literate_programming#Embedded_documentation
 
 
 Existing Frameworks
@@ -51,7 +86,7 @@ them to `PyLit`.
 WEB and friends
 ---------------
 
-The first published literate programming environment was `WEB`, introduced by
+The first published literate programming environment was WEB_, introduced by
 Donald Knuth in 1981 for his TeX typesetting system; it uses Pascal as its
 underlying programming language and TeX for typesetting of the
 documentation. 
@@ -86,33 +121,43 @@ user base. Some of the reasons are:
      http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
 
 How does PyLit differ from the web-like literate programming frameworks:
-
-* PyLit is not a complete framework but a simple tool. It supports code
-  embedded in a text document, but no re-arranging of named code chunks.
-  This is what the Wikipedia calles `semi-literate` programming.
   
 * PyLit is a *bidirectional* text <-> code converter. 
 
   + You can start a literate program from a "normal" code source by
     converting to a text source and adding the prosa.  
   + You can edit code with full support of any decent text editor or IDE.
-  + You can debug code with the standard tools -- the changes will propagate
-    to the text version with the next conversion, line numbers are the same
-    in text and code format.
+  + You can debug and fix code with the standard tools using the code source
+    Line numbers are the same in text and code format. Once ready, forward
+    your changes to the text version with a code->text conversion.
   
-  As a consequence, PyLit cannot support export to several code files from
-  one text source.     
+  - PyLit cannot support export to several code files from one text source.
+  
 
-* In PyLit, the literate program source is legible in any text editor. Python
-  docutils_ provide the backend for the transformation into both,
-  pretty-printed hardcopy (via LaTeX - PDF) and browsable electronic (HTML)
-  form.
+* PyLit is not a complete framework but a simple tool. It doesnot support
+  re-arranging of named code chunks. This is what the Wikipedia calls
+  `semi-literate` programming.
+
+* In PyLit, the literate program source is legible in any text editor. 
+
+  Even the code source is "in a fashion suited for reading by human beings",
+  in opposition to source code produced by a full grown web system:
+    
+    Just consider the output of `tangle` to be object code: You can run it,
+    but you don't want to look at it.
+    
+    -- http://www.perl.com/pub/a/tchrist/litprog.html
+
+  The Python docutils_ provide the backend for the transformation of the
+  text source into both, pretty-printed hardcopy (via LaTeX - PDF) and
+  browsable electronic (HTML) form.
 
 For a full discussion of the PyLit concepts see the Features_ page.
 
 .. _docutils: http://docutils.sourceforge.net/
 .. _Features: /features/index.html
 
+.. _WEB: http://www.literateprogramming.com/knuthweb.pdf
 .. _CWEB: http://www-cs-faculty.stanford.edu/~knuth/cweb.html
 .. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
 .. _FunnelWeb: http://www.ross.net/funnelweb/

@@ -38,14 +38,14 @@ Points to mention:
 * You can start literate programming with an existing code file (and without
   knowledge of reStructured Text syntax).
   
-* A *comment* is uncommented (if it is separated from code by a blank line
-  and has a recognised comment string at the start of each line).
+* The *documentation* is uncommented (if it is separated from code by a
+  blank line and has a recognised comment string at the start of each line).
 
 * A double colon is added at the end of the text block. It is the
   reStructured Text marker for the following `literal block`_.
   (No marker is added, if the text block already ends with a double colon.)
 
-* *code* is indented to form a literal block. It will be printed using a
+* The *code* is indented to form a literal block. It will be printed using a
   monospaced font and without reStructured Text substitutions.
 
 * PyLit adds ".txt" to the filename for the text version.
@@ -57,6 +57,8 @@ Now we can add some more documentation and a link (of course, knowledge of
      :literal:
 
 Pretty-printed with docutils, it looks like
+
+.. admonition:: Hello World
 
    .. include:: hello_2.py.txt
 
@@ -143,7 +145,7 @@ is mapped to text as::
     for bottles in range(99,0,-1):
         ....
 
-The comment in the 2nd line is removed, as it is inside a text block.
+The comment in the 2nd line is removed, as it is inside a documentation block.
 
 .. [#] a line is considered blank, if it contains only whitespace
 

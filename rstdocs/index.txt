@@ -30,9 +30,7 @@ __ literate-programming/index.html
   PyLit (Python-Literate) is a bidirectional converter between 
  
   * a *text source* (`reStructured Text`_ with embedded code blocks) and
-  * a *code source* (source code with comment blocks)
-  
-  of a 'program-document'. 
+  * a *code source* (source code with comment blocks).
    
   Documentation or code can be added or edited in a "native" format using
   ones favourite editor and editing mode.

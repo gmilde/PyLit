@@ -3,9 +3,7 @@
 .. 
   restindex
       crumb: Usage
-      format: rest
-      encoding: iso-8859-1
-      output-encoding: utf-8
+      page-title: PyLit - Usage
   /restindex
 
 Usage
@@ -24,6 +22,8 @@ Example: Run the converter script on itself::
 
 More examples in the tutorial_.
 
+.. _tutorial: ../tutorial/index.html
+
 Instead of defining a new extension for "pylit" literate programms, by
 default ``.txt`` will be appended for text source and stripped by the
 conversion to executable code. i.e. for a program foo:
@@ -40,8 +40,6 @@ With the ``-h`` (or ``--help``) argument, the script prints a usage info::
     
     Convert between reStructured Text with embedded code, and
     Source code with embedded text comment blocks
-
-.. _tutorial: ../tutorial/index.html
 
     
 Options
@@ -64,10 +62,12 @@ Options
      -d, --diff            do a round-trip and test for differences
 
 
-Use as module
--------------
+Programmatic use as pylit module
+--------------------------------
 
 If pylit.py is in the Python Module Path, it can be imported and used from
-other Python programs. The `literate source`__ explains the details.
+other Python programs. The simplest example is the executable wrapper script
+pylit_. The `literate source`__ explains more details of programmatic use.
 
+.. _pylit: pylit
 __ ../examples/pylit.py.html

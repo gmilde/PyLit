@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+  
+# call the pylit.py text <--> code converter
+import pylit
+pylit.main()
