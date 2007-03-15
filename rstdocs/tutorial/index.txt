@@ -150,8 +150,8 @@ The comment in the 2nd line is removed, as it is inside a documentation block.
 .. [#] a line is considered blank, if it contains only whitespace
 
 
-Headers
--------
+File Headers
+------------
 
 Sometimes code needs to remain on the first line(s) of the document to be
 valid. The most common example is the shebang_ line that tells a POSIX shell

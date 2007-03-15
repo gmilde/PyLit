@@ -13,7 +13,7 @@ It is written in Python_ but should work with any programming language that
 provides a syntax for comment blocks. (Currently, only comments running from
 a comment string to the end of line are accepted.)
 
-The following features set Pylit apart from 
+The following features set PyLit apart from 
 `existing literate programming frameworks`__
 
 __ ../literate-programming/index.html#existing-frameworks
@@ -25,30 +25,30 @@ Dual source
 Text source and code source are considered equal. Both hold the full
 information. 
 
-The `pylit.py` script converts the text source to code source and vice
-versa. Round-trips are possible without loss of information. (It is
-possible, to 'export' to a format by stripping code or text during the
-conversion using the ``--strip`` option)
+The ``pylit.py`` script converts the text source to code source and vice
+versa. Round-trips are possible without loss of information. (It is also
+possible, to 'export' to a format by stripping code or text parts during the
+conversion using the ``--strip`` option.)
 
 Advantages
 ~~~~~~~~~~
 
-* Work on code or documentation can be done in adapted editor modes or
+* Work on code or documentation parts can be done in adapted editor modes or
   environments providing formatting tools, syntax highlight, outlining, and
   other conveniences.
 
 * Debugging is straightforward (using the code source). Fixes are easily
-  passed to the text source (just calling pylit.py on the code source).
+  passed to the text source (just calling ``pylit.py`` on the code source).
 
 Limitations
 ~~~~~~~~~~~
 
 * The parallel existence of code and text source might lead to confusion on
-  which it the most up to date source.
+  which is the up to date, authoritative source.
 
 * While by default, an output file is not overwritten if it is newer than
   the input file, loss of changes can occur when both formats are edited in
-  parallel.
+  parallel. 
 
 * PyLit does not allow the specification of a separate output file for
   individual code blocks like e.g. noweb_. The "dual source" concept limits
@@ -68,7 +68,7 @@ Limitations
 Simplicity
 ----------
 
-`Pylit` does not introduce "named chunks". It lets the programmer
+`Py lit` does not introduce "named chunks". It lets the programmer
 intersperse documentation and code freely but does not provide code
 re-ordering or multiple expansion of definitions. Some call this
 *semi-literate* style.
@@ -77,9 +77,9 @@ This restriction was done deliberately. It reduces the complexity and seems
 better suited for a programming language like Python where you would rather
 use packages, modules, classes, and functions to structure the code.
 
-  The computer science and programming pioneers, like Wirth and Knuth, used
+  The computer science and programming pioneers, like Girth and Knuth, used
   another programming style than we recommend today. One notable difference
-  is the use of procedure abstractions. When Wirth and Knuth wrote their
+  is the use of procedure abstractions. When Mirth and Knuth wrote their
   influential books and programming, procedure calls were used with care,
   partly because they were relatively expensive. Consequently, they needed
   an extra level of structuring within a program or procedure. 
@@ -104,38 +104,38 @@ use packages, modules, classes, and functions to structure the code.
 reStructured Text
 -----------------
 
-`PyLit` uses `reStructured Text`_ from Python docutils_ for text markup.
+`PyLit` uses `reStructured Text`_ from Python docutils_ for text markup. [#]_
 
 Most of the time, a programmer will see the source in a "text editor". With
 reStructured Text as documenting language, not only the pretty printed
 documentation, but also the source (be it in "text" or "code" format) is a
 "combination of documentation and source together in a fashion suited for
-reading by human beings."[#]_
+reading by human beings", i.e. a *literate program* according to the
+"inclusive" definition in the `Literate Programming FAQ`_.
 
-* reStructuredText is an "ASCII-markup" language. Its syntax is very similar
-  to the usual conventions used to structure "ASCII text" like e.g. emails.
+
+* reStructured Text is an "ASCII-markup" language. Its syntax is very similar
+  to common conventions used to structure "ASCII text" like e.g. emails.
   Thus it is more easy to read and to edit in a text editor than e.g. TeX,
   HTML, or XML.
 
-* reStructuredText is well documented, and actively maintained.
+* reStructured Text is well documented, and actively maintained.
 
 * Special editor modes for editing reStructuredText already exist (see
   `Editor Support for reStructuredText`_.) 
 
 * With docutils_, the text source can be converted to a nice looking,
-  hyperlinked, browsable HTML documentation as well as to a printer-ready
-  PDF manual.
-
-Actually, only the syntax for literal blocks is needed for PyLit to convert
-from text to code. If no pretty-printed or web-ready document is desired, the
-programmer doesnot need to know anything else about reStructured Text.
+  hyper-linked, browsable HTML documentation as well as to a LaTeX document 
+  (and with pdflatex further to a printer-ready PDF manual).
 
 The tutorial_ and the examples_ show what code and text source look like.
 
+.. [#] Actually, only the syntax for literal blocks is needed for PyLit to
+       convert from text to code. If no pretty-printed or web-ready document
+       is desired, the programmer does not need to know anything else about
+       reStructured Text.
 
-.. [#] i.e. a literate program according to the definition in the 
-       `Literate Programming FAQ`_
-       
+.. References:
 
 .. _docutils: http://docutils.sourceforge.net/rst.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html

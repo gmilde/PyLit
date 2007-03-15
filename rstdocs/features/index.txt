@@ -17,6 +17,18 @@ PyLit Features
 Open questions
 ==============
 
-The pylit source has a `chapter on open questions`__ and ideas.
+TODO list
+---------
 
+The `PyLit source`__ has a `chapter on open questions`__ and ideas.
+
+__ ../examples/pylit.py.html
 __ ../examples/pylit.py.html#open-questions
+
+Syntax highlight
+----------------
+
+Another open topic is docutils support for `syntax-highlight`_.
+
+.. _syntax-highlight: syntax-highlight.html
+

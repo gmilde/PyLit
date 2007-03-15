@@ -1,0 +1,280 @@
+.. -*- rst-mode -*-
+.. 
+  restindex
+      crumb: Highlights
+      page-title: Pylit - Features - Syntax Highlight
+      file: rst2html-pygments
+      file: for-else-test.py.txt
+      file: for-else-test.py.html
+      file: pygments-default.css
+      file: pygments-default.css.txt
+      file: pygments-default.css.html
+  /restindex
+
+.. sectnum::
+.. contents::
+
+Syntax Highlight
+----------------
+
+Syntax highlighting significantly enhances the readability of code.
+So it is almost a must for pretty-printing a literate program.
+
+PyLit uses docutils_ as pretty-printing backend. However, in the current
+version, docutils does not highlight literal blocks.  But in a mail on
+`Questions about writing programming manuals and scientific documents`__,
+David Goodger wrote:
+
+   I'd be happy to include Python source colouring support, and other
+   languages would be welcome too. A multi-language solution would be
+   useful, of course. My issue is providing support for all output formats
+   -- HTML and LaTeX and XML and anything in the future -- simultaneously.
+   Just HTML isn't good enough. Until there is a generic-output solution,
+   this will be something users will have to put together themselves.
+
+__ http://sourceforge.net/mailarchive/message.php?msg_id=12921194
+
+
+There are already such add-ons providing syntax colouring. E.g 
+
+* the rest2web_ site builder provides the `colorize`__ macro (using the
+  `Moin-Moin Python colorizer`_) 
+* the Odtwriter_ for Docutils supports syntax colours via the pygments_
+  generic syntax highlighter.
+
+__ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
+
+
+`Pygments`_ seems to be a good choice for PyLit (or docutils in general):
+
+* It is written completely in Python, usable as a command-line tool and as a
+  Python package.
+* A wide range of common `languages and markup formats`_ is supported.
+* The layout is configurable by style sheets.
+* Several built-in styles and an option for line-numbering.
+* Built-in output formats include HTML, LaTeX, and rtf.
+* Support for new languages, formats, and styles is added easily (modular
+  structure, Python code, existing documentation).
+* Well documented and actively maintained.
+* There is a recipe for `using Pygments in ReST documents`_.
+
+
+Pygments enhanced rst2html front-end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `rst2html-pygments`_ script combines code from "`Using Pygments in ReST
+documents`_" with the standard docutils ``rst2html`` front-end producing a
+html rendering with syntax highlight. (It should be not too difficult to
+create an ``rst2latex-pygments`` front end and as well.)
+
+A new "sourcecode" directive is defined, that takes one argument `language`
+and uses the `Pygments`_ source highlighter to render its content as a
+literal block with syntax colour. It looks like::
+
+  .. sourcecode:: python
+     
+     def hello():
+         print "hello world"
+
+
+To support this way of syntax highlight, the PyLit converter would need a
+configurable "code block marker" instead of the hard coded double colon
+(``::``) presently in use. (See also the `open questions`__ section in
+pylit.py.)
+
+__ ../examples/pylit.py.html#open-questions
+
+Advantages:
+
+* Easy implementation with no changes needed for the stock docutils_. 
+* Separation of code blocks and ordinary literal blocks.
+
+Disadvantage:
+
+* more "invasive" markup distracting from content
+* no "minimal" code block marker -- three additional lines per code block
+
+The disadvantages become a real issue in literate programming where a code
+block is expected to be the most used block markup by far.
+
+Examples
+""""""""
+
+Python code:
+ source: `for-else-test.py.txt`_; output: `for-else-test.py.html`_
+ 
+Style sheet: 
+ source:  `pygments-default.css`_; output:  `pygments-default.css.html`_ 
+
+
+
+Alternative syntax: Odtwriter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The odtwriter_ can add Python syntax highlighting to ordinary literal blocks.
+
+The ``--add-syntax-highlighting`` command line flag activates syntax
+highlighting in literal blocks. By default, the "python" lexer is used.
+
+You can change this within your reST document with the `sourcecode`
+directive::
+  
+  .. sourcecode:: off
+  
+  ordinary literal block::
+  
+     content set in teletype
+
+  .. sourcecode:: on
+  .. sourcecode:: python
+     
+  colourful Python code::
+     
+     def hello():
+         print "hello world"
+
+
+The "sourcecode" directive defined by the odtwriter is principally
+different from the "sourcecode" directive of rst2html-pygments:
+  
+* The odtwriter directive does not have content. It is a switch.
+
+* The syntax highlighting state and language/lexer set by this directive
+  remain in effect until the next sourcecode directive is encountered in the
+  reST document.
+  
+  ``.. sourcecode:: <newstate>`` 
+       make highlighting active or inactive. 
+       <newstate> is either ``on`` or ``off``.
+  
+  ``.. sourcecode:: <lexer>`` 
+       change the lexer parsing literal code blocks.
+       <lexer> should be one of aliases listed at pygment's `languages and
+       markup formats`_.
+
+   
+The advantage of this approach is the clean and simple syntax for code
+blocks -- preserving the space saving feature of the "minimised" literal
+block marker (``::`` at the end of a text paragraph). This is especially
+handy in literate programs where there are many sourcecode blocks!
+
+
+Syntax alternative proposal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* A *command line option* ``--syntax-highlight=<lexer>`` 
+  tells the writer to apply syntax highlight to literal blocks.
+
+* Turn of syntax highlight with ``--syntax-highlight=off`` or
+  ``--no-syntax-highlight``.
+  
+* The corresponding *directive* should have the same name, as this
+  
+  * makes the relationship more transparent,
+  * makes clear that there is no content to expect,
+  * disambiguates from the name proposed in `Using Pygments in ReST
+    documents`_.
+    
+  Example::
+  
+    .. sourcecode:: off
+    
+    ordinary literal block::
+    
+       typeset in monospace
+  
+    .. sourcecode:: python
+       
+    colourful Python code::
+       
+       def hello():
+           print "hello world"
+    
+
+  Instead of a dedicated "syntax-highlight" directive, a settings
+  key could be employed together with the upcoming "settings" directive.
+
+  Example::
+
+    .. settings::
+       :syntax-highlight: bash
+     
+
+* The syntax highlighting state and language/lexer set by this
+  directive remain in effect until the next "syntax-highlight" directive
+  is encountered in the reST document.
+  
+* In contrast to the current odtwriter, there is no "on" argument:
+  
+  ``.. syntax-highlight:: <lexer>`` 
+       makes highlighting active and sets the Pygments lexer to use.
+  
+  ``.. syntax-highlight:: off`` 
+       turns off highlighting of literal blocks
+
+  In order to turn syntax highlighting on and set the
+  lexer, you will need to use this directive only once.
+
+
+     
+Configurable literal block directive
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An even more flexible alternative would be to make the default "literal block"
+role configurable.
+
+* Define a new "literal" directive for an ordinary literal block
+  (doctree element "literal-block" with no parsing)
+
+* Define a "literal-block" setting that controls which directive is called
+  on a block following ``::``. Default would be the "literal" directive.
+  
+  Alternatively, define a new "default-literal-block" directive instead of
+  a settings key.
+
+Analogue to customising the default "interpreted text" role with
+the "default-role" directive, the non-invasive literal-block markup could be
+used for e.g.
+
+* the "line-block" directive for poems or addresses
+
+* the "parsed-literal" directive
+
+* a "sourcecode" directive for colourful code 
+  (analog to the one in `rst2html-pygments`_)
+
+* a "listing" directive for the listings environment in LaTeX
+
+Example::
+
+  ordinary literal block::
+  
+     some text typeset in monospace
+
+  .. settings::
+     :literal-block:  sourcecode python
+     
+  colourful Python code::
+     
+     def hello():
+         print "hello world"
+
+  
+In the same line, a "default-block-quote" setting or directive could be
+considered to configure the meaning of a block quote.
+
+
+.. _docutils:  http://docutils.sourceforge.net/
+.. _rest2web:  http://www.voidspace.org.uk/python/rest2web/
+.. _Moin-Moin Python colorizer:
+     http://www.standards-schmandards.com/2005/fangs-093/
+.. _odtwriter: http://www.rexx.com/~dkuhlman/odtwriter.html
+.. _pygments:  http://pygments.org/
+.. _languages and markup formats: http://pygments.org/languages
+.. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
+
+.. _rst2html-pygments: rst2html-pygments
+.. _for-else-test.py.txt: for-else-test.py.txt
+.. _for-else-test.py.html: for-else-test.py.html
+.. _pygments-default.css: pygments-default.css
+.. _pygments-default.css.html: pygments-default.css.html

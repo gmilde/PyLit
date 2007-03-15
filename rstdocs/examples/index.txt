@@ -62,7 +62,7 @@ of such "literate comments".
 .. _pydoc: http://docs.python.org/lib/module-pydoc.html
 
 `simplestates.py`__
-  is the module providing the state machine used in PyLit.
+  is a module providing the state machine used in earlier PyLit versions.
 
   Sources: `simplestates.py`__, `simplestates.py.txt`__
 
@@ -176,6 +176,27 @@ __ ginac-tutorial.py.txt
 .. _LiteratePrograms.org Wiki: 
      http://en.literateprograms.org/LiteratePrograms:Welcome
 
+Style sheets
+------------
+
+Not only code, but also cascading style sheets can gain from beeing made
+literate documents.
+
+`pygments-default.css`__
+  is a style sheet that provides colour to code blocks.
+  
+  Sources: `pygments-default.css`__, `pygments-default.css.txt`__
+
+__ ../features/pygments-default.css.html
+__ ../features/pygments-default.css
+__ ../features/pygments-default.css.txt
+
+Configuration files
+-------------------
+
+An interesting use case will be configuration files. Generating a template
+as well as user documentation from the same source helps to keep them
+synchronized.
 
 
 

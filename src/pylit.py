@@ -46,6 +46,7 @@
 #                    removed dependency on SimpleStates module
 # :2007-03-06: 0.3.2 bugfix: do not set `language` in `option_defaults`
 #                    renamed `code_languages` to `languages`
+#              0.3.3 added "css" to known languages
 # 
 # ::
 
@@ -90,6 +91,7 @@ option_defaults = {}
 option_defaults["comment_strings"] = {"python": '# ',
                                       "slang":  '% ', 
                                       "c++":    '// ',
+                                      "css":    '// ',
                                       "elisp":  ';; '}  
 
 # The default language is set from file extensions (if not given as
@@ -98,9 +100,10 @@ option_defaults["comment_strings"] = {"python": '# ',
 
 ## option_defaults["language"]        = "python"        
 option_defaults["languages"]  = {".py": "python", 
-                                      ".sl": "slang", 
-                                      ".c": "c++",
-                                      ".el":"elisp"}
+                                 ".sl": "slang", 
+                                 ".c": "c++",
+                                 ".css": "css",
+                                 ".el":"elisp"}
 option_defaults["code_extensions"] = option_defaults["languages"].keys()
 option_defaults["text_extensions"] = [".txt"]
 
