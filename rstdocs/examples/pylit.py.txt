@@ -50,8 +50,7 @@ Changelog
                    option_defaults -> defaults = optparse.Values()
                    simpler PylitOptions: don't store parsed values,
                                          don't parse at initialization
-                   OptionValues: return None for non-existing attributes
-
+                   OptionValues: return `None` for non-existing attributes
 
 ::
 
@@ -734,35 +733,9 @@ How to determine which source is up-to-date?
 Recognised Filename Extensions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Finding an easy to remember, unused filename extension is not easy.
-
-.py.txt
-  a double extension (similar to .tar.gz, say) seems most appropriate
-  (at least on UNIX). However, it fails on FAT16 filesystems.
-  The same scheme can be used for c.txt, p.txt and the like.
-
-.pytxt
-  is recognised as extension by os.path.splitext but also fails on FAT16
-
-.pyt 
-  (PYthon Text) is used by the Python test interpreter
-  `pytest <http:www.zetadev.com/software/pytest/>`__
-
-.pyl
-  was even mentioned as extension for "literate Python" files in an
-  email exchange (http://www.python.org/tim_one/000115.html) but 
-  subsequently used for Python libraries.
-
-.lpy 
-  seems to be free (as by a Google search, "lpy" is the name of a python
-  code pretty printer but this should not pose a problem).
-
-.tpy
-  seems to be free as well.
-
 Instead of defining a new extension for "pylit" literate programms,
-by default ``.txt`` will be appended for literate code and stripped by
-the conversion to executable code. i.e. for a Python program foo:
+by default ``.txt`` will be appended for the text source and stripped by
+the conversion to the code source. I.e. for a Python program foo:
 
 * the code source is called ``foo.py``
 * the text source is called ``foo.py.txt``
@@ -771,10 +744,10 @@ the conversion to executable code. i.e. for a Python program foo:
 OptionValues
 ------------
 
-For use as keyword arguments, it is handy to have the options
-in a dictionary. The following class adds an `as_dict` method to
+For use as keyword arguments, it is handy to have the options in a
+dictionary. The following class adds an `as_dict` method to
 `optparse.Values` that returns all data arguments that are not in the class
-definition (thus filtering class methods and arguments) and not None::
+definition and not None::
 
   class OptionValues(optparse.Values):
       def as_dict(self):
