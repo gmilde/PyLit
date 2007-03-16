@@ -24,14 +24,6 @@ More examples in the tutorial_.
 
 .. _tutorial: ../tutorial/index.html
 
-Instead of defining a new extension for "pylit" literate programms, by
-default ``.txt`` will be appended for text source and stripped by the
-conversion to executable code. i.e. for a program foo:
-
-  * the python source is called ``foo.py``
-  * the literate source is called ``foo.py.txt``
-  * the html rendering is called ``foo.py.html``
-
 With the ``-h`` (or ``--help``) argument, the script prints a usage info::
 
    #> python pylit.py -h
@@ -60,6 +52,20 @@ Options
      -s, --strip           strip comments|code
      -t, --txt2code        convert reStructured text to code
      -d, --diff            do a round-trip and test for differences
+
+
+Recognised Filename Extensions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Instead of defining a new `extension for pylit files`_, by default ``.txt``
+will be appended for literate code and stripped by the conversion to
+executable code. i.e. for a Python program foo:
+
+* the code source is called ``foo.py``
+* the text source is called ``foo.py.txt``
+* the html rendering is called ``foo.py.html``
+
+.. _extension for pylit files: extensions-for-pylit.txt
 
 
 Programmatic use as pylit module
