@@ -16,9 +16,6 @@ The `Literate Programming FAQ`_ gives the following definition:
 
    `Literate programming` is the combination of documentation and source
    together in a fashion suited for reading by human beings.
-   
-
-.. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
 
 The term `literate programming` and the first implementation of the concept
 were both the creation of Donald Knuth, the author of `The Art of Computer
@@ -36,10 +33,12 @@ art.
 
    -- Donald E. Knuth, `Literate Programming`_,  1984
 
+
+.. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
 .. _Literate Programming: WEB_
 
 
-A more specific definition is given in `POD is not Literate Programming`_
+A narrower definition is given in `POD is not Literate Programming`_
 by Mark-Jason Dominus:
 
   Literate programming systems have the following properties:
@@ -67,7 +66,7 @@ qualifies as `semi-literate`:
   programming and excessive documenting, where the documentation is embedded
   into the code as comments.
 
-For a full discussion of the PyLit concepts see the Features_ page.
+For more discussion of the PyLit concepts see the Features_ page.
 
 .. _POD is not Literate Programming: 
     http://www.perl.com/pub/a/tchrist/litprog.html
