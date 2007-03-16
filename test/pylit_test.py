@@ -598,33 +598,55 @@ print 'hello world'
 """,
 "")
 
+## Global defaults
+## ===============
+
+def test_global_option_defaults():
+    """dictionary of programming languages and extensions"""
+    for ext in [".py", ".sl", ".c"]:
+        assert ext in defaults.code_extensions
+    assert defaults.languages[".py"] == "python"
+    assert defaults.languages[".sl"] == "slang"
+    assert defaults.languages[".c"] == "c++"
+
+
 ## Command line use
 ## ================
 ## 
 ## Test the option parsing::
 
-def test_Values():
-    values = OptionValues()
-    print values
+class test_Values(object):
     defaults = {"a1": 1, "a2": False}
-    values = OptionValues(defaults)
-    print values, values.as_dict()
-    assert values.a1 == 1
-    assert values.a2 == False
-    assert values.as_dict() == defaults
+    def setUp(self):
+        self.values = OptionValues(self.defaults)
+        print self.values
+        
+    def test_setup(self):
+        assert self.values.a1 == 1
+        assert self.values.a2 == False
+    
+    def test_as_dict(self):
+        print "as_dict() ->", self.values.as_dict()
+        assert self.values.as_dict() == self.defaults
+        
+    def test_getattr(self):
+        """Attempt to get a non-existing argument should return None
+        
+        This make the code more concise as a try: except: AttributeError
+        statement or the parent class method `ensure_value(name, default)`.
+        """
+        assert self.values.a3 == None
+        
+    def test_getattr_ensure_value(self):
+        """Ensure value can be used to set a default different from None"""
+        assert self.values.a4 == None
+        self.values.ensure_value("a4", 32)
+        assert self.values.a4 == 32
 
 class test_PylitOptions:
     """Test the PylitOption class"""
     def setUp(self):
         self.options = PylitOptions()
-
-    def test_languages_and_extensions(self):
-        """dictionary of programming languages and extensions"""
-        for ext in [".py", ".sl", ".c"]:
-            assert ext in self.options.values.code_extensions
-        assert self.options.values.languages[".py"] == "python"
-        assert self.options.values.languages[".sl"] == "slang"
-        assert self.options.values.languages[".c"] == "c++"
 
     def test_parse_args(self):
         """parse cmd line args"""
@@ -714,11 +736,11 @@ class test_PylitOptions:
         assert values.outfile == "bar.txt"
         assert values.txt2code == True
 
-    def test_init(self):
-        options = PylitOptions(["--txt2code", "foo"], txt2code=False)
-        pprint(options)
-        assert options.values.txt2code == True
-        assert options.values.infile == "foo"
+    def test_call(self):
+        values = self.options(["--txt2code", "foo"], txt2code=False)
+        pprint(values)
+        assert values.txt2code == True
+        assert values.infile == "foo"
 
 ## Input and Output streams
 ## ------------------------

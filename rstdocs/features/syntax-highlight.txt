@@ -65,7 +65,7 @@ Pygments enhanced rst2html front-end
 The `rst2html-pygments`_ script combines code from "`Using Pygments in ReST
 documents`_" with the standard docutils ``rst2html`` front-end producing a
 html rendering with syntax highlight. (It should be not too difficult to
-create an ``rst2latex-pygments`` front end and as well.)
+create an ``rst2latex-pygments`` front end as well.)
 
 A new "sourcecode" directive is defined, that takes one argument `language`
 and uses the `Pygments`_ source highlighter to render its content as a
@@ -100,18 +100,23 @@ block is expected to be the most used block markup by far.
 Examples
 """"""""
 
-Python code:
- source: `for-else-test.py.txt`_; output: `for-else-test.py.html`_
+`for-else-test.py.html`_
+  tries out of the command flow in a Python for else construct.
+  
+  Source: `for-else-test.py.txt`_
  
-Style sheet: 
- source:  `pygments-default.css`_; output:  `pygments-default.css.html`_ 
+`pygments-default.css.html`_
+  is the style sheet that provides the colours in these examples
+  
+  Sources: `pygments-default.css`_, `pygments-default.css.txt`_ 
 
 
 
-Alternative syntax: Odtwriter
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Odtwriter syntax
+~~~~~~~~~~~~~~~~
 
-The odtwriter_ can add Python syntax highlighting to ordinary literal blocks.
+Dave Kuhlmans odtwriter_ extension can add Python syntax highlighting
+to ordinary literal blocks.
 
 The ``--add-syntax-highlighting`` command line flag activates syntax
 highlighting in literal blocks. By default, the "python" lexer is used.
@@ -159,31 +164,44 @@ block marker (``::`` at the end of a text paragraph). This is especially
 handy in literate programs where there are many sourcecode blocks!
 
 
-Syntax alternative proposal
+Alternative syntax proposal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* A *command line option* ``--syntax-highlight=<lexer>`` 
+Ideas for a revised highlighting syntax based on the one in the
+odtwriter:
+
+* A *command line option* ``--syntax-highlight=LEXER`` 
   tells the writer to apply syntax highlight to literal blocks.
 
 * Turn of syntax highlight with ``--syntax-highlight=off`` or
   ``--no-syntax-highlight``.
   
-* The corresponding *directive* should have the same name, as this
+* The corresponding *directive* should also be named "syntax-highlight"
+  (instead of "sourcecode") because:
   
-  * makes the relationship more transparent,
-  * makes clear that there is no content to expect,
-  * disambiguates from the name proposed in `Using Pygments in ReST
+  * it makes the relationship of command line option and directive more
+    transparent,
+    
+  * The name "sourcecode" leads me to assume that the directive
+    contains source code that should be treated specially. It's a
+    surprise to realise that the odtwriter's "sourcecode" directive
+    is a switch without content.
+    
+  * it disambiguates from the name proposed in `Using Pygments in ReST
     documents`_.
+  
+  * with Pygments you can highlight not only source code but also
+    config files and markup languages,
     
   Example::
   
-    .. sourcecode:: off
+    .. syntax-highlight:: off
     
     ordinary literal block::
     
        typeset in monospace
   
-    .. sourcecode:: python
+    .. syntax-highlight:: python
        
     colourful Python code::
        
@@ -206,7 +224,7 @@ Syntax alternative proposal
   
 * In contrast to the current odtwriter, there is no "on" argument:
   
-  ``.. syntax-highlight:: <lexer>`` 
+  ``.. syntax-highlight:: LEXER`` 
        makes highlighting active and sets the Pygments lexer to use.
   
   ``.. syntax-highlight:: off`` 
@@ -232,8 +250,8 @@ role configurable.
   Alternatively, define a new "default-literal-block" directive instead of
   a settings key.
 
-Analogue to customising the default "interpreted text" role with
-the "default-role" directive, the non-invasive literal-block markup could be
+Analogue to customising the default role of "interpreted text" with
+the "default-role" directive, the concise literal-block markup could be
 used for e.g.
 
 * the "line-block" directive for poems or addresses
@@ -261,7 +279,7 @@ Example::
 
   
 In the same line, a "default-block-quote" setting or directive could be
-considered to configure the meaning of a block quote.
+considered to configure the role of a block quote.
 
 
 .. _docutils:  http://docutils.sourceforge.net/
@@ -277,4 +295,5 @@ considered to configure the meaning of a block quote.
 .. _for-else-test.py.txt: for-else-test.py.txt
 .. _for-else-test.py.html: for-else-test.py.html
 .. _pygments-default.css: pygments-default.css
+.. _pygments-default.css.txt: pygments-default.css.txt
 .. _pygments-default.css.html: pygments-default.css.html
