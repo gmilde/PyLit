@@ -51,6 +51,7 @@
 #                    simpler PylitOptions: don't store parsed values,
 #                    don't parse at initialization.
 #                    OptionValues: return `None` for non-existing attributes
+#                    removed -infile and -outfile, use positional arguments
 # 
 # ::
 
@@ -70,8 +71,6 @@ _version = "0.3"
 # Requirements
 # ------------
 # 
-# * library modules
-# 
 # ::
 
 import re
@@ -85,9 +84,9 @@ import optparse
 # defaults
 # --------
 # 
-# Collect option defaults in an `defaults` object. This gives an central
-# point for the used defaults and their customization.
-# It also facilitates the setting of options in programmatic use ::
+# The `defaults` object provides a central point for default values and
+# their customization. It also facilitates the setting of options in
+# programmatic use ::
 
 defaults = optparse.Values()
 

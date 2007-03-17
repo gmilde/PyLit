@@ -71,8 +71,6 @@ Changelog
 Requirements
 ------------
 
-* library modules
-
 ::
 
   import re
@@ -86,9 +84,9 @@ Customisation
 defaults
 --------
 
-Collect option defaults in an `defaults` object. This gives an central
-point for the used defaults and their customization.
-It also facilitates the setting of options in programmatic use ::
+The `defaults` object provides a central point for default values and
+their customization. It also facilitates the setting of options in
+programmatic use ::
 
   defaults = optparse.Values()
   
