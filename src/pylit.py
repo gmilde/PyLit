@@ -46,6 +46,11 @@
 #                    removed dependency on SimpleStates module
 # :2007-03-06: 0.3.2 bugfix: do not set `language` in `option_defaults`
 #                    renamed `code_languages` to `languages`
+# :2007-03-16: 0.3.3 new language css
+#                    option_defaults -> defaults = optparse.Values()
+#                    simpler PylitOptions: don't store parsed values,
+#                    don't parse at initialization.
+#                    OptionValues: return `None` for non-existing attributes
 # 
 # ::
 
@@ -53,8 +58,8 @@
    
    PyLit is a bidirectional converter between
    
-   * a (reStructured) text source with embedded code, and
-   * a code source with embedded text blocks (comments)
+   * a (reStructured) text source with embedded code blocks, and
+   * a code source with embedded documentation (comment blocks)
 """
 
 __docformat__ = 'restructuredtext'
@@ -74,7 +79,7 @@ import os
 import sys
 import optparse
 
-# Customization
+# Customisation
 # =============
 # 
 # defaults
@@ -86,8 +91,8 @@ import optparse
 
 defaults = optparse.Values()
 
-# Languages and language specific defaults::
-
+# Languages and language specific defaults:
+# 
 # The language is set from file extensions (if not given as command line
 # option). Setting it in `defaults` would override this auto-setting
 # feature.::
@@ -131,10 +136,12 @@ defaults.codeindent =  2
 #        first recognized code line (leading comment or first indented literal
 #        block of the text source).
 # 
-#   
-#  
-# Classes
-# =======
+# ::
+
+defaults.overwrite_default = 'update'
+  
+# Converter Classes
+# =================
 # 
 # Converter
 # ---------
@@ -354,7 +361,7 @@ class Text2Code(PyLitConverter):
         
         Strip `self.header_string` if present."""
         
-  
+
         self.set_state = self.code_test
         
         if lines[0].startswith(self.header_string):
@@ -689,7 +696,6 @@ class Code2Text(PyLitConverter):
             lines[-2] = ":".join((head, tail))
 
 
-
 # Command line use
 # ================
 # 
@@ -728,95 +734,90 @@ class Code2Text(PyLitConverter):
 # Recognised Filename Extensions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Finding an easy to remember, unused filename extension is not easy.
-# 
-# .py.txt
-#   a double extension (similar to .tar.gz, say) seems most appropriate
-#   (at least on UNIX). However, it fails on FAT16 filesystems.
-#   The same scheme can be used for c.txt, p.txt and the like.
-# 
-# .pytxt
-#   is recognised as extension by os.path.splitext but also fails on FAT16
-# 
-# .pyt 
-#   (PYthon Text) is used by the Python test interpreter
-#   `pytest <http:www.zetadev.com/software/pytest/>`__
-# 
-# .pyl
-#   was even mentioned as extension for "literate Python" files in an
-#   email exchange (http://www.python.org/tim_one/000115.html) but 
-#   subsequently used for Python libraries.
-# 
-# .lpy 
-#   seems to be free (as by a Google search, "lpy" is the name of a python
-#   code pretty printer but this should not pose a problem).
-# 
-# .tpy
-#   seems to be free as well.
-# 
 # Instead of defining a new extension for "pylit" literate programms,
-# by default ``.txt`` will be appended for literate code and stripped by
-# the conversion to executable code. i.e. for a Python program foo:
+# by default ``.txt`` will be appended for the text source and stripped by
+# the conversion to the code source. I.e. for a Python program foo:
 # 
 # * the code source is called ``foo.py``
 # * the text source is called ``foo.py.txt``
 # * the html rendering is called ``foo.py.html``
 # 
+# 
 # OptionValues
 # ------------
 # 
-# For use as keyword arguments, it is handy to have the options
-# in a dictionary. The following class adds an `as_dict` method to
-# `optparse.Values` that returns all data arguments that are not in the class
-# definition (thus filtering class methods and arguments) and not None::
+# The following class adds `as_dict` and `__getattr__` methods to
+# `optparse.Values`::
 
 class OptionValues(optparse.Values):
+
+# OptionValues.as_dict
+# ~~~~~~~~~~~~~~~~~~~~
+# 
+# For use as keyword arguments, it is handy to have the options in a
+# dictionary. `as_dict` returns a copy of the instances object dictionary::
+      
     def as_dict(self):
         """Return options as dictionary object"""
-        non_values = dir(OptionValues)
-        return dict([(option, getattr(self, option)) for option in dir(self)
-                     if option not in non_values and option is not None])
+        return self.__dict__.copy()
 
-# Defining `__getattr__` lets us replace calls like
-# ``options.ensure_value("key", None)`` with the more concise
-# ``options.key``.
-#
-# The Python Reference Manual says:
-#
+# OptionValues.complete
+# ~~~~~~~~~~~~~~~~~~~~~
+# 
+# ::
+
+    def complete(self, **keyw):
+        """
+        Complete the option values with keyword arguments.
+        
+        Do not overwrite existing values. Only use arguments that do not
+        have a corresponding attribute in `self`, 
+        """
+        for key in keyw:
+            if not self.__dict__.has_key(key):
+                setattr(self, key, keyw[key])
+
+# OptionValues.__getattr__
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# The Python Reference Manual says on the special method `__getattr__`:
+# 
 #   Called when an attribute lookup has not found the attribute in the usual
 #   places (i.e. it is not an instance attribute nor is it found in the class
 #   tree for self). name is the attribute name. This method should return the
 #   (computed) attribute value or raise an AttributeError exception.
+# 
+# To replace calls using ``options.ensure_value("OPTION", None)`` with the
+# more concise ``options.OPTION``, we define `__getattr__` returning the
+# default value `None`::
 
     def __getattr__(self, name): 
         """Return default value for non existing options"""
         return None
 
+
 # PylitOptions
 # ------------
 # 
-# Options are stored in the values attribute of the `PylitOptions` class.
-# It is initialized with default values and parsed command line options (and
-# arguments)  This scheme allows easy customization by code importing the
- # `pylit` module. ::
-
+# The `PylitOptions` class comprises an option parser and methods for parsing
+# and completion of command line options::
+  
 class PylitOptions(object):
-    """Storage and handling of program options
-    """
+    """Storage and handling of command line options for pylit"""
 
 # Instantiation       
 # ~~~~~~~~~~~~~
 # 
-# Instantiation sets up an OptionParser and initializes it with pylit's
-# command line options and default values. ::
+# ::
 
-    def __init__(self, args=sys.argv[1:], **keyw):
+    def __init__(self):
         """Set up an `OptionParser` instance for pylit command line options
+
         """
         p = optparse.OptionParser(usage=main.__doc__, version=_version)
         # add the options
         p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
-                     help="convert code to reStructured text")
+                     help="convert code source to text source")
         p.add_option("--comment-string", dest="comment_string",
                      help="text block marker (default '# ' (for python))" )
         p.add_option("-d", "--diff", action="store_true", 
@@ -825,36 +826,19 @@ class PylitOptions(object):
                      help="run doctest.testfile() on the text version")
         p.add_option("-e", "--execute", action="store_true",
                      help="execute code (Python only)")
-        p.add_option("-f", "--infile",
-                     help="input file name ('-' for stdout)" )
         p.add_option("--language", action="store", 
                      choices = defaults.languages.values(),
                      help="use LANGUAGE native comment style")
         p.add_option("--overwrite", action="store", 
                      choices = ["yes", "update", "no"],
                      help="overwrite output file (default 'update')")
-        p.add_option("-o", "--outfile",
-                     help="output file name ('-' for stdout)" )
         p.add_option("--replace", action="store_true",
                      help="move infile to a backup copy (appending '~')")
         p.add_option("-s", "--strip", action="store_true",
                      help="export by stripping text or code")
         p.add_option("-t", "--txt2code", action="store_true",
-                     help="convert reStructured text to code")
+                     help="convert text source to code source")
         self.parser = p
-
-# Calling
-# ~~~~~~~
-# 
-# "Calling" an instance parses the argument list to get option values and 
-# completes the option values based on "context-sensitive defaults". 
-# Defaults can be provided as keyword arguments. ::
-
-    def __call__(self, args=sys.argv[1:], **keyw):
-        """parse and complete command line args
-        """
-        values = self.parse_args(args, **keyw)
-        return self.complete_values(values)
 
 
 # PylitOptions.parse_args
@@ -881,49 +865,68 @@ class PylitOptions(object):
             values.outfile = args[1]
         except IndexError:
             pass
+        
         return values
 
 # PylitOptions.complete_values
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The `complete` method uses context information to set missing option values
-# to sensible defaults (if possible).
-# 
-# ::
+# Complete an OptionValues instance `values`.  Use module-level defaults and
+# context information to set missing option values to sensible defaults (if
+# possible) ::
 
     def complete_values(self, values):
-        """complete option values with context sensible defaults
+        """complete option values with module and context sensible defaults
+        
+        x.complete_values(values) -> values
+        values -- OptionValues instance
         """
+        
+# Complete with module-level defaults::
+
+        values.complete(**defaults.__dict__)
+
+# Ensure infile is a string::
+
         values.ensure_value("infile", "")
-        # Guess conversion direction from infile filename
-        if values.ensure_value("txt2code", None) is None:
+
+# Guess conversion direction from `infile` filename::
+
+        if values.txt2code is None:
             in_extension = os.path.splitext(values.infile)[1]
-            if in_extension in defaults.text_extensions:
+            if in_extension in values.text_extensions:
                 values.txt2code = True
-            elif in_extension in defaults.code_extensions:
+            elif in_extension in values.code_extensions:
                 values.txt2code = False
-        # Auto-determine the output file name
-        values.ensure_value("outfile", self.get_outfile_name(values.infile, 
-                                                             values.txt2code))
-        # Guess conversion direction from outfile filename or set to default
+
+# Auto-determine the output file name::
+
+        values.ensure_value("outfile", self._get_outfile_name(values))
+        
+# Second try: Guess conversion direction from outfile filename::
+
         if values.txt2code is None:
             out_extension = os.path.splitext(values.outfile)[1]
-            values.txt2code = not (out_extension in defaults.text_extensions)
+            values.txt2code = not (out_extension in values.text_extensions)
         
-        # Set the language of the code (default "python")
+# Set the language of the code::
+
         if values.txt2code is True:
             code_extension = os.path.splitext(values.outfile)[1]
         elif values.txt2code is False:
             code_extension = os.path.splitext(values.infile)[1]
         values.ensure_value("language", 
-                            defaults.languages.get(code_extension, "python"))
-        # Set the default overwrite mode
-        values.ensure_value("overwrite", 'update')
+                            values.languages.get(code_extension, 
+                                                 values.default_language))
+            
+# Set the default overwrite mode::
+
+        values.ensure_value("overwrite", values.overwrite_default)
 
         return values
 
-# PylitOptions.get_outfile_name
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PylitOptions._get_outfile_name
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # Construct a matching filename for the output file. The output filename is
 # constructed from `infile` by the following rules:
@@ -933,27 +936,38 @@ class PylitOptions(object):
 # * add a `txt_ extension` (code2txt)
 # * fallback: if no guess can be made, add ".out"
 # 
+# TODO: use values.outfile_extensionif it exists?
 # ::
 
-    def get_outfile_name(self, infile, txt2code=None):
+    def _get_outfile_name(self, values):
         """Return a matching output filename for `infile`
         """
         # if input is stdin, default output is stdout
-        if infile == '-':
+        if values.infile == '-':
             return '-'
-        # Modify `infile`
-        (base, ext) = os.path.splitext(infile)
-        # TODO: should get_outfile_name() use self.values.outfile_extension
-        #       if it exists?
         
-        # strip text extension
-        if ext in defaults.text_extensions: 
-            return base
-        # add (first) text extension for code files
-        if ext in defaults.code_extensions or txt2code == False:
-            return infile + defaults.text_extensions[0]
+        # Derive from `infile` name: strip or add text extension
+        (base, ext) = os.path.splitext(values.infile)
+        if ext in values.text_extensions: 
+            return base # strip
+        if ext in values.code_extensions or values.txt2code == False:
+            return values.infile + values.text_extensions[0] # add
         # give up
-        return infile + ".out"
+        return values.infile + ".out"
+
+# PylitOptions.__call__
+# ~~~~~~~~~~~~~~~~~~~~~
+# 
+# The special `__call__` method allows to use PylitOptions instances as
+# *callables*: Calling an instance parses the argument list to extract option
+# values and completes them based on "context-sensitive defaults".  Keyword
+# arguments are passed to `PylitOptions.parse_args`_ as default values. ::
+
+    def __call__(self, args=sys.argv[1:], **keyw):
+        """parse and complete command line args return option values
+        """
+        values = self.parse_args(args, **keyw)
+        return self.complete_values(values)
 
 
 
@@ -1130,16 +1144,16 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # Customization
 # ~~~~~~~~~~~~~
 # 
-# Option defaults for the conversion can be as keyword arguments to `main`_. 
-# The option defaults will be updated by command line options and extended
-# with "intelligent guesses" by `PylitOptions` and passed on to helper
-# functions and the converter instantiation.
+# Option default values for the conversion can be given as keyword arguments
+# to `main`_.  The option defaults will be updated by command line options and
+# extended with "intelligent guesses" by `PylitOptions` and passed on to
+# helper functions and the converter instantiation.
 # 
 # This allows easy customization for programmatic use -- just or call `main`
 # with the appropriate keyword options (or with a `defaults`
 # dictionary.), e.g.:
 # 
-# >>> defaults = {'language': "c++",
+# >>> defaults = {'language_default': "c++",
 # ...             'codeindent': 4,
 # ...             'header_string': '..admonition::'
 # ...            }
@@ -1149,14 +1163,18 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # ::
 
 def main(args=sys.argv[1:], **defaults):
-    """%prog [options] FILE [OUTFILE]
+    """%prog [options] INFILE [OUTFILE]
     
-    Convert between reStructured Text with embedded code, and
-    Source code with embedded text comment blocks"""
+    Convert between (reStructured) text source with embedded code,
+    and code source with embedded documentation (comment blocks)
+    
+    The special filename '-' stands for standard in and output.
+    """
 
 # Parse and complete the options::
 
     options = PylitOptions()(args, **defaults)
+    # print "infile", repr(options.infile)
 
 # Special actions with early return::
 

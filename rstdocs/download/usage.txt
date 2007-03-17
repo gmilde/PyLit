@@ -28,30 +28,31 @@ With the ``-h`` (or ``--help``) argument, the script prints a usage info::
 
    #> python pylit.py -h
    
-   usage: pylit [options] FILE [OUTFILE]
+   usage: pylit [options] INFILE [OUTFILE]
     
-    Convert between reStructured Text with embedded code, and
-    Source code with embedded text comment blocks
-
+        Convert between (reStructured) text source with embedded code,
+        and code source with embedded documentation (comment blocks)
+        
+        The special filename '-' stands for standard in and output.
+    
     
 Options
 ~~~~~~~
 
-     --version             show program's version number and exit
-     -h, --help            show this help message and exit
-     -c, --code2txt        convert code to reStructured text
-     --doctest             run doctest.testfile() on the text version
-     -e, --execute         execute code (implies -c, Python only)
-     -f INFILE, --infile=INFILE
-                           input file name ('-' for stdout)
-     --overwrite=OVERWRITE
-                           overwrite output file (default 'update')
-     -o OUTFILE, --outfile=OUTFILE
-                           output file name ('-' for stdout)
-     --replace             move infile to a backup copy (appending '~')
-     -s, --strip           strip comments|code
-     -t, --txt2code        convert reStructured text to code
-     -d, --diff            do a round-trip and test for differences
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+  -c, --code2txt        convert code source to text source
+  --comment-string=COMMENT_STRING
+                        text block marker (default '# ' (for python))
+  -d, --diff            test for differences to existing file
+  --doctest             run doctest.testfile() on the text version
+  -e, --execute         execute code (Python only)
+  --language=LANGUAGE   use LANGUAGE native comment style
+  --overwrite=OVERWRITE
+                        overwrite output file (default 'update')
+  --replace             move infile to a backup copy (appending '~')
+  -s, --strip           export by stripping text or code
+  -t, --txt2code        convert text source to code source
 
 
 Recognised Filename Extensions

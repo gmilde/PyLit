@@ -615,7 +615,7 @@ def test_global_option_defaults():
 ## 
 ## Test the option parsing::
 
-class test_Values(object):
+class test_OptionValues(object):
     defaults = {"a1": 1, "a2": False}
     def setUp(self):
         self.values = OptionValues(self.defaults)
@@ -628,6 +628,17 @@ class test_Values(object):
     def test_as_dict(self):
         print "as_dict() ->", self.values.as_dict()
         assert self.values.as_dict() == self.defaults
+        
+    def test_complete(self):
+        """complete should update non-existing values only"""
+        self.values.complete(**{"a1": 2, "a2": 4, "a3": 3})
+        print "completed ->", self.values
+        assert self.values.a1 == 1, "must not overwrite existing value"
+        assert self.values.a2 == False, "must not overwrite existing value"
+        assert self.values.a3 == 3, "should set new attributes"
+        self.values.complete(a1=2, a4=20)
+        assert self.values.a1 == 1, "must not overwrite existing value"
+        assert self.values.a4 == 20, "should set new attributes"
         
     def test_getattr(self):
         """Attempt to get a non-existing argument should return None
@@ -642,6 +653,7 @@ class test_Values(object):
         assert self.values.a4 == None
         self.values.ensure_value("a4", 32)
         assert self.values.a4 == 32
+
 
 class test_PylitOptions:
     """Test the PylitOption class"""
@@ -662,9 +674,9 @@ class test_PylitOptions:
         print values.infile
         assert values.infile == "text.txt"
         assert values.outfile == "code.py"
-        # set the output (option with argument)
-        values = self.options.parse_args(["--outfile", "code.py"])
-        assert values.outfile == "code.py"
+        # option with argument
+        values = self.options.parse_args(["--language", "slang"])
+        assert values.language == "slang"
 
     def test_parse_args_comment_string(self):
        # default should appear in options
@@ -679,21 +691,35 @@ class test_PylitOptions:
     def test_get_outfile_name(self):
         """should return a sensible outfile name given an infile name"""
         # return stdout for stdin
-        assert "-" == self.options.get_outfile_name("-")
+        values = OptionValues({"infile": "-"})
+        values.complete(**defaults.__dict__)
+        assert "-" == self.options._get_outfile_name(values)
         # return with ".txt" stripped
-        assert "foo.py" == self.options.get_outfile_name("foo.py.txt")
+        values = OptionValues({"infile": "foo.py.txt"})
+        values.complete(**defaults.__dict__)
+        assert "foo.py" == self.options._get_outfile_name(values)
         # return with ".txt" added if extension marks code file
-        assert "foo.py.txt" == self.options.get_outfile_name("foo.py")
-        assert "foo.sl.txt" == self.options.get_outfile_name("foo.sl")
-        assert "foo.c.txt" == self.options.get_outfile_name("foo.c")
+        values = OptionValues({"infile": "foo.py"})
+        values.complete(**defaults.__dict__)
+        assert "foo.py.txt" == self.options._get_outfile_name(values)
+        values = OptionValues({"infile": "foo.sl"})
+        values.complete(**defaults.__dict__)
+        assert "foo.sl.txt" == self.options._get_outfile_name(values)
+        values = OptionValues({"infile": "foo.c"})
+        values.complete(**defaults.__dict__)
+        assert "foo.c.txt" == self.options._get_outfile_name(values)
         # return with ".txt" added if txt2code == False (not None!)
-        assert "foo.py.txt" == self.options.get_outfile_name("foo.py", txt2code=False)
+        values = OptionValues({"infile": "foo.py", "txt2code": False})
+        values.complete(**defaults.__dict__)
+        assert "foo.py.txt" == self.options._get_outfile_name(values)
         # catchall: add ".out" if no other guess possible
-        assert "foo.out" == self.options.get_outfile_name("foo", txt2code=None)
+        values = OptionValues({"infile": "foo", "txt2code": None})
+        values.complete(**defaults.__dict__)
+        assert "foo.out" == self.options._get_outfile_name(values)
 
     def test_complete_values(self):
         """Basic test of the option completion"""
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = "foo"
         values = self.options.complete_values(values)
         # the following options should be set:
@@ -707,7 +733,7 @@ class test_PylitOptions:
 
     def test_complete_values_txt(self):
         """Test the option completion with a text input file"""
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = "foo.txt"
         values = self.options.complete_values(values)
         # should set outfile (see also `test_get_outfile_name`)
@@ -717,7 +743,7 @@ class test_PylitOptions:
 
     def test_complete_values_code(self):
         """Test the option completion with a code input file"""
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = "foo.py"
         values = self.options.complete_values(values)
         # should set outfile name
@@ -728,7 +754,7 @@ class test_PylitOptions:
 
     def test_complete_values_dont_overwrite(self):
         """The option completion must not overwrite existing option values"""
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = "foo.py"
         values.outfile = "bar.txt"
         values.txt2code = True
