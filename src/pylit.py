@@ -2,10 +2,10 @@
 # -*- coding: iso-8859-1 -*-
 
 # ===============================================================
-# pylit.py: Literate programming with Python and reStructuredText
+# pylit.py: Literate programming with reStructuredText
 # ===============================================================
 # 
-# :Date:      $Date: 2007-03-06$
+# :Date:      $Date$
 # :Version:   SVN-Revision $Revision$
 # :URL:       $URL$
 # :Copyright: 2005, 2007 Guenter Milde.
@@ -52,7 +52,9 @@
 #                    don't parse at initialization.
 #                    OptionValues: return `None` for non-existing attributes
 #                    removed -infile and -outfile, use positional arguments
-# 
+# :2007-03-19: 0.3.4 documentation update
+#                    separate `execute` function
+#              
 # ::
 
 """pylit: Literate programming with Python and reStructuredText
@@ -84,17 +86,30 @@ import optparse
 # defaults
 # --------
 # 
-# The `defaults` object provides a central point for default values and
-# their customization. It also facilitates the setting of options in
-# programmatic use ::
+# The `defaults` object provides a central repository for default values
+# and their customisation. 
+# 
+# * used for the initialization of data arguments in Converter_ and
+#   PylitOptions_
+#   
+# * used for completion of command line options in 
+#   `PylitOptions.complete_values`_. This way, using `pylit.py` as
+#   module one can customise the defaults and then call main_ e.g.:
+# 
+#   >>> import pylit
+#   >>> defaults.comment_string = "## "
+#   >>> defaults.codeindent = 4
+#   >>> main()
+#   
+# ::
 
 defaults = optparse.Values()
 
-# Languages and language specific defaults:
-# 
-# The language is set from file extensions (if not given as command line
-# option). Setting it in `defaults` would override this auto-setting
-# feature.::
+
+# By default, the language is set by `OptionValues.complete`_ from the code
+# file extension. The ``--language` command line option or setting 
+# ``defaults.language`` in programmatic use will override this auto-setting
+# feature::
 
 defaults.languages  = {".py": "python", 
                        ".sl": "slang", 
@@ -102,12 +117,27 @@ defaults.languages  = {".py": "python",
                        ".css": "css",
                        ".el":"elisp"}
 
+# If there is no matching extension, e.g. if pylit is used as filter, fall
+# back to the `fallback_language`::
+
+defaults.fallback_language = "python"
+
+
+# The `code extensions` are used in `OptionValues.complete`_ to auto-determine
+# the conversion direction from the input and output file names:: 
+
 defaults.code_extensions = defaults.languages.keys()
+
+
+# The `text_extensions` are used by `OptionValues._get_outfile` to
+# auto-determine the output filename::
+
 defaults.text_extensions = [".txt"]
 
-# The fallback is our favourite language::
 
-defaults.default_language = "python"
+# `Comment strings` for the various known languages include a trailing space.
+# Used in Code2Text_ to recognise text blocks and in Text2Code_ to format text
+# blocks as comments::
 
 defaults.comment_strings = {"python": '# ',
                             "slang":  '% ', 
@@ -115,30 +145,40 @@ defaults.comment_strings = {"python": '# ',
                             "css":    '// ',
                             "elisp":  ';; '}  
 
-# Marker string for the first code block. (Should be a valid rst directive
-# that accepts code on the same line, e.g. ``'.. admonition::'``.)  No
-# trailing whitespace needed as indented code follows. Default is a comment
-# marker::
+# Marker string for a header code block in the text source. (Should be a valid
+# rst directive that accepts code on the same line, e.g. ``'..
+# admonition::'``.) No trailing whitespace needed as indented code follows.
+# Default is a comment marker::
   
 defaults.header_string = '..'
+
 
 # Export to the output format stripping text or code blocks::
 
 defaults.strip = False
       
-# Number of spaces to indent code blocks in the code -> text conversion. [#]_
-# ::
+# Number of spaces to indent code blocks in `Code2Text.code`_. [#]_ ::
 
 defaults.codeindent =  2
 
-# .. [#] For the text -> code conversion, the codeindent is determined by the
+# .. [#] In `Text2Code.code`_, the codeindent is determined by the
 #        first recognized code line (leading comment or first indented literal
 #        block of the text source).
 # 
+# 
+# What to do if the outfile already exists? (Irrelevant if `outfile` == '-'.)
+# 
+# Recognized values:
+# 
+# :'yes':    overwrite eventually existing `outfile`,
+# :'update': fail if the `outfile` is newer than `infile`,
+# :'no':     fail if `outfile` exists.
+#                       
 # ::
 
-defaults.overwrite_default = 'update'
-  
+defaults.overwrite = 'update'
+
+
 # Converter Classes
 # =================
 # 
@@ -161,25 +201,23 @@ class PyLitConverter(object):
 # parsing is needed. PyLit's parser assumes:
 # 
 # * indented literal blocks in a text source are code blocks.
-#   (TODO: allow other directives for source code)
 # 
 # * comment lines that start with a matching comment string in a code source
 #   are documentation blocks.
 # 
-# .. _docutils: http://docutils.sourceforge.net/
 #   
 # Data attributes
 # ~~~~~~~~~~~~~~~
 # 
-# The data attributes are class default values. They are fetched from the
-# `defaults`_ dictionary and can be overridden by matching keyword
-# arguments during class instantiation. Keyword arguments to `get_converter`_
-# and `main`_ can be used to customize the converter, as they are passed on to
-# the instantiation of a converter class. ::
+# Class default values are fetched from the `defaults`_ object and can be
+# overridden by matching keyword arguments during class instantiation. This
+# also works with keyword arguments to `get_converter`_ and `main`_, as these
+# functions pass on unused keyword args to the instantiation of a converter
+# class. ::
 
-    language = defaults.default_language
+    language = defaults.fallback_language
     comment_strings = defaults.comment_strings
-    comment_string = None # set in __init__
+    comment_string = "" # set in __init__
     codeindent =  defaults.codeindent
     header_string = defaults.header_string
     strip = defaults.strip
@@ -187,7 +225,6 @@ class PyLitConverter(object):
 # Initial state (do not overwrite)::
 
     state = 'header' 
-
 
 # Converter.__init__
 # ~~~~~~~~~~~~~~~~~~
@@ -469,7 +506,7 @@ class Text2Code(PyLitConverter):
         return [line.replace(" "*self._codeindent, "", 1) for line in block]
 
 
-# Txt2Code.remove_literal_marker
+# Txt2Code.strip_literal_marker
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # Remove literal marker (::) in "expanded form" i.e. in a paragraph on its own.
@@ -478,9 +515,11 @@ class Text2Code(PyLitConverter):
 # searches (e.g. grep) as line-numbers between text and code source will
 # differ. 
 # The code is left here, as it can be used for conversion of
-# a literal marker to a different code-marker::
+# a literal marker to a different code-marker
+# 
+# .. parsed-literal::
 
-    def remove_literal_marker(list):
+    def strip_literal_marker(list):
         try:
             # print lines[-3:]
             if (lines[-3].strip() == self.comment_string.strip() 
@@ -779,22 +818,20 @@ class OptionValues(optparse.Values):
 # OptionValues.__getattr__
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The Python Reference Manual says on the special method `__getattr__`:
-# 
-#   Called when an attribute lookup has not found the attribute in the usual
-#   places (i.e. it is not an instance attribute nor is it found in the class
-#   tree for self). name is the attribute name. This method should return the
-#   (computed) attribute value or raise an AttributeError exception.
-# 
 # To replace calls using ``options.ensure_value("OPTION", None)`` with the
-# more concise ``options.OPTION``, we define `__getattr__` returning the
-# default value `None`::
-
+# more concise ``options.OPTION``, we define `__getattr__` [#]_ ::
+    
     def __getattr__(self, name): 
         """Return default value for non existing options"""
         return None
 
 
+# .. [#] The special method `__getattr__` is only called when an attribute
+#        lookup has not found the attribute in the usual places (i.e. it is
+#        not an instance attribute nor is it found in the class tree for
+#        self).
+# 
+# 
 # PylitOptions
 # ------------
 # 
@@ -881,7 +918,7 @@ class PylitOptions(object):
         values -- OptionValues instance
         """
         
-# Complete with module-level defaults::
+# Complete with module-level defaults_::
 
         values.complete(**defaults.__dict__)
 
@@ -916,12 +953,8 @@ class PylitOptions(object):
             code_extension = os.path.splitext(values.infile)[1]
         values.ensure_value("language", 
                             values.languages.get(code_extension, 
-                                                 values.default_language))
+                                                 values.fallback_language))
             
-# Set the default overwrite mode::
-
-        values.ensure_value("overwrite", values.overwrite_default)
-
         return values
 
 # PylitOptions._get_outfile_name
@@ -931,11 +964,12 @@ class PylitOptions(object):
 # constructed from `infile` by the following rules:
 # 
 # * '-' (stdin) results in '-' (stdout)
-# * strip the `txt_extension` or add the `code_extension` (txt2code)
+# * strip the `txt_extension` (txt2code) or
 # * add a `txt_ extension` (code2txt)
 # * fallback: if no guess can be made, add ".out"
-# 
-# TODO: use values.outfile_extensionif it exists?
+#   
+#   .. TODO: use values.outfile_extension if it exists?
+#   
 # ::
 
     def _get_outfile_name(self, values):
@@ -988,10 +1022,11 @@ def open_streams(infile = '-', outfile = '-', overwrite='update', **keyw):
     
     in_stream   --  file(infile) or sys.stdin
     out_stream  --  file(outfile) or sys.stdout
-    overwrite   --  ['yes', 'update', 'no']
-                    if 'update', only open output file if it is older than
-                    the input stream.
-                    Irrelevant if outfile == '-'.
+    overwrite   --  'yes': overwrite eventually existing `outfile`,
+                    'update': fail if the `outfile` is newer than `infile`,
+                    'no': fail if `outfile` exists.
+                    
+                    Irrelevant if `outfile` == '-'.
     """
     if not infile:
         strerror = "Missing input file name ('-' for stdin; -h for help)"
@@ -1133,31 +1168,41 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
         print newname
         print "no differences found"
     return bool(delta)
-       
+
+
+# execute
+# ~~~~~~~
+# 
+# Works only for python code.
+# 
+# Doesnot work with `eval`, as code is not just one expression. ::
+
+def execute(infile="-", txt2code=True, **keyw):
+    """Execute the input file. Convert first, if it is a text source.
+    """
+    
+    data = file(infile)
+    if txt2code: 
+        data = str(Text2Code(data, **keyw))
+    # print "executing " + options.infile
+    exec data
+
+
 # main
 # ----
 # 
 # If this script is called from the command line, the `main` function will
 # convert the input (file or stdin) between text and code formats.
 # 
-# Customization
-# ~~~~~~~~~~~~~
-# 
 # Option default values for the conversion can be given as keyword arguments
 # to `main`_.  The option defaults will be updated by command line options and
-# extended with "intelligent guesses" by `PylitOptions` and passed on to
+# extended with "intelligent guesses" by `PylitOptions`_ and passed on to
 # helper functions and the converter instantiation.
 # 
-# This allows easy customization for programmatic use -- just or call `main`
-# with the appropriate keyword options (or with a `defaults`
-# dictionary.), e.g.:
+# This allows easy customization for programmatic use -- just call `main`
+# with the appropriate keyword options, e.g.:
 # 
-# >>> defaults = {'language_default': "c++",
-# ...             'codeindent': 4,
-# ...             'header_string': '..admonition::'
-# ...            }
-# 
-# >>> main(**defaults)
+# >>> main(comment_string="## ")
 # 
 # ::
 
@@ -1183,6 +1228,9 @@ def main(args=sys.argv[1:], **defaults):
     if options.diff:
         return diff(**options.as_dict())
 
+    if options.execute:
+        return execute(**options.as_dict())
+
 # Open in- and output streams::
 
     try:
@@ -1194,20 +1242,8 @@ def main(args=sys.argv[1:], **defaults):
 # Get a converter instance::
 
     converter = get_converter(data, **options.as_dict())
-    
-# Execute if the ``-execute`` option is set
-# Doesnot work with `eval`, as code is not just one expression. ::
-
-    if options.execute:
-        print "executing " + options.infile
-        if options.txt2code:
-            code = str(converter)
-        else:
-            code = data
-        exec code
-        return 
-
-# Default action: Convert and write to out_stream::
+      
+# Convert and write to out_stream::
 
     out_stream.write(str(converter))
     
@@ -1275,44 +1311,71 @@ if __name__ == '__main__':
 # * How can I include a literal block that should not be in the
 #   executable code (e.g. an example, an earlier version or variant)?
 # 
-#   Workaround: 
-#     Use a `quoted literal block` (with a quotation different from
-#     the comment string used for text blocks to keep it as commented over the
-#     code-text round-trips.
-# 
-#     Python `pydoc` examples can also use the special pydoc block syntax (no
-#     double colon!).
-#               
-#   Alternative: 
-#     use a special "code block" directive or a special "no code
-#     block" directive.
+#   Workarounds:
+#   
+#   - Use a `parsed-literal block`_ directive if there is no "accidential"
+#     markup in the literal code
 #     
-# * ignore "matching comments" in literal strings?
+#   - Use a `line block`_ directive or the `line block syntax`_
+#     and mark all lines as `inline literals`_.
 # 
-#   (would need a specific detection algorithm for every language that
-#   supports multi-line literal strings (C++, PHP, Python)
+#   - Python session examples and doctests can use `doctest block`_ syntax 
+#   
+#     No double colon! Start first line of block with ``>>>```.
+#               
+# 
+#   Not implemented yet:
+#   
+#   - use a special `sourcecode directive`_ or a special directive for
+#     ordinary literal blocks.
+#     
+# * Ignore "matching comments" in literal strings?
+# 
+#   Too complicated: Would need a specific detection algorithm for every
+#   language that supports multi-line literal strings (C++, PHP, Python)
 # 
 # * Warn if a comment in code will become text after round-trip?
 # 
-# code syntax highlight
-# ---------------------
-#   
-# use `listing` package in LaTeX->PDF
+# sourcecode directive
+# --------------------
 # 
-# in html, see 
+# In a document where code examples are only one of several uses of literal
+# blocks, it would be more appropriate to single out the sourcecode with a
+# dedicated "sourcecode" directive.
 # 
-# * the syntax highlight support in rest2web
-#   (uses the Moin-Moin Python colorizer, see a version at
-#   http://www.standards-schmandards.com/2005/fangs-093/)
-# * Pygments (pure Python, many languages, rst integration recipe):
-#   http://pygments.org/docs/rstdirective/
-# * Silvercity, enscript, ...  
+# Some highlight plug-ins require a special "sourcecode" or "code block"
+# directive instead of the ``::`` literal block marker. Actually,
+# syntax-highlight is possible without changes to docutils with the Pygments_
+# package using a "sourcecode" directive. See the `syntax highlight`_ section
+# in the features documentation.
 # 
-# Some plug-ins require a special "code block" directive instead of the
-# `::`-literal block. TODO: make this an option
+# TODO:
 # 
-# Ask at docutils users|developers
+# * provide a "code-block-marker" string option.
+# 
+# * correctly handle the case of ``code_block_marker == '::'`` and conversion
+#   of ``::`` to a different "code-block-marker" -- consider minimized forms.
+# 
+# doctstrings in code blocks
+# --------------------------
 # 
 # * How to handle docstrings in code blocks? (it would be nice to convert them
 #   to rst-text if ``__docformat__ == restructuredtext``)
 # 
+# TODO: Ask at docutils users|developers
+# 
+# .. References
+# 
+# .. _docutils: http://docutils.sourceforge.net/
+# .. _doctest block: 
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
+# .. _parsed-literal block: 
+#     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
+# .. _line block: 
+#     http://docutils.sourceforge.net/docs/ref/rst/directives.html#line-block
+# .. _line block syntax: 
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks
+# .. _inline literals:
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals
+# .. _pygments: http://pygments.org/
+# .. _syntax highlight: ../features/syntax-highlight.html

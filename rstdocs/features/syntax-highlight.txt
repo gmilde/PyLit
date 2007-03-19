@@ -20,7 +20,7 @@ Syntax Highlight
 Syntax highlighting significantly enhances the readability of code.
 So it is almost a must for pretty-printing a literate program.
 
-PyLit uses docutils_ as pretty-printing backend. However, in the current
+PyLit uses docutils_ as pretty-printing back end. However, in the current
 version, docutils does not highlight literal blocks.  But in a mail on
 `Questions about writing programming manuals and scientific documents`__,
 David Goodger wrote:
@@ -39,25 +39,30 @@ There are already such add-ons providing syntax colouring. E.g
 
 * the rest2web_ site builder provides the `colorize`__ macro (using the
   `Moin-Moin Python colorizer`_) 
+
 * the Odtwriter_ for Docutils supports syntax colours via the pygments_
   generic syntax highlighter.
 
 __ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
 
+* the `listings`_ LaTeX package provides highly customisable and advanced
+  syntax highlight, though only for the LaTeX (and LaTeX derived PS|PDF)
+  rendering.
 
-`Pygments`_ seems to be a good choice for PyLit (or docutils in general):
+* `Pygments`_ a generic syntax highlighter for general use. 
 
-* It is written completely in Python, usable as a command-line tool and as a
-  Python package.
-* A wide range of common `languages and markup formats`_ is supported.
-* The layout is configurable by style sheets.
-* Several built-in styles and an option for line-numbering.
-* Built-in output formats include HTML, LaTeX, and rtf.
-* Support for new languages, formats, and styles is added easily (modular
-  structure, Python code, existing documentation).
-* Well documented and actively maintained.
-* There is a recipe for `using Pygments in ReST documents`_.
+  * It is written completely in Python, usable as a command-line tool and as a
+    Python package.
+  * A wide range of common `languages and markup formats`_ is supported.
+  * The layout is configurable by style sheets.
+  * Several built-in styles and an option for line-numbering.
+  * Built-in output formats include HTML, LaTeX, and rtf.
+  * Support for new languages, formats, and styles is added easily (modular
+    structure, Python code, existing documentation).
+  * Well documented and actively maintained.
+  * There is a recipe for `using Pygments in ReST documents`_.
 
+Pygments seems to be the most promising docutils highlighter.
 
 Pygments enhanced rst2html front-end
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,10 +84,10 @@ literal block with syntax colour. It looks like::
 
 To support this way of syntax highlight, the PyLit converter would need a
 configurable "code block marker" instead of the hard coded double colon
-(``::``) presently in use. (See also the `open questions`__ section in
+(``::``) presently in use. (See also the `sourcecode directive`__ section in
 pylit.py.)
 
-__ ../examples/pylit.py.html#open-questions
+__ ../examples/pylit.py.html#sourcecode-directive
 
 Advantages:
 
@@ -261,7 +266,7 @@ used for e.g.
 * a "sourcecode" directive for colourful code 
   (analog to the one in `rst2html-pygments`_)
 
-* a "listing" directive for the listings environment in LaTeX
+* a "listing" directive for the `listings`_ environment in LaTeX
 
 Example::
 
@@ -282,12 +287,13 @@ In the same line, a "default-block-quote" setting or directive could be
 considered to configure the role of a block quote.
 
 
-.. _docutils:  http://docutils.sourceforge.net/
-.. _rest2web:  http://www.voidspace.org.uk/python/rest2web/
+.. _docutils: http://docutils.sourceforge.net/
+.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
 .. _Moin-Moin Python colorizer:
      http://www.standards-schmandards.com/2005/fangs-093/
 .. _odtwriter: http://www.rexx.com/~dkuhlman/odtwriter.html
-.. _pygments:  http://pygments.org/
+.. _pygments: http://pygments.org/
+.. _listings: http://tug.ctan.org/tex-archive/macros/latex/contrib/listings/
 .. _languages and markup formats: http://pygments.org/languages
 .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
 

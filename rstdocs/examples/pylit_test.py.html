@@ -5,289 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title></title>
-<style type="text/css">
-
-/*
-:Author: David Goodger
-:Contact: goodger@users.sourceforge.net
-:Date: $Date: 2005-12-18 01:56:14 +0100 (Sun, 18 Dec 2005) $
-:Revision: $Revision: 4224 $
-:Copyright: This stylesheet has been placed in the public domain.
-
-Default cascading style sheet for the HTML output of Docutils.
-
-See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
-customize this style sheet.
-*/
-
-/* used to remove borders from tables and images */
-.borderless, table.borderless td, table.borderless th {
-  border: 0 }
-
-table.borderless td, table.borderless th {
-  /* Override padding for "table.docutils td" with "! important".
-     The right padding separates the table cells. */
-  padding: 0 0.5em 0 0 ! important }
-
-.first {
-  /* Override more specific margin styles with "! important". */
-  margin-top: 0 ! important }
-
-.last, .with-subtitle {
-  margin-bottom: 0 ! important }
-
-.hidden {
-  display: none }
-
-a.toc-backref {
-  text-decoration: none ;
-  color: black }
-
-blockquote.epigraph {
-  margin: 2em 5em ; }
-
-dl.docutils dd {
-  margin-bottom: 0.5em }
-
-/* Uncomment (and remove this text!) to get bold-faced definition list terms
-dl.docutils dt {
-  font-weight: bold }
-*/
-
-div.abstract {
-  margin: 2em 5em }
-
-div.abstract p.topic-title {
-  font-weight: bold ;
-  text-align: center }
-
-div.admonition, div.attention, div.caution, div.danger, div.error,
-div.hint, div.important, div.note, div.tip, div.warning {
-  margin: 2em ;
-  border: medium outset ;
-  padding: 1em }
-
-div.admonition p.admonition-title, div.hint p.admonition-title,
-div.important p.admonition-title, div.note p.admonition-title,
-div.tip p.admonition-title {
-  font-weight: bold ;
-  font-family: sans-serif }
-
-div.attention p.admonition-title, div.caution p.admonition-title,
-div.danger p.admonition-title, div.error p.admonition-title,
-div.warning p.admonition-title {
-  color: red ;
-  font-weight: bold ;
-  font-family: sans-serif }
-
-/* Uncomment (and remove this text!) to get reduced vertical space in
-   compound paragraphs.
-div.compound .compound-first, div.compound .compound-middle {
-  margin-bottom: 0.5em }
-
-div.compound .compound-last, div.compound .compound-middle {
-  margin-top: 0.5em }
-*/
-
-div.dedication {
-  margin: 2em 5em ;
-  text-align: center ;
-  font-style: italic }
-
-div.dedication p.topic-title {
-  font-weight: bold ;
-  font-style: normal }
-
-div.figure {
-  margin-left: 2em ;
-  margin-right: 2em }
-
-div.footer, div.header {
-  clear: both;
-  font-size: smaller }
-
-div.line-block {
-  display: block ;
-  margin-top: 1em ;
-  margin-bottom: 1em }
-
-div.line-block div.line-block {
-  margin-top: 0 ;
-  margin-bottom: 0 ;
-  margin-left: 1.5em }
-
-div.sidebar {
-  margin-left: 1em ;
-  border: medium outset ;
-  padding: 1em ;
-  background-color: #ffffee ;
-  width: 40% ;
-  float: right ;
-  clear: right }
-
-div.sidebar p.rubric {
-  font-family: sans-serif ;
-  font-size: medium }
-
-div.system-messages {
-  margin: 5em }
-
-div.system-messages h1 {
-  color: red }
-
-div.system-message {
-  border: medium outset ;
-  padding: 1em }
-
-div.system-message p.system-message-title {
-  color: red ;
-  font-weight: bold }
-
-div.topic {
-  margin: 2em }
-
-h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
-h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
-  margin-top: 0.4em }
-
-h1.title {
-  text-align: center }
-
-h2.subtitle {
-  text-align: center }
-
-hr.docutils {
-  width: 75% }
-
-img.align-left {
-  clear: left }
-
-img.align-right {
-  clear: right }
-
-ol.simple, ul.simple {
-  margin-bottom: 1em }
-
-ol.arabic {
-  list-style: decimal }
-
-ol.loweralpha {
-  list-style: lower-alpha }
-
-ol.upperalpha {
-  list-style: upper-alpha }
-
-ol.lowerroman {
-  list-style: lower-roman }
-
-ol.upperroman {
-  list-style: upper-roman }
-
-p.attribution {
-  text-align: right ;
-  margin-left: 50% }
-
-p.caption {
-  font-style: italic }
-
-p.credits {
-  font-style: italic ;
-  font-size: smaller }
-
-p.label {
-  white-space: nowrap }
-
-p.rubric {
-  font-weight: bold ;
-  font-size: larger ;
-  color: maroon ;
-  text-align: center }
-
-p.sidebar-title {
-  font-family: sans-serif ;
-  font-weight: bold ;
-  font-size: larger }
-
-p.sidebar-subtitle {
-  font-family: sans-serif ;
-  font-weight: bold }
-
-p.topic-title {
-  font-weight: bold }
-
-pre.address {
-  margin-bottom: 0 ;
-  margin-top: 0 ;
-  font-family: serif ;
-  font-size: 100% }
-
-pre.literal-block, pre.doctest-block {
-  margin-left: 2em ;
-  margin-right: 2em ;
-  background-color: #eeeeee }
-
-span.classifier {
-  font-family: sans-serif ;
-  font-style: oblique }
-
-span.classifier-delimiter {
-  font-family: sans-serif ;
-  font-weight: bold }
-
-span.interpreted {
-  font-family: sans-serif }
-
-span.option {
-  white-space: nowrap }
-
-span.pre {
-  white-space: pre }
-
-span.problematic {
-  color: red }
-
-span.section-subtitle {
-  /* font-size relative to parent (h1..h6 element) */
-  font-size: 80% }
-
-table.citation {
-  border-left: solid 1px gray;
-  margin-left: 1px }
-
-table.docinfo {
-  margin: 2em 4em }
-
-table.docutils {
-  margin-top: 0.5em ;
-  margin-bottom: 0.5em }
-
-table.footnote {
-  border-left: solid 1px black;
-  margin-left: 1px }
-
-table.docutils td, table.docutils th,
-table.docinfo td, table.docinfo th {
-  padding-left: 0.5em ;
-  padding-right: 0.5em ;
-  vertical-align: top }
-
-table.docutils th.field-name, table.docinfo th.docinfo-name {
-  font-weight: bold ;
-  text-align: left ;
-  white-space: nowrap ;
-  padding-left: 0 }
-
-h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
-h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
-  font-size: 100% }
-
-tt.docutils {
-  background-color: #eeeeee }
-
-ul.auto-toc {
-  list-style-type: none }
-
-</style>
+<link rel="stylesheet" href="/usr/lib/python2.4/site-packages/docutils/writers/html4css1/html4css1.css" type="text/css" />
 </head>
 <body>
 <div class="document">
@@ -337,8 +55,9 @@ Released under the terms of the GNU General Public License
 </li>
 </ul>
 </li>
-<li><a class="reference" href="#command-line-use" id="id18" name="id18">Command line use</a><ul>
-<li><a class="reference" href="#input-and-output-streams" id="id19" name="id19">Input and Output streams</a></li>
+<li><a class="reference" href="#global-defaults" id="id18" name="id18">Global defaults</a></li>
+<li><a class="reference" href="#command-line-use" id="id19" name="id19">Command line use</a><ul>
+<li><a class="reference" href="#input-and-output-streams" id="id20" name="id20">Input and Output streams</a></li>
 </ul>
 </li>
 </ul>
@@ -503,7 +222,7 @@ def test_Text2Code_malindented_code_line():
     data1 = [&quot;..    #!/usr/bin/env python\n&quot;, # indent == 4 * &quot; &quot;
             &quot;\n&quot;,
             &quot;  print 'hello world'&quot;]          # indent == 2 * &quot; &quot;
-    data2 = [&quot;..\t#!/usr/bin/env python\n&quot;,   # indent == 4 * &quot; &quot;
+    data2 = [&quot;..\t#!/usr/bin/env python\n&quot;,   # indent == 8 * &quot; &quot;
             &quot;\n&quot;,
             &quot;  print 'hello world'&quot;]          # indent == 2 * &quot; &quot;
     for data in (data1, data2):
@@ -524,14 +243,15 @@ marker&quot; is not followed by a blank line.</p>
 <p>Assuming that no double colon at end of line occures accidentially,
 pylit will fix this and issue a warning:</p>
 <pre class="literal-block">
-textsamples[&quot;ensure blank line after text&quot;] = (
-&quot;&quot;&quot;text followed by a literal block::
-  block1 = 'first block'
-&quot;&quot;&quot;,
-&quot;&quot;&quot;# text followed by a literal block::
-
-block1 = 'first block'
-&quot;&quot;&quot;)
+# Do we need this feature? (Complicates code a lot)
+# textsamples[&quot;ensure blank line after text&quot;] = (
+# &quot;&quot;&quot;text followed by a literal block::
+#   block1 = 'first block'
+# &quot;&quot;&quot;,
+# &quot;&quot;&quot;# text followed by a literal block::
+#
+# block1 = 'first block'
+# &quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -543,18 +263,19 @@ it.</p>
 <p>Assuming that the unindent is not accidential, pylit fixes this and issues a
 warning:</p>
 <pre class="literal-block">
-textsamples[&quot;ensure blank line after code&quot;] = (
-&quot;&quot;&quot;::
-
-  block1 = 'first block'
-more text
-&quot;&quot;&quot;,
-&quot;&quot;&quot;# ::
-
-block1 = 'first block'
+# Do we need this feature? (Complicates code a lot)
+# textsamples[&quot;ensure blank line after code&quot;] = (
+# &quot;&quot;&quot;::
+#
+#   block1 = 'first block'
+# more text
+# &quot;&quot;&quot;,
+# &quot;&quot;&quot;# ::
+#
+# block1 = 'first block'
 
 # more text
-&quot;&quot;&quot;)
+# &quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
@@ -852,8 +573,15 @@ foo = 'first'
 <h4><a class="toc-backref" href="#id17" id="id2" name="id2">header samples</a></h4>
 <p>Convert a header (leading code block) to a reStructured text comment.</p>
 <pre class="literal-block">
-codesamples[&quot;no matching comment, just code&quot;] = (&quot;print 'hello world'&quot;,
-                                                 &quot;..  print 'hello world'&quot;)
+codesamples[&quot;no matching comment, just code&quot;] = (
+&quot;&quot;&quot;print 'hello world'
+
+print 'ende'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;..  print 'hello world'
+
+  print 'ende'
+&quot;&quot;&quot;)
 
 codesamples[&quot;empty header (start with matching comment)&quot;] = (
 &quot;&quot;&quot;# a classical example without header::
@@ -903,31 +631,65 @@ print 'hello world'
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id18" id="command-line-use" name="command-line-use">Command line use</a></h1>
+<h1><a class="toc-backref" href="#id18" id="global-defaults" name="global-defaults">Global defaults</a></h1>
+<pre class="literal-block">
+def test_global_option_defaults():
+    &quot;&quot;&quot;dictionary of programming languages and extensions&quot;&quot;&quot;
+    for ext in [&quot;.py&quot;, &quot;.sl&quot;, &quot;.c&quot;]:
+        assert ext in defaults.code_extensions
+    assert defaults.languages[&quot;.py&quot;] == &quot;python&quot;
+    assert defaults.languages[&quot;.sl&quot;] == &quot;slang&quot;
+    assert defaults.languages[&quot;.c&quot;] == &quot;c++&quot;
+</pre>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id19" id="command-line-use" name="command-line-use">Command line use</a></h1>
 <p>Test the option parsing:</p>
 <pre class="literal-block">
-def test_Values():
-    values = OptionValues()
-    print values
+class test_OptionValues(object):
     defaults = {&quot;a1&quot;: 1, &quot;a2&quot;: False}
-    values = OptionValues(defaults)
-    print values, values.as_dict()
-    assert values.a1 == 1
-    assert values.a2 == False
-    assert values.as_dict() == defaults
+    def setUp(self):
+        self.values = OptionValues(self.defaults)
+        print self.values
+
+    def test_setup(self):
+        assert self.values.a1 == 1
+        assert self.values.a2 == False
+
+    def test_as_dict(self):
+        print &quot;as_dict() -&gt;&quot;, self.values.as_dict()
+        assert self.values.as_dict() == self.defaults
+
+    def test_complete(self):
+        &quot;&quot;&quot;complete should update non-existing values only&quot;&quot;&quot;
+        self.values.complete(**{&quot;a1&quot;: 2, &quot;a2&quot;: 4, &quot;a3&quot;: 3})
+        print &quot;completed -&gt;&quot;, self.values
+        assert self.values.a1 == 1, &quot;must not overwrite existing value&quot;
+        assert self.values.a2 == False, &quot;must not overwrite existing value&quot;
+        assert self.values.a3 == 3, &quot;should set new attributes&quot;
+        self.values.complete(a1=2, a4=20)
+        assert self.values.a1 == 1, &quot;must not overwrite existing value&quot;
+        assert self.values.a4 == 20, &quot;should set new attributes&quot;
+
+    def test_getattr(self):
+        &quot;&quot;&quot;Attempt to get a non-existing argument should return None
+
+        This make the code more concise as a try: except: AttributeError
+        statement or the parent class method `ensure_value(name, default)`.
+        &quot;&quot;&quot;
+        assert self.values.a3 == None
+
+    def test_getattr_ensure_value(self):
+        &quot;&quot;&quot;Ensure value can be used to set a default different from None&quot;&quot;&quot;
+        assert self.values.a4 == None
+        self.values.ensure_value(&quot;a4&quot;, 32)
+        assert self.values.a4 == 32
+
 
 class test_PylitOptions:
     &quot;&quot;&quot;Test the PylitOption class&quot;&quot;&quot;
     def setUp(self):
         self.options = PylitOptions()
-
-    def test_languages_and_extensions(self):
-        &quot;&quot;&quot;dictionary of programming languages and extensions&quot;&quot;&quot;
-        for ext in [&quot;.py&quot;, &quot;.sl&quot;, &quot;.c&quot;]:
-            assert ext in self.options.code_extensions
-        assert self.options.code_languages[&quot;.py&quot;] == &quot;python&quot;
-        assert self.options.code_languages[&quot;.sl&quot;] == &quot;slang&quot;
-        assert self.options.code_languages[&quot;.c&quot;] == &quot;c++&quot;
 
     def test_parse_args(self):
         &quot;&quot;&quot;parse cmd line args&quot;&quot;&quot;
@@ -943,9 +705,9 @@ class test_PylitOptions:
         print values.infile
         assert values.infile == &quot;text.txt&quot;
         assert values.outfile == &quot;code.py&quot;
-        # set the output (option with argument)
-        values = self.options.parse_args([&quot;--outfile&quot;, &quot;code.py&quot;])
-        assert values.outfile == &quot;code.py&quot;
+        # option with argument
+        values = self.options.parse_args([&quot;--language&quot;, &quot;slang&quot;])
+        assert values.language == &quot;slang&quot;
 
     def test_parse_args_comment_string(self):
        # default should appear in options
@@ -960,21 +722,35 @@ class test_PylitOptions:
     def test_get_outfile_name(self):
         &quot;&quot;&quot;should return a sensible outfile name given an infile name&quot;&quot;&quot;
         # return stdout for stdin
-        assert &quot;-&quot; == self.options.get_outfile_name(&quot;-&quot;)
+        values = OptionValues({&quot;infile&quot;: &quot;-&quot;})
+        values.complete(**defaults.__dict__)
+        assert &quot;-&quot; == self.options._get_outfile_name(values)
         # return with &quot;.txt&quot; stripped
-        assert &quot;foo.py&quot; == self.options.get_outfile_name(&quot;foo.py.txt&quot;)
+        values = OptionValues({&quot;infile&quot;: &quot;foo.py.txt&quot;})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.py&quot; == self.options._get_outfile_name(values)
         # return with &quot;.txt&quot; added if extension marks code file
-        assert &quot;foo.py.txt&quot; == self.options.get_outfile_name(&quot;foo.py&quot;)
-        assert &quot;foo.sl.txt&quot; == self.options.get_outfile_name(&quot;foo.sl&quot;)
-        assert &quot;foo.c.txt&quot; == self.options.get_outfile_name(&quot;foo.c&quot;)
+        values = OptionValues({&quot;infile&quot;: &quot;foo.py&quot;})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.py.txt&quot; == self.options._get_outfile_name(values)
+        values = OptionValues({&quot;infile&quot;: &quot;foo.sl&quot;})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.sl.txt&quot; == self.options._get_outfile_name(values)
+        values = OptionValues({&quot;infile&quot;: &quot;foo.c&quot;})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.c.txt&quot; == self.options._get_outfile_name(values)
         # return with &quot;.txt&quot; added if txt2code == False (not None!)
-        assert &quot;foo.py.txt&quot; == self.options.get_outfile_name(&quot;foo.py&quot;, txt2code=False)
+        values = OptionValues({&quot;infile&quot;: &quot;foo.py&quot;, &quot;txt2code&quot;: False})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.py.txt&quot; == self.options._get_outfile_name(values)
         # catchall: add &quot;.out&quot; if no other guess possible
-        assert &quot;foo.out&quot; == self.options.get_outfile_name(&quot;foo&quot;, txt2code=None)
+        values = OptionValues({&quot;infile&quot;: &quot;foo&quot;, &quot;txt2code&quot;: None})
+        values.complete(**defaults.__dict__)
+        assert &quot;foo.out&quot; == self.options._get_outfile_name(values)
 
     def test_complete_values(self):
         &quot;&quot;&quot;Basic test of the option completion&quot;&quot;&quot;
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = &quot;foo&quot;
         values = self.options.complete_values(values)
         # the following options should be set:
@@ -988,7 +764,7 @@ class test_PylitOptions:
 
     def test_complete_values_txt(self):
         &quot;&quot;&quot;Test the option completion with a text input file&quot;&quot;&quot;
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = &quot;foo.txt&quot;
         values = self.options.complete_values(values)
         # should set outfile (see also `test_get_outfile_name`)
@@ -998,33 +774,70 @@ class test_PylitOptions:
 
     def test_complete_values_code(self):
         &quot;&quot;&quot;Test the option completion with a code input file&quot;&quot;&quot;
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = &quot;foo.py&quot;
         values = self.options.complete_values(values)
         # should set outfile name
         assert values.outfile == &quot;foo.py.txt&quot;
         # should set conversion directions according to extension
         print values.txt2code
-        assert values.txt2code == False
+        assert values.txt2code == False, &quot;set conversion according to extension&quot;
 
     def test_complete_values_dont_overwrite(self):
         &quot;&quot;&quot;The option completion must not overwrite existing option values&quot;&quot;&quot;
-        values = optparse.Values()
+        values = OptionValues()
         values.infile = &quot;foo.py&quot;
         values.outfile = &quot;bar.txt&quot;
         values.txt2code = True
         values = self.options.complete_values(values)
+        pprint(values)
         assert values.outfile == &quot;bar.txt&quot;
         assert values.txt2code == True
 
-    def test_init(self):
-        options = PylitOptions([&quot;--txt2code&quot;, &quot;foo&quot;], txt2code=False)
-        pprint(options)
-        assert options.values.txt2code == True
-        assert options.values.infile == &quot;foo&quot;
+    def test_complete_values_language_infile(self):
+        &quot;&quot;&quot;set the language from the infile extension&quot;&quot;&quot;
+        values = OptionValues()
+        values.infile = &quot;foo.c&quot;
+        values = self.options.complete_values(values)
+        pprint(values)
+        assert values.language == &quot;c++&quot;
+
+    def test_complete_values_language_outfile(self):
+        &quot;&quot;&quot;set the language from the outfile extension&quot;&quot;&quot;
+        values = OptionValues()
+        values.outfile = &quot;foo.sl&quot;
+        values = self.options.complete_values(values)
+        pprint(values)
+        assert values.language == &quot;slang&quot;
+
+    def test_complete_values_language_fallback(self):
+        &quot;&quot;&quot;set the language from the fallback language&quot;&quot;&quot;
+        values = OptionValues()
+        values = self.options.complete_values(values)
+        pprint(values)
+        print &quot;fallback language:&quot;, defaults.fallback_language
+        assert values.language == defaults.fallback_language
+
+    def test_call(self):
+        values = self.options([&quot;--txt2code&quot;, &quot;foo.sl&quot;], txt2code=False)
+        pprint(values)
+        assert values.txt2code == True
+        assert values.infile == &quot;foo.sl&quot;
+
+    def test_call_language(self):
+        &quot;&quot;&quot;test the language setting from filename&quot;&quot;&quot;
+        values = self.options([&quot;foo.sl&quot;])
+        pprint(values)
+        assert values.language == &quot;slang&quot;
+
+    def test_call_language_outfile(self):
+        &quot;&quot;&quot;test the language setting from filename&quot;&quot;&quot;
+        values = self.options([&quot;foo, foo.sl&quot;])
+        pprint(values)
+        assert values.language == &quot;slang&quot;
 </pre>
 <div class="section">
-<h2><a class="toc-backref" href="#id19" id="input-and-output-streams" name="input-and-output-streams">Input and Output streams</a></h2>
+<h2><a class="toc-backref" href="#id20" id="input-and-output-streams" name="input-and-output-streams">Input and Output streams</a></h2>
 <pre class="literal-block">
 class IOTests:
     &quot;&quot;&quot;base class for IO tests, sets up and tears down example files in /tmp
@@ -1178,7 +991,8 @@ sys.exit()
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2007-03-01.
+<a class="reference" href="pylit_test.py.txt">View document source</a>.
+Generated on: 2007-03-19.
 
 </div>
 </body>

@@ -639,7 +639,7 @@ class test_OptionValues(object):
         self.values.complete(a1=2, a4=20)
         assert self.values.a1 == 1, "must not overwrite existing value"
         assert self.values.a4 == 20, "should set new attributes"
-        
+
     def test_getattr(self):
         """Attempt to get a non-existing argument should return None
         
@@ -750,7 +750,7 @@ class test_PylitOptions:
         assert values.outfile == "foo.py.txt"
         # should set conversion directions according to extension
         print values.txt2code
-        assert values.txt2code == False
+        assert values.txt2code == False, "set conversion according to extension"
 
     def test_complete_values_dont_overwrite(self):
         """The option completion must not overwrite existing option values"""
@@ -759,14 +759,51 @@ class test_PylitOptions:
         values.outfile = "bar.txt"
         values.txt2code = True
         values = self.options.complete_values(values)
+        pprint(values)
         assert values.outfile == "bar.txt"
         assert values.txt2code == True
 
+    def test_complete_values_language_infile(self):
+        """set the language from the infile extension"""
+        values = OptionValues()
+        values.infile = "foo.c"
+        values = self.options.complete_values(values)
+        pprint(values)
+        assert values.language == "c++"
+
+    def test_complete_values_language_outfile(self):
+        """set the language from the outfile extension"""
+        values = OptionValues()
+        values.outfile = "foo.sl"
+        values = self.options.complete_values(values)
+        pprint(values)
+        assert values.language == "slang"
+
+    def test_complete_values_language_fallback(self):
+        """set the language from the fallback language"""
+        values = OptionValues()
+        values = self.options.complete_values(values)
+        pprint(values)
+        print "fallback language:", defaults.fallback_language
+        assert values.language == defaults.fallback_language
+
     def test_call(self):
-        values = self.options(["--txt2code", "foo"], txt2code=False)
+        values = self.options(["--txt2code", "foo.sl"], txt2code=False)
         pprint(values)
         assert values.txt2code == True
-        assert values.infile == "foo"
+        assert values.infile == "foo.sl"
+        
+    def test_call_language(self):
+        """test the language setting from filename"""
+        values = self.options(["foo.sl"])
+        pprint(values)
+        assert values.language == "slang"
+
+    def test_call_language_outfile(self):
+        """test the language setting from filename"""
+        values = self.options(["foo, foo.sl"])
+        pprint(values)
+        assert values.language == "slang"
 
 ## Input and Output streams
 ## ------------------------
