@@ -54,6 +54,7 @@ Changelog
                    removed -infile and -outfile, use positional arguments
 :2007-03-19: 0.3.4 documentation update
                    separate `execute` function
+:2007-03-21:       code cleanup in `Text2Code.__iter__`
              
 ::
 
@@ -352,89 +353,82 @@ and slow down the conversion.
   
 Text2Code.__iter__
 ~~~~~~~~~~~~~~~~~~
-
-Data is collected into "blocks" separated by blank lines. The state is set
-by the `set_state` method based on markers or indentation in the block.
+ 
 ::
 
       def __iter__(self):
-          """Iterate over text source and return lists of code-source lines"""
+          """Iterate over text source and yield converted blocks
+          """
   
-The indent of first non-blank code line, set in `Text2Code.code`::
+Initialize data arguments
 
+`state`
+  :"header": first block -> check for leading `header_string`
+  :"text":   documentation part -> comment out
+  :"code":   literal blocks containing source code -> unindent
+`_codeindent`
+  * stripped from all 'code' block lines. 
+  * set in `Text2Code.code`_ to the indent of first non-blank code line
+`_textindent`
+  * set by `Text2Code.text`_ to the minimal indent of a text block
+  * used in `Text2Code.set_state`_ to find the end of a code block
+
+::
+       
+          self.state = "header"
           self._codeindent = None  
-  
-Text indent level (needed by the code handler to find the
-end of code block)::
-
           self._textindent = 0
   
-The "code" to "text" state transition is detected in the  first non-code
-block. `header_test` will set `set_state` to `code_test` which checks the
-indentation.
+Iterate over blocks of lines. 
 
-The "text" to "code" state transition is codified in the preceding "text"
-block. This is why the "end-of-text" test is performed inside the `text`
-state handler.
-::
+Data is collected into "blocks" separated by blank lines by
+`Converter.collect_blocks`_. Determine the state of the block ("text" or
+"code") and yield the block converted by the matching "handler" method::
 
           for block in self.collect_blocks():
-              if self.state != "text":
-                  self.state = self.set_state(block)
+              self.set_state(block)
               yield getattr(self, self.state)(block)
               
-
 
 Text2Code.set_state
 ~~~~~~~~~~~~~~~~~~~~~
 
-At start, the check for "text" or "code" needs to check for the 
-`header_string`. After testing the "header" block, test for code-blocks with
-`Code2Text.code_test`_::
-
-      def set_state(self, lines):
-          """Return whether the header block is "text" or "code".
-          
-          Strip `self.header_string` if present."""
-          
-
-          self.set_state = self.code_test
-          
-          if lines[0].startswith(self.header_string):
-              lines[0] = lines[0].replace(self.header_string, "", 1)
-              return "code"
-          return "text"
-  
-
-Code2Text.code_test
-~~~~~~~~~~~~~~~~~~~
-
-Test for end of code block, return next state. 
-
-A literal block ends with the first less indented, nonblank line.
-`_textindent` is set by the text handler to the indent of the
-preceding paragraph. 
-
 ::
 
-      def code_test(self, block):
-          """test code block for end of "code" state, return next state
-          """
-          indents = [self.get_indent(line) for line in block]
-          if min(indents) <= self._textindent:
-              return 'text'
-          return 'code'
+      def set_state(self, block):
+          """Determine and set state of `block` ("text" or "code"). """
   
-TODO: insert blank line before the first line with too-small codeindent?
-self.ensure_trailing_blank_line(lines, line)
+If the current state is "header" (first block), check for
+the  `header_string`. Strip if present. ::
+          
+          if self.state == "header":
+              if block[0].startswith(self.header_string):
+                  block[0] = block[0].replace(self.header_string, "", 1)
+                  self.state = "code"
+              else:
+                  self.state = "text"
+  
+A literal block ends with the first less indented, nonblank line.
+`_textindent` is set by the text handler to the indent of the
+preceding text block::
 
+          elif self.state == "code":
+              indents = [self.get_indent(line) for line in block]
+              if min(indents) <= self._textindent:
+                  self.state = 'text'
+              else:
+                  self.state = 'code'
+  
+TODO: insert blank line before the first line with too-small codeindent
+using self.ensure_trailing_blank_line(lines, line) (would need split and
+push-back of the text part)?
 
 Text2Code.text
 ~~~~~~~~~~~~~~
 
 The 'text' handler processes everything that is not an indented literal
 comment. Text is quoted with `self.comment_string` or filtered (with
-strip=True). ::
+`--strip=True`). ::
 
       def text(self, lines):
           """Convert text blocks from rst to comment
@@ -447,8 +441,8 @@ Test for the end of the text block: does the second last line end with
 If end-of-text marker is detected, 
 
 * set state to 'code'
-* set the current text indent level (needed by the code handler to find the
-  end of code block)
+* set `self._textindent` (needed by `Text2Code.set_state`_ to find the
+  next "text" block)
 * remove the comment from the last line again (it's a separator between text
   and code blocks).
 
@@ -457,7 +451,7 @@ TODO: allow different code marking directives (for syntax color etc)
 
           try:
               line = lines[-2]
-          except IndexError:  # len(lines < 2)
+          except IndexError:  # len(lines < 2), e.g. last line of document
               pass
           else:
               if (line.rstrip().endswith("::") 

@@ -11,7 +11,7 @@
 ##             (v. 2 or later)
 ## 
 ## .. contents::
-## 
+
 ## ::
 
 """pylit_test.py: test the "literal python" module"""
@@ -600,6 +600,8 @@ print 'hello world'
 
 ## Global defaults
 ## ===============
+## 
+## ::
 
 def test_global_option_defaults():
     """dictionary of programming languages and extensions"""
