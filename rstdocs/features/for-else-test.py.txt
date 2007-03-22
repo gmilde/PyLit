@@ -3,10 +3,14 @@
 Example for syntax highlight with Pygments
 ==========================================
 
-Translate this document to html with the pygments enhanced frontend::
+Translate this document to html with a pygments enhanced frontend::
 
-   rst2html-pygments --stylesheet=pygments-default.css
-
+  rst2html-pygments --stylesheet=pygments-default.css
+   
+or
+     
+  rst2latex-pygments --stylesheet=pygments-default.sty
+  
 to gain syntax highlight in the output.
 
 .. Run the doctests with ``pylit --doctest for-else-test.py``.

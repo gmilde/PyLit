@@ -4,11 +4,12 @@
       crumb: Highlights
       page-title: Pylit - Features - Syntax Highlight
       file: rst2html-pygments
+      file: rst2latex-pygments
       file: for-else-test.py.txt
+      file: for-else-test.py.tex
+      file: for-else-test.py.pdf
       file: for-else-test.py.html
       file: pygments-default.css
-      file: pygments-default.css.txt
-      file: pygments-default.css.html
   /restindex
 
 .. sectnum::
@@ -21,9 +22,10 @@ Syntax highlighting significantly enhances the readability of code.
 So it is almost a must for pretty-printing a literate program.
 
 PyLit uses docutils_ as pretty-printing back end. However, in the current
-version, docutils does not highlight literal blocks.  But in a mail on
+version, docutils does not highlight literal blocks. This may change in the
+future, as in a mail on
 `Questions about writing programming manuals and scientific documents`__,
-David Goodger wrote:
+docutils main developer David Goodger wrote:
 
    I'd be happy to include Python source colouring support, and other
    languages would be welcome too. A multi-language solution would be
@@ -64,22 +66,58 @@ __ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
 
 Pygments seems to be the most promising docutils highlighter.
 
-Pygments enhanced rst2html front-end
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `rst2html-pygments`_ script combines code from "`Using Pygments in ReST
-documents`_" with the standard docutils ``rst2html`` front-end producing a
-html rendering with syntax highlight. (It should be not too difficult to
-create an ``rst2latex-pygments`` front end as well.)
+Pygments enhanced docutils front-ends
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A new "sourcecode" directive is defined, that takes one argument `language`
-and uses the `Pygments`_ source highlighter to render its content as a
-literal block with syntax colour. It looks like::
+The example code in "`Using Pygments in ReST documents`_" defines a new
+"sourcecode" directive.  The directive takes one argument `language` and
+uses the `Pygments`_ source highlighter to parse and render its content as a
+literal block with syntax colour. 
+
+Example::
 
   .. sourcecode:: python
      
      def hello():
          print "hello world"
+
+Combining the pygments_ example code with the standard docutils_ front-ends,
+results in front-end scripts generating pretty-print with syntax highlight: 
+
+`rst2html-pygments`_ 
+  enhances the standard docutils ``rst2html`` front-end to
+  generate a HTML rendering with syntax highlight. 
+  
+`rst2latex-pygments`_ 
+  enhances docutils' ``rst2latex`` to generate LaTeX with syntax highlight.
+
+Advantages:
+  + Easy implementation with no changes needed for the stock docutils_. 
+  + Separation of code blocks and ordinary literal blocks.
+
+Disadvantage:
+  - more "invasive" markup distracting from content
+  - no "minimal" code block marker -- three additional lines per code block
+
+The disadvantages become a real issue in literate programming where a code
+block is expected to be the most used block markup.
+
+Examples
+""""""""
+
+example Python script: 
+  `for-else-test`_ investigates the command flow in a Python
+  ``for ... else`` construct.
+  
+  :text source: `for-else-test.py.txt`_
+  :HTML:   `for-else-test.py.html`_
+  :LaTeX:  `for-else-test.py.tex`_
+  :PDF:    `for-else-test.py.pdf`_
+
+Stylesheets:
+  :CSS stylesheet:  `pygments-default.css`_
+  :LaTeX style:     `pygments-default.sty`_
 
 
 To support this way of syntax highlight, the PyLit converter would need a
@@ -88,33 +126,6 @@ configurable "code block marker" instead of the hard coded double colon
 pylit.py.)
 
 __ ../examples/pylit.py.html#sourcecode-directive
-
-Advantages:
-
-* Easy implementation with no changes needed for the stock docutils_. 
-* Separation of code blocks and ordinary literal blocks.
-
-Disadvantage:
-
-* more "invasive" markup distracting from content
-* no "minimal" code block marker -- three additional lines per code block
-
-The disadvantages become a real issue in literate programming where a code
-block is expected to be the most used block markup by far.
-
-Examples
-""""""""
-
-`for-else-test.py.html`_
-  tries out of the command flow in a Python for else construct.
-  
-  Source: `for-else-test.py.txt`_
- 
-`pygments-default.css.html`_
-  is the style sheet that provides the colours in these examples
-  
-  Sources: `pygments-default.css`_, `pygments-default.css.txt`_ 
-
 
 
 Odtwriter syntax
@@ -145,7 +156,7 @@ directive::
 
 
 The "sourcecode" directive defined by the odtwriter is principally
-different from the "sourcecode" directive of rst2html-pygments:
+different from the "sourcecode" directive of ``rst2html-pygments``:
   
 * The odtwriter directive does not have content. It is a switch.
 
@@ -264,7 +275,7 @@ used for e.g.
 * the "parsed-literal" directive
 
 * a "sourcecode" directive for colourful code 
-  (analog to the one in `rst2html-pygments`_)
+  (analog to the one in the `pygments enhanced docutils front-ends`_)
 
 * a "listing" directive for the `listings`_ environment in LaTeX
 
@@ -298,8 +309,13 @@ considered to configure the role of a block quote.
 .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
 
 .. _rst2html-pygments: rst2html-pygments
-.. _for-else-test.py.txt: for-else-test.py.txt
+.. _rst2latex-pygments: rst2latex-pygments
+.. _for-else-test:
 .. _for-else-test.py.html: for-else-test.py.html
+.. _for-else-test.py.txt: for-else-test.py.txt
+.. _for-else-test.py.tex: for-else-test.py.tex
+.. _for-else-test.py.pdf: for-else-test.py.pdf
 .. _pygments-default.css: pygments-default.css
 .. _pygments-default.css.txt: pygments-default.css.txt
 .. _pygments-default.css.html: pygments-default.css.html
+.. _pygments-default.sty: pygments-default.sty

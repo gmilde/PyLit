@@ -1,7 +1,7 @@
 .. -*- rst-mode -*-
    restindex
      crumb: Home
-     page-title: PyLit - Literate programming with reStructuredText
+     page-title: PyLit
    /restindex
 
 ============================================================
@@ -23,25 +23,27 @@ __ literate-programming/index.html
 .. _Charming Python interview:
      http://www-128.ibm.com/developerworks/library/l-pyth7.html
 
-`Pylit Features`__
-  PyLit (Python-Literate) is a Python_ module providing a bidirectional
-  converter between 
- 
-  * a *text source* with embedded code blocks and
-  * a *code source* with documentation in comment blocks.
+`Pylit Features`__ 
+  *PyLit* (Python-Literate) is a `pure Python module`__ providing a
+  **bidirectional** converter between a text source with embedded code
+  blocks and a code source with documentation in comment blocks.
    
-  Documentation or code can be edited in their "native" format using
+  Documentation and code can be edited in their "native" format using
   ones favourite editor and editing mode.
+  
+  The Python docutils_ can be used to convert the text source into HTML or
+  LaTeX documents.
 
-.. _pylit module: examples/pylit.py.html
-.. _reStructured Text: http://docutils.sourceforge.net/rst.html
 __ features/index.html
+__ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
+.. _docutils Text: http://docutils.sourceforge.net/
 
 
 Tutorial__ 
   How to write literate programs with PyLit
   
 __ tutorial/index.html
+
   
 Examples__ 
   Use cases for literate programming with PyLit
@@ -49,10 +51,8 @@ Examples__
 __ examples/index.html
 
 
-
 `Download, Installation, Usage`__
   PyLit requires functioning Python_ installation and the `pylit.py`_  module.
-  
   Installation_ and usage_ are straigtforward.
   
   Not required by PyLit converter but for conversion of the text source
@@ -116,4 +116,5 @@ About this site
   developers by the Fraunhofer-Institut für Offene Kommunikationssysteme 
   (FOKUS) in Berlin.
   
+.. _reStructured Text: http://docutils.sourceforge.net/rst.html
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/

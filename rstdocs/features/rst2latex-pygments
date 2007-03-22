@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-# :Author: David Goodger, a Pygments author|contributor, Guenter Milde
-# :Date: $Date: $
-# :Copyright: This module has been placed in the public domain.
+# Author: David Goodger, a Pygments author|contributor, Guenter Milde
+# Date: $Date: $
+# Copyright: This module has been placed in the public domain.
 
-# This is a merge of the docutils_ `rst2html` front end with an extension
+# This is a merge of the docutils_ `rst2latex` front end with an extension
 # suggestion taken from the pygments_ documentation.
 
 """
-A front end to docutils, producing HTML with colorized code using pygments
+A front end to docutils, producing LaTeX with colorized code using pygments
 """
 
 try:
@@ -19,7 +19,7 @@ except:
 
 from docutils.core import publish_cmdline, default_description
 
-description = ('Generates (X)HTML documents from standalone reStructuredText '
+description = ('Generates LaTeX documents from standalone reStructuredText '
                'sources. Uses `pygments` to colorize code. '
                'Needs an adapted stylesheet' + default_description)
 
@@ -33,9 +33,9 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters import HtmlFormatter
+from pygments.formatters import LatexFormatter
 
-pygments_formatter = HtmlFormatter()
+pygments_formatter = LatexFormatter()
 
 def pygments_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):
@@ -45,14 +45,14 @@ def pygments_directive(name, arguments, options, content, lineno,
         # no lexer found - use the text one instead of an exception
         lexer = get_lexer_by_name('text')
     parsed = highlight(u'\n'.join(content), lexer, pygments_formatter)
-    return [nodes.raw('', parsed, format='html')]
+    return [nodes.raw('', parsed, format='latex')]
 pygments_directive.arguments = (1, 0, 1)
 pygments_directive.content = 1
 directives.register_directive('sourcecode', pygments_directive)
 
-# Call the docutils publisher to render the input as html::
+# Call the docutils publisher to render the input as latex::
 
-publish_cmdline(writer_name='html', description=description)
+publish_cmdline(writer_name='latex', description=description)
 
 # .. _doctutile: http://docutils.sf.net/
 # .. _pygments: http://pygments.org/

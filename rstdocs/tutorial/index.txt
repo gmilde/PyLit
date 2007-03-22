@@ -14,7 +14,7 @@ How to write program documents with PyLit
 Hello world
 -----------
 
-We start with a classical example (in Python_)
+We start with a classical example in Python_
 
   .. include:: hello.py
      :literal:
@@ -35,17 +35,17 @@ text document".
 
 Points to mention:
 
-* You can start literate programming with an existing code file (and without
+* One can start literate programming with an existing code file (and without
   knowledge of reStructured Text syntax).
   
-* The *documentation* is uncommented (if it is separated from code by a
+* *Documentation* is uncommented (if it is separated from code by a
   blank line and has a recognised comment string at the start of each line).
 
 * A double colon is added at the end of the text block. It is the
-  reStructured Text marker for the following `literal block`_.
+  `reStructured Text`_ marker for the following `literal block`_.
   (No marker is added, if the text block already ends with a double colon.)
 
-* The *code* is indented to form a literal block. It will be printed using a
+* *Code* is indented to form a literal block. It will be printed using a
   monospaced font and without reStructured Text substitutions.
 
 * PyLit adds ".txt" to the filename for the text version.
@@ -88,11 +88,11 @@ Points to mention:
 Textblocks and Comments
 -----------------------
 
-Comment lines are only transformed to a text block,
+Comment lines are only transformed to a text block, if they
 
-* if they start with a matching `comment string` (Python default ``'# '``,
-  whitespace counts!), and
-* if they are separated from non-text lines by at least one blank[#]_ line
+* start with a matching `comment string` (whitespace counts!, the Python
+  default is ``'# '``), and
+* are separated from non-text lines by at least one blank[#]_ line
 
 Otherwise, they are kept as commented code.
 
@@ -109,7 +109,9 @@ An example will illustrate this. The code::
 
 is mapped to text as::
 
-  99bottles.py -- print the famous "99 bottles of beer" song lyrics::
+  99bottles.py -- print the famous "99 bottles of beer" song lyrics
+  
+  ::
 
     # This is used as an introductory example to literate programming
     # in the literateprograms.org Wiki.
@@ -134,7 +136,7 @@ However, ::
 
 is mapped to text as::
 
-  99bottles.py -- print the famous "99 bottles of beer" song lyrics::
+  99bottles.py -- print the famous "99 bottles of beer" song lyrics
 
   This is used as an introductory example to literate programming
   in the literateprograms.org Wiki.
@@ -185,17 +187,18 @@ the source is a literate program anyway). But there are advantages also:
   many source files.
 
 If needed for the documentation, it is possible to repeat the header in the
-the first text block, e.g. using `inline markup`_ markup in `line block`_
-nested in a `block quote`_:
+the first text block, e.g. using a `parsed literal block`_:
 
-  |  ``#!/usr/bin/env python``
-  |  ``# -*- coding: iso-8859-1 -*-``
+.. parsed-literal::
+
+  #!/usr/bin/env python
+  # -*- coding: iso-8859-1 -*-
 
 
 Doctests
 --------
 
-Pylit allows to run `Python doctests`_ on a literate script. 
+Pylit supports `Python doctests`_ in a literate script. 
 
 We add a doctest to our example:
 
@@ -276,15 +279,8 @@ looks like
 .. _literal block: 
      http://docutils.sourceforge.net/docs/user/rst/quickref.html#literal-blocks
 
-.. _inline markup:
-     http://docutils.sourceforge.net/docs/user/rst/quickref.html#inline-markup
-
-.. _line block:
-     http://docutils.sourceforge.net/docs/user/rst/quickref.html#line-blocks
-
-.. _block quote:
-     http://docutils.sourceforge.net/docs/user/rst/quickref.html#block-quotes
-
+.. _parsed literal block:
+     http://docutils.sourceforge.net/docs/ref/rst/directives.html#parsed-literal-block
 .. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
 
 .. _include directive:

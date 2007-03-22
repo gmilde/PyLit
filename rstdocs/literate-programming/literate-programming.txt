@@ -58,20 +58,50 @@ by Mark-Jason Dominus:
 This is why the `Wikipedia entry on literate programming`_ classifies POD as
 `embedded documentation`. 
 
-PyLit also fails this narrow definition but, according to the Wikipedia,
-qualifies as `semi-literate`:
+PyLit also fails this narrow definition but, according to the Wikipedia_,
+qualifies as _`semi-literate`:
 
   It is the fact that documentation can be written freely whereas code must
   be marked in a special way that makes the difference between semi-literate
   programming and excessive documenting, where the documentation is embedded
   into the code as comments.
 
-For more discussion of the PyLit concepts see the Features_ page.
+Renouncing named chunks and code re-ordering enables the `dual-source`_
+concept. It seems well suited for a programming language like Python where
+you would rather use packages, modules, classes, and functions to structure
+the code. Also, Pythons dynamic name resolution allows a great deal of
+flexibility in the order of code.
+
+  The computer science and programming pioneers, like Wirth and Knuth, used
+  another programming style than we recommend today. One notable difference
+  is the use of procedure abstractions. When Wirth and Knuth wrote their
+  influential books and programming, procedure calls were used with care,
+  partly because they were relatively expensive. Consequently, they needed
+  an extra level of structuring within a program or procedure. 
+  'Programming by stepwise refinement' as well as 'literate programming' can
+  be seen as techniques and representations to remedy the problem. The use
+  of many small (procedure) abstractions goes in another direction. If you
+  have attempted to use 'literate programming' on a program (maybe an
+  object-oriented program) with lots of small abstractions, you will
+  probably have realized that there is a misfit between, on the one hand,
+  being forced to name literal program fragments (scraps) and on the other,
+  named program abstractions. We do not want to leave the impression that
+  this is a major conceptual problem, but it is the experience of the author
+  that we need a variation of literate programming, which is well-suited to
+  programs with many, small (named) abstractions.
+
+  -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+
 
 .. _POD is not Literate Programming: 
     http://www.perl.com/pub/a/tchrist/litprog.html
-.. _Wikipedia entry on literate programming: 
+.. _Wikipedia entry on literate programming:
+.. _Wikipedia:
     http://en.wikipedia.org/wiki/Literate_programming#Embedded_documentation
+.. _`Literate Programming - Issues and Problems`:
+     http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
+.. _dual-source: /features/index.html#dual-source
+
 
 
 Existing Frameworks
@@ -151,7 +181,7 @@ How does PyLit differ from the web-like literate programming frameworks:
   text source into both, pretty-printed hardcopy (via LaTeX - PDF) and
   browsable electronic (HTML) form.
 
-For a full discussion of the PyLit concepts see the Features_ page.
+For a full discussion of PyLit's concepts see the Features_ page.
 
 .. _docutils: http://docutils.sourceforge.net/
 .. _Features: /features/index.html
