@@ -10,6 +10,7 @@
       file: for-else-test.py.pdf
       file: for-else-test.py.html
       file: pygments-default.css
+      file: pygments-default.sty
   /restindex
 
 .. sectnum::

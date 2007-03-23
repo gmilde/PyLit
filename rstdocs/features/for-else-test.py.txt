@@ -7,7 +7,7 @@ Translate this document to html with a pygments enhanced frontend::
 
   rst2html-pygments --stylesheet=pygments-default.css
    
-or
+or::
      
   rst2latex-pygments --stylesheet=pygments-default.sty
   
