@@ -12,6 +12,21 @@
 ## 
 ## .. contents::
 
+
+## A catalog of errors
+## ----------------------
+## 
+## from file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html
+## 
+## * Numbers: zero, largest, smallest magnitude, most negative
+## * Structures: empty, exactly one element, maximum number of elements
+##   - Duplicate elements (e.g., the letter "J" appears three times in a string)
+##   - Aliased elements (e.g., a list contains two references to another list)
+##   - Circular structures (e.g., a list that contains a reference to itself)
+## * Searching: no match found, one match found, multiple matches found, everything matches
+##   - Code like x = find_all(structure)[0] is almost always wrong
+##   - Should also check aliased matches (same thing found multiple times)
+##
 ## ::
 
 """pylit_test.py: test the "literal python" module"""

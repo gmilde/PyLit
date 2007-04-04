@@ -251,16 +251,17 @@ into floating point numbers:
   >>> numeric('1/7').evalf()
   0.14285714285714285714
 
-.. note:: In GiNaC or ginsh, this can be done to arbitrary predefined
-    accuracy:
+.. note:: 
+   In GiNaC or ginsh, this can be done to arbitrary predefined
+   accuracy:
 
-   > Digits=150;
-   150
-   > evalf(1/7);
-   0.1428571428571428571428571428571428571428571428571428571428571428571428
+   ``> Digits=150;``
+   ``150``
+   ``> evalf(1/7);``
+   ``0.1428571428571428571428571428571428571428571428571428571428571428571428``
 
- I did not find an equivalent setting in swiginac, though. Either this is
- not available (yet) or I just did not find it.
+ There is an equivalent setting in the swiginac developer version, but not in
+ the released versions.
 
 The return value of ``evalf()`` is still a ``numeric`` value:
 
@@ -293,9 +294,9 @@ exact number) as well as in numeric expressions (as an inexact number):
 .. note:: The ``subs()`` method is used, as changing the value of ``x`` will
           not propagate to the already defined expression ``a``:
 
-               >>> x = 2
-               >>> a.evalf()
-               9.869604401089358619+x
+          ``>>> x = 2``
+          ``>>> a.evalf()``
+          ``9.869604401089358619+x``
 
 Built-in functions evaluate immediately to exact numbers if this is
 possible. Conversions that can be safely performed are done immediately;

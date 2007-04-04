@@ -55,7 +55,8 @@
 # :2007-03-19: 0.3.4 documentation update
 #                    separate `execute` function
 # :2007-03-21:       code cleanup in `Text2Code.__iter__`
-#              
+# :2007-03-23: 0.3.5 removed "css" from languages after learning that 
+#                    there is no C++ style "// " comment in css2
 # ::
 
 """pylit: Literate programming with Python and reStructuredText
@@ -115,7 +116,6 @@ defaults = optparse.Values()
 defaults.languages  = {".py": "python", 
                        ".sl": "slang", 
                        ".c": "c++",
-                       ".css": "css",
                        ".el":"elisp"}
 
 # If there is no matching extension, e.g. if pylit is used as filter, fall
@@ -143,7 +143,6 @@ defaults.text_extensions = [".txt"]
 defaults.comment_strings = {"python": '# ',
                             "slang":  '% ', 
                             "c++":    '// ',
-                            "css":    '// ',
                             "elisp":  ';; '}  
 
 # Marker string for a header code block in the text source. (Should be a valid
