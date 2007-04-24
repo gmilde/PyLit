@@ -13,11 +13,11 @@
       file: pygments-default.sty
   /restindex
 
-.. sectnum::
-.. contents::
-
 Syntax Highlight
 ----------------
+
+.. contents::
+.. sectnum::
 
 Syntax highlighting significantly enhances the readability of code.
 So it is almost a must for pretty-printing a literate program.
@@ -38,49 +38,54 @@ docutils main developer David Goodger wrote:
 __ http://sourceforge.net/mailarchive/message.php?msg_id=12921194
 
 
-There are already such add-ons providing syntax colouring. E.g 
+Existing highlighting additions to docutils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* the rest2web_ site builder provides the `colorize`__ macro (using the
-  `Moin-Moin Python colorizer`_) 
+There are already such add-ons providing syntax colouring, e.g:
 
-__ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
-
-* the Odtwriter_ for Docutils supports syntax colours via the pygments_
-  generic syntax highlighter.
-
-* a `code-block` directive recipe__ examples that uses SilverCity_ 
-  for syntax highlight.
+* A `code-block` directive recipe__ that uses SilverCity_ for syntax
+  highlight.
   
 __ http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/252170
 
-* a `code-block` patch__ mailed by Gael Varoquaux for
+* A `code-block` patch__ mailed by Gael Varoquaux for
   Python syntax highlight (using the listings package for LaTeX export).
   
 __ http://article.gmane.org/gmane.text.docutils.devel/3914
 
-* Trac_ `supports reStructuredText`__ and offers syntax highlighting with a
-  `code-block` directive using GNU Enscript, SilverCity_, or Pygments_.
+* Trac_ has `reStructuredText support`__ and offers syntax highlighting with
+  a `code-block` directive using GNU Enscript, SilverCity_, or Pygments_.
   
 __ http://trac.edgewall.org/wiki/WikiRestructuredText
 
-* the `listings`_ LaTeX package provides highly customisable and advanced
+* The rest2web_ site builder provides the `colorize`__ macro (using the
+  `Moin-Moin Python colorizer`_) 
+
+__ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
+
+* The Odtwriter_ for Docutils supports syntax colours via the pygments_
+  generic syntax highlighter.
+
+* The `listings`_ LaTeX package provides highly customisable and advanced
   syntax highlight, though only for the LaTeX (and LaTeX derived PS|PDF)
   rendering.
 
 * `Pygments`_ a generic syntax highlighter for general use. 
 
-  * It is written completely in Python, usable as a command-line tool and as a
+  * Written completely in Python, usable as a command-line tool and as a
     Python package.
   * A wide range of common `languages and markup formats`_ is supported.
   * The layout is configurable by style sheets.
   * Several built-in styles and an option for line-numbering.
-  * Built-in output formats include HTML, LaTeX, and rtf.
+  * Built-in output formats include HTML, LaTeX, rtf,
+    OpenOffice is supported by the odtwriter_.
   * Support for new languages, formats, and styles is added easily (modular
     structure, Python code, existing documentation).
   * Well documented and actively maintained.
-  * There is a recipe for `using Pygments in ReST documents`_.
+  * The web site provides a recipe for `using Pygments in ReST documents`_.
+    It is used in the `Pygments enhanced docutils front-ends`_ below.
 
-Pygments seems to be the most promising docutils highlighter. For printed
+Pygments_ seems to be the most promising docutils highlighter. For printed
 output, the listings_ package has its advantages too.
 
 
@@ -88,19 +93,20 @@ Pygments enhanced docutils front-ends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The example code in "`Using Pygments in ReST documents`_" defines a new
-"sourcecode" directive.  The directive takes one argument `language` and
-uses the `Pygments`_ source highlighter to parse and render its content
-as a colourful source code block. 
+"sourcedode" directive. For consistency with the majority of existing
+add-ons, it is renamed to "code-block". The directive takes one argument
+`language` and uses the `Pygments`_ source highlighter to parse and render
+its content as a colourful source code block. 
 
 Example::
 
-  .. sourcecode:: python
+  .. code-block:: python
      
      def hello():
          print "hello world"
 
 Combining the pygments_ example code with the standard docutils_ front-ends,
-results in front-end scripts generating pretty-print with syntax highlight: 
+results in front-end scripts generating output documents with syntax colour: 
 
 `rst2html-pygments`_ 
   enhances the standard docutils ``rst2html`` front-end to
@@ -116,13 +122,12 @@ Advantages:
 Disadvantage:
   - more "invasive" markup distracting from content
   - no "minimal" code block marker -- three additional lines per code block
+  - documents are incompatible with the standard docutils because of the
+    locally defined directive.
 
 The disadvantages become a real issue in literate programming where a code
 block is expected to be the most used block markup.
   
-TODO: 
-  should be renamed to "code-block" for compatibility with existing
-  directives (trac, rest2web).
 
 Examples
 """"""""
@@ -143,10 +148,10 @@ Stylesheets:
 
 To support this way of syntax highlight, the PyLit converter would need a
 configurable "code block marker" instead of the hard coded double colon
-(``::``) presently in use. (See also the `sourcecode directive`__ section in
+(``::``) presently in use. (See also the `code-block directive`__ section in
 pylit.py.)
 
-__ ../examples/pylit.py.html#sourcecode-directive
+__ ../examples/pylit.py.html#code-block-directive
 
 
 The listings LaTeX package
@@ -174,16 +179,20 @@ some nice stuff and customisation, e.g.::
   \usepackage{fancyvrb}
   \DefineVerbatimEnvironment{verbatim}{Verbatim}{frame=lines}
 
-However, employing this way to let "listings" render the block as
-described in the ``listings.pdf`` documentation fails::
+The ``listings.pdf`` documentation says one can use the listings package to
+render a "Verbatim" environment with ::
 
   \lstset{language=Python, fancyvrb}
 
-seems not to have any effect. [#]_
+. However this did not work in my test. [#]_
 
 .. [#] at least with ``listings 2004/10/17 1.3b`` and ``fancyvrb
-       1998/07/17`` where it also does not work with explicit Verbatim,
-       environments while the documentation says it should.
+       1998/07/17``
+
+
+The current workaround is to use a post-processing filter to replace all
+occurences of {verbatim} with {lstlisting}. (More details can be found
+searching the docutils-users mail archive for "listings").
 
 
 Odtwriter

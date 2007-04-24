@@ -3,11 +3,11 @@
 Example for syntax highlight with Pygments
 ==========================================
 
-Translate this document to html with a pygments enhanced frontend::
+Translate this document to HTML with a pygments enhanced frontend::
 
   rst2html-pygments --stylesheet=pygments-default.css
    
-or::
+or to LaTeX with::
      
   rst2latex-pygments --stylesheet=pygments-default.sty
   
@@ -23,7 +23,7 @@ Test the flow in a `for` loop with `else` statement.
 
 First define a simple `for` loop.
 
-.. sourcecode:: python
+.. code-block:: python
 
   def loop1(iterable):
       """simple for loop with `else` statement"""
@@ -37,7 +37,7 @@ Now test it:
   
 The first test runs as I expect: iterator empty -> else clause applies:
       
-.. sourcecode:: pycon
+.. code-block:: pycon
 
   >>> loop1(range(0))
   iterable empty
@@ -46,7 +46,7 @@ The first test runs as I expect: iterator empty -> else clause applies:
 However, the else clause even runs if the iterator is not empty in the first
 place but after it is "spent":
 
-.. sourcecode:: pycon
+.. code-block:: pycon
 
   >>> loop1(range(3))
   0
@@ -58,7 +58,7 @@ place but after it is "spent":
 It seems like the else clause can only be prevented, if we break out of
 the loop. Let's try
 
-.. sourcecode:: python
+.. code-block:: python
 
   def loop2(iterable):
       """for loop with `break` and `else` statement"""
@@ -71,7 +71,7 @@ the loop. Let's try
 
 And indeed, the else clause is skipped after breaking out of the loop:
 
-.. sourcecode:: pycon
+.. code-block:: pycon
 
   >>> loop2(range(3))
   0
@@ -79,7 +79,7 @@ And indeed, the else clause is skipped after breaking out of the loop:
   
 The empty iterator runs as expected:
 
-.. sourcecode:: pycon
+.. code-block:: pycon
       
   >>> loop2(range(0))
   iterable empty

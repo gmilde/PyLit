@@ -1319,7 +1319,7 @@ if __name__ == '__main__':
 # 
 #   Not implemented yet:
 #   
-#   - use a special `sourcecode directive`_ or a special directive for
+#   - use a special `code-block directive`_ or a special directive for
 #     ordinary literal blocks.
 #     
 # * Ignore "matching comments" in literal strings?
@@ -1329,17 +1329,17 @@ if __name__ == '__main__':
 # 
 # * Warn if a comment in code will become text after round-trip?
 # 
-# sourcecode directive
+# code-block directive
 # --------------------
 # 
 # In a document where code examples are only one of several uses of literal
 # blocks, it would be more appropriate to single out the sourcecode with a
-# dedicated "sourcecode" directive.
+# dedicated "code-block" directive.
 # 
 # Some highlight plug-ins require a special "sourcecode" or "code block"
 # directive instead of the ``::`` literal block marker. Actually,
 # syntax-highlight is possible without changes to docutils with the Pygments_
-# package using a "sourcecode" directive. See the `syntax highlight`_ section
+# package using a "code-block" directive. See the `syntax highlight`_ section
 # in the features documentation.
 # 
 # TODO:
