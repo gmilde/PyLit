@@ -57,6 +57,8 @@ Changelog
 :2007-03-21:       code cleanup in `Text2Code.__iter__`
 :2007-03-23: 0.3.5 removed "css" from languages after learning that 
                    there is no C++ style "// " comment in css2
+:2007-04-24: 0.3.6 documentation update
+
 ::
 
   """pylit: Literate programming with Python and reStructuredText
@@ -1314,12 +1316,12 @@ Parsing Problems
 
   - Python session examples and doctests can use `doctest block`_ syntax 
   
-    No double colon! Start first line of block with ``>>>```.
+    No double colon! Start first line of block with ``>>>``.
               
 
   Not implemented yet:
   
-  - use a special `code-block directive`_ or a special directive for
+  - use a dedicated `code-block directive`_ or a distinct directive for
     ordinary literal blocks.
     
 * Ignore "matching comments" in literal strings?
@@ -1336,7 +1338,7 @@ In a document where code examples are only one of several uses of literal
 blocks, it would be more appropriate to single out the sourcecode with a
 dedicated "code-block" directive.
 
-Some highlight plug-ins require a special "sourcecode" or "code block"
+Some highlight plug-ins require a special "sourcecode" or "code-block"
 directive instead of the ``::`` literal block marker. Actually,
 syntax-highlight is possible without changes to docutils with the Pygments_
 package using a "code-block" directive. See the `syntax highlight`_ section
