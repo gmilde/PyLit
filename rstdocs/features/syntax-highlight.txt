@@ -90,7 +90,7 @@ Pygments enhanced docutils front-ends
 The example code in "`Using Pygments in ReST documents`_" defines a new
 "sourcecode" directive.  The directive takes one argument `language` and
 uses the `Pygments`_ source highlighter to parse and render its content
-as a colourfull source code block. 
+as a colourful source code block. 
 
 Example::
 
@@ -166,10 +166,10 @@ First idea: use a stylesheet to redefine the ``verbatim`` environment::
   % \renewenvironment{verbatim}{\begin{lstlisting}}{\end{lstlisting}}
 
 This fails, as ``verbatim`` is a very special environment looking for a
-literal occurence of ``end{verbatim}``.
+literal occurrence of ``end{verbatim}``.
 
 One can use the `fancyvrb` package and re-define "verbatim" do to
-some nice stuff and customization, e.g.::
+some nice stuff and customisation, e.g.::
 
   \usepackage{fancyvrb}
   \DefineVerbatimEnvironment{verbatim}{Verbatim}{frame=lines}
@@ -182,7 +182,7 @@ described in the ``listings.pdf`` documentation fails::
 seems not to have any effect. [#]_
 
 .. [#] at least with ``listings 2004/10/17 1.3b`` and ``fancyvrb
-       1998/07/17`` where it also does not work with explicite Verbatim,
+       1998/07/17`` where it also does not work with explicit Verbatim,
        environments while the documentation says it should.
 
 
@@ -242,7 +242,7 @@ handy in literate programs where there are many sourcecode blocks!
 Configurable literal block directive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The *role* of inline `interpreted text` can be customized with the
+The *role* of inline `interpreted text` can be customised with the
 "default-role" directive. This allows the use of the concise "backtick"
 syntax for the most often used role, e.g. in a chemical paper, one could
 use::
@@ -251,23 +251,25 @@ use::
   
   The triple point of H`2`O is at 0°C.
 
-This customization is currently not possible for block markup.
+This customisation is currently not possible for block markup.
 
-.. admonition:: Proposal
+Proposal 1: make the default "literal block" role configurable.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-  make the default "literal block" role configurable.
+* Define a new "literal" directive for an ordinary literal block
+  (doctree element "literal-block" with no parsing)
 
-  * Define a new "literal" directive for an ordinary literal block
-    (doctree element "literal-block" with no parsing)
+* Define a "literal-block" setting that controls which directive is called
+  on a block following ``::``. Default would be the "literal" directive.
   
-  * Define a "literal-block" setting that controls which directive is called
-    on a block following ``::``. Default would be the "literal" directive.
-    
-    Alternatively, define a new "default-literal-block" directive instead of
-    a settings key.
+  Alternatively, define a new "default-literal-block" directive instead of
+  a settings key.
 
-Analogue to customising the default role of "interpreted text" with
-the "default-role" directive, the concise literal-block markup could be
+Motivation
+''''''''''
+
+Analogue to customising the default role of "interpreted text" with the
+"default-role" directive, the concise ``::`` literal-block markup could be
 used for e.g.
 
 * the "line-block" directive for poems or addresses
@@ -279,7 +281,7 @@ used for e.g.
 
 * a "listing" directive for the `listings`_ environment in LaTeX
 
-* a "verbatim" directive explicitely calling the verbatim environment in
+* a "verbatim" directive explicitly calling the verbatim environment in
   LaTeX.
 
 Example::
@@ -301,77 +303,141 @@ In the same line, a "default-block-quote" setting or directive could be
 considered to configure the role of a block quote.
 
 
+Proposal 2: literal block with configurable classes 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Revised odtwriter syntax
-~~~~~~~~~~~~~~~~~~~~~~~~
+* Enhance writers to support syntax highlight for "literal-block" doctree
+  elements with ``classes="code-block LANGUAGE"``.
 
-As a "light" option in case the `configurable literal block directive`_
-proposal is not accepted by the docutils developers, here are some
-ideas for a revised highlighting syntax based on the one in the
-odtwriter:
-
-* A *command line option* ``--syntax-highlight=LEXER`` 
-  tells the writer to apply syntax highlight to literal blocks.
-
-* Turn of syntax highlight with ``--syntax-highlight=off`` or
-  ``--no-syntax-highlight``.
+  The standard html and latex writers could use `pygments`_ as a plug-in: if
+  the "pygments" module is found, code-blocks will get syntax highlight, if
+  not, the standard "literal-block" rendering is used.
   
-* The corresponding *directive* should also be named "syntax-highlight"
-  (instead of "sourcecode") because:
+  Alternatively, separate writers and back-end scripts for
+  syntax-highlighting conversion could be added.
   
-  * it makes the relationship of command line option and directive more
-    transparent,
-    
-  * The name "sourcecode" leads me to assume that the directive
-    contains source code that should be treated specially. It's a
-    surprise to realise that the odtwriter's "sourcecode" directive
-    is a switch without content.
-    
-  * it disambiguates from the name proposed in `Using Pygments in ReST
-    documents`_.
+  The LaTeX writer should also support the "lstlistings" environment as an
+  alternative.
   
-  * with Pygments you can highlight not only source code but also
-    config files and markup languages,
-    
-  Example::
+* Add a "literal-block-classes" setting that controls which classes are
+  attributed to a literal block following "``::``".
   
-    .. syntax-highlight:: off
-    
-    ordinary literal block::
-    
-       typeset in monospace
-  
-    .. syntax-highlight:: python
-       
-    colourful Python code::
-       
-       def hello():
-           print "hello world"
-    
+  Alternatively, define a new "literal-block-classes" directive instead of
+  (or in addition to) a settings key.
 
-  Instead of a dedicated "syntax-highlight" directive, a settings
-  key could be employed together with the upcoming "settings" directive.
+Motivation
+''''''''''
 
-  Example::
+Classes are used in `docutils document tree`_ to carry non-vital
+information from reader to writer.
 
-    .. settings::
-       :syntax-highlight: bash
+Using the "literal-block" doctree element together with class information
+for source code blocks could be *the right thing*:
+
+* If a writer supports "code-block" and the specified language, it can parse
+  the literal block's content and render it accordingly.
+
+* The fall-back is to render the block in a monospaced font with whitespace
+  preserved (as currently done by all writers)
+  
+This solves the problem of compatibility with "non-enhanced" writers that do
+not provide syntax highlight. 
+
+The "class" directive can already be used to specify classes of an object::
+ 
+  colourful Python code
+
+  .. class:: code-block python
      
+  ::
+  
+     def hello():
+         print "hello world"
 
-* The syntax highlighting state and language/lexer set by this
-  directive remain in effect until the next "syntax-highlight" directive
-  is encountered in the reST document.
-  
-* In contrast to the current odtwriter, there is no "on" argument:
-  
-  ``.. syntax-highlight:: LEXER`` 
-       makes highlighting active and sets the Pygments lexer to use.
-  
-  ``.. syntax-highlight:: off`` 
-       turns off highlighting of literal blocks
+I. e. a highlight-enhanced writer that works with backwards compatible
+documents is already possible!
 
-  In order to turn syntax highlighting on and set the
-  lexer, you will need to use this directive only once.
+However, an extra "class" directive for every code block is a rather bulky
+syntax for literate programming or documenting code. A
+"literal-block-classes" setting, could allow the setting of the code-block
+language in 
+
+* a config file for a software project
+* in the document "preamble" once for all literal blocks
+* during export using a command line argument
+
+  
+
+.. Revised odtwriter syntax
+   ~~~~~~~~~~~~~~~~~~~~~~~~
+   
+   As a "light" option in case the `configurable literal block directive`_
+   proposal is not accepted by the docutils developers, here are some
+   ideas for a revised highlighting syntax based on the one in the
+   odtwriter:
+   
+   * A *command line option* ``--syntax-highlight=LEXER`` 
+     tells the writer to apply syntax highlight to literal blocks.
+   
+   * Turn of syntax highlight with ``--syntax-highlight=off`` or
+     ``--no-syntax-highlight``.
+     
+   * The corresponding *directive* should also be named "syntax-highlight"
+     (instead of "sourcecode") because:
+     
+     * it makes the relationship of command line option and directive more
+       transparent,
+       
+     * The name "sourcecode" leads me to assume that the directive
+       contains source code that should be treated specially. It's a
+       surprise to realise that the odtwriter's "sourcecode" directive
+       is a switch without content.
+       
+     * it disambiguates from the name proposed in `Using Pygments in ReST
+       documents`_.
+     
+     * with Pygments you can highlight not only source code but also
+       config files and markup languages,
+       
+     Example::
+     
+       .. syntax-highlight:: off
+       
+       ordinary literal block::
+       
+          typeset in monospace
+     
+       .. syntax-highlight:: python
+          
+       colourful Python code::
+          
+          def hello():
+              print "hello world"
+       
+   
+     Instead of a dedicated "syntax-highlight" directive, a settings
+     key could be employed together with the upcoming "settings" directive.
+   
+     Example::
+   
+       .. settings::
+          :syntax-highlight: bash
+        
+   
+   * The syntax highlighting state and language/lexer set by this
+     directive remain in effect until the next "syntax-highlight" directive
+     is encountered in the reST document.
+     
+   * In contrast to the current odtwriter, there is no "on" argument:
+     
+     ``.. syntax-highlight:: LEXER`` 
+          makes highlighting active and sets the Pygments lexer to use.
+     
+     ``.. syntax-highlight:: off`` 
+          turns off highlighting of literal blocks
+   
+     In order to turn syntax highlighting on and set the
+     lexer, you will need to use this directive only once.
 
 .. External links
 .. _docutils: http://docutils.sourceforge.net/ 
@@ -385,6 +451,8 @@ odtwriter:
 .. _listings: http://tug.ctan.org/tex-archive/macros/latex/contrib/listings/ 
 .. _languages and markup formats: http://pygments.org/languages 
 .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
+.. _`Docutils Document Tree`: 
+       http://docutils.sf.net/docs/ref/doctree.html#classes
 
 .. Internal links
 .. _rst2html-pygments: rst2html-pygments
