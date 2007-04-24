@@ -43,18 +43,21 @@ Existing highlighting additions to docutils
 
 There are already such add-ons providing syntax colouring, e.g:
 
-* A `code-block` directive recipe__ that uses SilverCity_ for syntax
-  highlight.
+* SilverCity_ is a C++ library and Python extension that can provide lexical
+  analysis for over 20 different programming languages. There is a recipe__
+  for a "code-block" directive with syntax highlight by SilverCity.
   
 __ http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/252170
 
-* A `code-block` patch__ mailed by Gael Varoquaux for
-  Python syntax highlight (using the listings package for LaTeX export).
+* The `listings`_ LaTeX package provides highly customisable and advanced
+  syntax highlight, though only for the LaTeX (and LaTeX derived PS|PDF). 
+  A patch__ mailed by Gael Varoquaux uses the listings LaTeX package for a
+  "code-block" directive with Python syntax highlight.
   
 __ http://article.gmane.org/gmane.text.docutils.devel/3914
 
 * Trac_ has `reStructuredText support`__ and offers syntax highlighting with
-  a `code-block` directive using GNU Enscript, SilverCity_, or Pygments_.
+  a "code-block" directive using GNU Enscript_, SilverCity_, or Pygments_.
   
 __ http://trac.edgewall.org/wiki/WikiRestructuredText
 
@@ -63,13 +66,6 @@ __ http://trac.edgewall.org/wiki/WikiRestructuredText
 
 __ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
 
-* The Odtwriter_ for Docutils supports syntax colours via the pygments_
-  generic syntax highlighter.
-
-* The `listings`_ LaTeX package provides highly customisable and advanced
-  syntax highlight, though only for the LaTeX (and LaTeX derived PS|PDF)
-  rendering.
-
 * `Pygments`_ a generic syntax highlighter for general use. 
 
   * Written completely in Python, usable as a command-line tool and as a
@@ -77,13 +73,16 @@ __ http://www.voidspace.org.uk/python/rest2web/macros.html#colorize
   * A wide range of common `languages and markup formats`_ is supported.
   * The layout is configurable by style sheets.
   * Several built-in styles and an option for line-numbering.
-  * Built-in output formats include HTML, LaTeX, rtf,
-    OpenOffice is supported by the odtwriter_.
+  * Built-in output formats include HTML, LaTeX, rtf
+    (OpenOffice is supported by the odtwriter_).
   * Support for new languages, formats, and styles is added easily (modular
     structure, Python code, existing documentation).
   * Well documented and actively maintained.
   * The web site provides a recipe for `using Pygments in ReST documents`_.
     It is used in the `Pygments enhanced docutils front-ends`_ below.
+
+  The experimental Odtwriter_ for Docutils OpenOffice export supports syntax
+  colours using Pygments.
 
 Pygments_ seems to be the most promising docutils highlighter. For printed
 output, the listings_ package has its advantages too.
@@ -93,20 +92,14 @@ Pygments enhanced docutils front-ends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The example code in "`Using Pygments in ReST documents`_" defines a new
-"sourcedode" directive. For consistency with the majority of existing
-add-ons, it is renamed to "code-block". The directive takes one argument
-`language` and uses the `Pygments`_ source highlighter to parse and render
-its content as a colourful source code block. 
-
-Example::
-
-  .. code-block:: python
-     
-     def hello():
-         print "hello world"
+"sourcedode" directive. The directive takes one argument `language` and uses
+the `Pygments`_ source highlighter to parse and render its content as a
+colourful source code block. 
 
 Combining the pygments_ example code with the standard docutils_ front-ends,
-results in front-end scripts generating output documents with syntax colour: 
+results in front-end scripts generating output documents with syntax colour.
+For consistency with the majority of existing add-ons, the directive is
+renamed to "code-block".
 
 `rst2html-pygments`_ 
   enhances the standard docutils ``rst2html`` front-end to
@@ -115,11 +108,19 @@ results in front-end scripts generating output documents with syntax colour:
 `rst2latex-pygments`_ 
   enhances docutils' ``rst2latex`` to generate LaTeX with syntax highlight.
 
+
+Example code block::
+
+  .. code-block:: python
+     
+     def hello():
+         print "hello world"
+
 Advantages:
-  + Easy implementation with no changes needed for the stock docutils_. 
+  + Easy implementation with no changes to the stock docutils_. 
   + Separation of code blocks and ordinary literal blocks.
 
-Disadvantage:
+Disadvantages:
   - more "invasive" markup distracting from content
   - no "minimal" code block marker -- three additional lines per code block
   - documents are incompatible with the standard docutils because of the
@@ -127,15 +128,8 @@ Disadvantage:
 
 The disadvantages become a real issue in literate programming where a code
 block is expected to be the most used block markup.
-  
 
-Examples
-""""""""
-
-example Python script: 
-  `for-else-test`_ investigates the command flow in a Python
-  ``for ... else`` construct.
-  
+Example Python script:
   :text source: `for-else-test.py.txt`_
   :HTML:   `for-else-test.py.html`_
   :LaTeX:  `for-else-test.py.tex`_
@@ -186,14 +180,12 @@ render a "Verbatim" environment with ::
 
 . However this did not work in my test. [#]_
 
-.. [#] at least with ``listings 2004/10/17 1.3b`` and ``fancyvrb
-       1998/07/17``
-
-
 The current workaround is to use a post-processing filter to replace all
 occurences of {verbatim} with {lstlisting}. (More details can be found
 searching the docutils-users mail archive for "listings").
 
+.. [#] with ``listings 2004/10/17 1.3b`` and ``fancyvrb
+       1998/07/17``
 
 Odtwriter
 ~~~~~~~~~
@@ -244,8 +236,7 @@ different from the "sourcecode" directive of ``rst2html-pygments``:
 The advantage of this approach is the clean and simple syntax for code
 blocks -- preserving the space saving feature of the "minimised" literal
 block marker (``::`` at the end of a text paragraph). This is especially
-handy in literate programs where there are many sourcecode blocks!
-
+handy in literate programs with many sourcecode blocks!
 
      
 Configurable literal block directive
@@ -375,8 +366,6 @@ language in
 * in the document "preamble" once for all literal blocks
 * during export using a command line argument
 
-  
-
 .. Revised odtwriter syntax
    ~~~~~~~~~~~~~~~~~~~~~~~~
    
@@ -450,7 +439,8 @@ language in
 
 .. External links
 .. _docutils: http://docutils.sourceforge.net/ 
-.. _rest2web: http://www.voidspace.org.uk/python/rest2web/ 
+.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
+.. _Enscript: http://www.gnu.org/software/enscript/enscript.html
 .. _SilverCity: http://silvercity.sourceforge.net/ 
 .. _Trac: http://trac.edgewall.org/ 
 .. _Moin-Moin Python colorizer:
