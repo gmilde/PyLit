@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# :Copyright: 2007 Riccardo Murri, Guenter Milde.
+#             Released under the terms of the GNU General Public License 
+#             (v. 2 or later)
 
 # 99bottles.py
 # ============
