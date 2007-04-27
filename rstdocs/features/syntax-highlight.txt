@@ -11,6 +11,7 @@
       file: for-else-test.py.html
       file: pygments-default.css
       file: pygments-default.sty
+      file: literal-blocks.pdf
   /restindex
 
 Syntax Highlight
@@ -41,18 +42,18 @@ __ http://sourceforge.net/mailarchive/message.php?msg_id=12921194
 Existing highlighting additions to docutils
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are already such add-ons providing syntax colouring, e.g:
+There are already docutils extensions providing syntax colouring, e.g:
 
 * SilverCity_ is a C++ library and Python extension that can provide lexical
-  analysis for over 20 different programming languages. There is a recipe__
-  for a "code-block" directive with syntax highlight by SilverCity.
+  analysis for over 20 different programming languages. A recipe__
+  for a "code-block" directive provides syntax highlight by SilverCity.
   
 __ http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/252170
 
 * The `listings`_ LaTeX package provides highly customisable and advanced
-  syntax highlight, though only for the LaTeX (and LaTeX derived PS|PDF). 
-  A patch__ mailed by Gael Varoquaux uses the listings LaTeX package for a
-  "code-block" directive with Python syntax highlight.
+  syntax highlight, though only for LaTeX (and LaTeX derived PS|PDF). 
+  A patch__ mailed by Gael Varoquaux uses the listings package for a
+  "code-block" directive with syntax highlight.
   
 __ http://article.gmane.org/gmane.text.docutils.devel/3914
 
@@ -92,7 +93,7 @@ Pygments enhanced docutils front-ends
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The example code in "`Using Pygments in ReST documents`_" defines a new
-"sourcedode" directive. The directive takes one argument `language` and uses
+"sourcecode" directive. The directive takes one argument `language` and uses
 the `Pygments`_ source highlighter to parse and render its content as a
 colourful source code block. 
 
@@ -101,20 +102,20 @@ results in front-end scripts generating output documents with syntax colour.
 For consistency with the majority of existing add-ons, the directive is
 renamed to "code-block".
 
-`rst2html-pygments`_ 
-  enhances the standard docutils ``rst2html`` front-end to
-  generate a HTML rendering with syntax highlight. 
-  
-`rst2latex-pygments`_ 
-  enhances docutils' ``rst2latex`` to generate LaTeX with syntax highlight.
-
-
 Example code block::
 
   .. code-block:: python
      
      def hello():
          print "hello world"
+
+
+`rst2html-pygments`_ 
+  enhances the standard docutils ``rst2html`` front-end to
+  generate a HTML rendering with syntax highlight. 
+  
+`rst2latex-pygments`_ 
+  enhances docutils' ``rst2latex`` to generate LaTeX with syntax highlight.
 
 Advantages:
   + Easy implementation with no changes to the stock docutils_. 
@@ -127,7 +128,7 @@ Disadvantages:
     locally defined directive.
 
 The disadvantages become a real issue in literate programming where a code
-block is expected to be the most used block markup.
+block is the most used block markup.
 
 Example Python script:
   :text source: `for-else-test.py.txt`_
@@ -148,49 +149,116 @@ pylit.py.)
 __ ../examples/pylit.py.html#code-block-directive
 
 
-The listings LaTeX package
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the listings LaTeX package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the listings_ LaTeX package for syntax highlight is not possible with
-the current latex writer output.
+Using the listings_ LaTeX package for syntax highlight is currently not
+possible with the standard latex writer output. 
 
-First idea: use a stylesheet to redefine the ``verbatim`` environment::
+Workarounds
+"""""""""""
 
-  % use listings for literate blocks (verbatim environment)
-  % -------------------------------------------------------
+Run rst2latex with ``--use-verbatim-when-possible`` and do:
+
+post-processing:
+  a workaround would be to use a post-processing filter to replace all
+  occurrences of {verbatim} with {lstlisting}.
+
+redefine "verbatim":
+  Idea: Use a stylesheet to redefine the "verbatim" environment::
   
-  \usepackage{listings}
-  \lstset{language=Python}
-  % redefine verbatim as lstlisting:
-  % \renewenvironment{verbatim}{\begin{lstlisting}}{\end{lstlisting}}
+    \usepackage{listings}
+    \lstset{language=Python}
+    % redefine verbatim as lstlisting:
+    \renewenvironment{verbatim}{\begin{lstlisting}}{\end{lstlisting}}
+  
+  **Fails**, as "verbatim" is a very special environment looking for a
+  literal occurrence of ``end{verbatim}``.
 
-This fails, as ``verbatim`` is a very special environment looking for a
-literal occurrence of ``end{verbatim}``.
+use fancyvrb_: 
+  It is possible to re-define "verbatim" in a stylesheet with the `fancyvrb`
+  package, e.g.::
+  
+    \usepackage{fancyvrb}
+    \DefineVerbatimEnvironment{verbatim}{Verbatim}{frame=lines}
+  
+  `fancyvrb` fails in some cases (if the latex writer puts something behind
+  ``\end{verbatim}`` without line-break).
+  
+  One can use the listings package to render a "Verbatim" environment with
+  ::
+  
+    \lstset{language=Python, fancyvrb=true}
+  
+  However this did not work in my test__ with ``listings 2004/10/17 1.4`` and
+  ``fancyvrb 1998/07/17``. While listings renders both, "Verbatim" and
+  re-defined "verbatim" blocks, it does not highlight the Python syntax
+  (only marks whitespace in strings).
+  
+__ literal-blocks.pdf
 
-One can use the `fancyvrb` package and re-define "verbatim" do to
-some nice stuff and customisation, e.g.::
+"literal-environment" setting
+"""""""""""""""""""""""""""""""""""
 
-  \usepackage{fancyvrb}
-  \DefineVerbatimEnvironment{verbatim}{Verbatim}{frame=lines}
+Considering the problems with verbatim-like environments in LaTeX, it might
+be desirable to define a "literal-environment" setting for the latex writer
+as Alan Isaac proposed in docutils-users
+(http://article.gmane.org/gmane.text.docutils.user/3325 and
+http://article.gmane.org/gmane.text.docutils.user/3327 ).
 
-The ``listings.pdf`` documentation says one can use the listings package to
-render a "Verbatim" environment with ::
+Some considerations about the implementation:
+  
+* The implementation must consider that "verbatim"-like environments
+  clash with literal-blocks containing inline elements and use a fall-back
+  non-verbatim environment (e.g. `alltt`) in this case.
 
-  \lstset{language=Python, fancyvrb}
+* The latex output file becomes smaller and compiles faster, if only
+  actually needed packages and command definitions are included in the
+  preamble.
 
-. However this did not work in my test. [#]_
+* There might be a list of supported environments with info about needed
+  escaping of the block content and used packages:
+  
+  ===========  ========================  =================================== 
+  Environment  Escaping                  Required Packages
+  ===========  ========================  =================================== 
+  verbatim     no
+  Verbatim     no                        fancyvrb_
+  verbatimtab  no                        moreverb_
+  listing      no                        moreverb_
+  lstlisting   no                        listings_
+  alltt        '\\', '{' and '}'         alltt_ (standard)
+  quote        whitespace and 
+               special chars
+  ===========  ========================  ===================================
 
-The current workaround is to use a post-processing filter to replace all
-occurences of {verbatim} with {lstlisting}. (More details can be found
-searching the docutils-users mail archive for "listings").
+  The `fancyvrb` environments ("Verbatim", "BVerbatim", ...) do not
+  necessarily need to be supported by this setting. Their use can be 
+  defined in a stylesheet with ``\DefineVerbatimEnvironment`` (see above
+  section Workarounds_). However, the latex writer should always place
+  ``\begin(verbatim)`` and ``\end(verbatim)`` on a line of its own.
 
-.. [#] with ``listings 2004/10/17 1.3b`` and ``fancyvrb
-       1998/07/17``
+* Some of the above packages provide commands for verbatim file input.
+  The ``:literal:`` option of the "include" directive should translate to:
+  
+  ===========  ========================  =================================== 
+  Environment  Input Command             Required Packages
+  ===========  ========================  =================================== 
+  verbatim     verbatiminput             verbatim_
+  Verbatim     Verbatiminput             fancyvrb_
+  verbatimtab  verbatimtabinput          moreverb_
+  listing      listinginput              moreverb_
+  lstlisting   lstlistinginput           listings_
+  alltt        input in alltt            alltt_ (standard)
+               environment
+  quote        input
+  ===========  ========================  ===================================
+
 
 Odtwriter
 ~~~~~~~~~
 
-Dave Kuhlmans odtwriter_ extension can add Python syntax highlighting
+Dave Kuhlman's odtwriter_ extension can add Python syntax highlighting
 to ordinary literal blocks.
 
 The ``--add-syntax-highlighting`` command line flag activates syntax
@@ -232,15 +300,20 @@ different from the "sourcecode" directive of ``rst2html-pygments``:
        <lexer> should be one of aliases listed at pygment's `languages and
        markup formats`_.
 
-   
-The advantage of this approach is the clean and simple syntax for code
-blocks -- preserving the space saving feature of the "minimised" literal
-block marker (``::`` at the end of a text paragraph). This is especially
-handy in literate programs with many sourcecode blocks!
+I.e. the odtwriter already implements a `configurable literal block
+directive`_
 
-     
+
 Configurable literal block directive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I would like a clean and simple syntax for highlighted code blocks --
+preserving the space saving feature of the "minimised" literal block marker
+(``::`` at the end of a text paragraph). This is especially important in
+literate programs with many code blocks.
+
+Inline analogon
+"""""""""""""""
 
 The *role* of inline `interpreted text` can be customised with the
 "default-role" directive. This allows the use of the concise "backtick"
@@ -265,16 +338,15 @@ Proposal 1: make the default "literal block" role configurable.
   Alternatively, define a new "default-literal-block" directive instead of
   a settings key.
 
+* From a syntax view, this would be analog to the behaviour of the odtwriter_.
+  (I am not sure about the representation in the document tree, though.)
+
 Motivation
 ''''''''''
 
 Analogue to customising the default role of "interpreted text" with the
 "default-role" directive, the concise ``::`` literal-block markup could be
 used for e.g.
-
-* the "line-block" directive for poems or addresses
-
-* the "parsed-literal" directive
 
 * a "code-block" or "sourcecode" directive for colourful code 
   (analog to the one in the `pygments enhanced docutils front-ends`_)
@@ -284,7 +356,11 @@ used for e.g.
 * a "verbatim" directive explicitly calling the verbatim environment in
   LaTeX.
 
-Example::
+* the "line-block" directive for poems or addresses
+
+* the "parsed-literal" directive
+
+Example (using the upcoming "settings" directive)::
 
   ordinary literal block::
   
@@ -306,6 +382,8 @@ considered to configure the role of a block quote.
 Proposal 2: literal block with configurable classes 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
+This proposal consists of two independent parts:
+
 * Enhance writers to support syntax highlight for "literal-block" doctree
   elements with ``classes="code-block LANGUAGE"``.
 
@@ -316,7 +394,7 @@ Proposal 2: literal block with configurable classes
   Alternatively, separate writers and back-end scripts for
   syntax-highlighting conversion could be added.
   
-  The LaTeX writer should also support the "lstlistings" environment as an
+  The LaTeX writer could also support the "lstlisting" environment as an
   alternative.
   
 * Add a "literal-block-classes" setting that controls which classes are
@@ -328,14 +406,17 @@ Proposal 2: literal block with configurable classes
 Motivation
 ''''''''''
 
-Classes are used in `docutils document tree`_ to carry non-vital
+Classes are used in the `docutils document tree`_ to carry non-vital
 information from reader to writer.
 
 Using the "literal-block" doctree element together with class information
-for source code blocks could be *the right thing*:
+for source code blocks seems *the right thing*:
 
-* If a writer supports "code-block" and the specified language, it can parse
-  the literal block's content and render it accordingly.
+* "code-block" and "LANGUAGE" classes provide non-essential information
+  about an "is a" relationship that the writer can use for improved output.
+
+* If a writer supports the "code-block" class and the specified language,
+  it can parse the literal block's content and highlight it accordingly.
 
 * The fall-back is to render the block in a monospaced font with whitespace
   preserved (as currently done by all writers)
@@ -343,7 +424,8 @@ for source code blocks could be *the right thing*:
 This solves the problem of compatibility with "non-enhanced" writers that do
 not provide syntax highlight. 
 
-The "class" directive can already be used to specify classes of an object::
+The "class" directive can already be used to specify classes of a literal
+block::
  
   colourful Python code
 
@@ -355,87 +437,21 @@ The "class" directive can already be used to specify classes of an object::
          print "hello world"
 
 I. e. a highlight-enhanced writer that works with backwards compatible
-documents is already possible!
+documents is already possible.
 
-However, an extra "class" directive for every code block is a rather bulky
-syntax for literate programming or documenting code. A
-"literal-block-classes" setting, could allow the setting of the code-block
-language in 
+However, an extra "class" directive for every code block is a rather
+bulky syntax for literate programming or documenting code, especially as
+the "minimal" syntax variant with the double colon on the same line
+cannot be used. A "literal-block-classes" setting, could allow the
+setting of the code-block language in 
 
 * a config file for a software project
 * in the document "preamble" once for all literal blocks
 * during export using a command line argument
 
-.. Revised odtwriter syntax
-   ~~~~~~~~~~~~~~~~~~~~~~~~
-   
-   As a "light" option in case the `configurable literal block directive`_
-   proposal is not accepted by the docutils developers, here are some
-   ideas for a revised highlighting syntax based on the one in the
-   odtwriter:
-   
-   * A *command line option* ``--syntax-highlight=LEXER`` 
-     tells the writer to apply syntax highlight to literal blocks.
-   
-   * Turn of syntax highlight with ``--syntax-highlight=off`` or
-     ``--no-syntax-highlight``.
-     
-   * The corresponding *directive* should also be named "syntax-highlight"
-     (instead of "sourcecode") because:
-     
-     * it makes the relationship of command line option and directive more
-       transparent,
-       
-     * The name "sourcecode" leads me to assume that the directive
-       contains source code that should be treated specially. It's a
-       surprise to realise that the odtwriter's "sourcecode" directive
-       is a switch without content.
-       
-     * it disambiguates from the name proposed in `Using Pygments in ReST
-       documents`_.
-     
-     * with Pygments you can highlight not only source code but also
-       config files and markup languages,
-       
-     Example::
-     
-       .. syntax-highlight:: off
-       
-       ordinary literal block::
-       
-          typeset in monospace
-     
-       .. syntax-highlight:: python
-          
-       colourful Python code::
-          
-          def hello():
-              print "hello world"
-       
-   
-     Instead of a dedicated "syntax-highlight" directive, a settings
-     key could be employed together with the upcoming "settings" directive.
-   
-     Example::
-   
-       .. settings::
-          :syntax-highlight: bash
-        
-   
-   * The syntax highlighting state and language/lexer set by this
-     directive remain in effect until the next "syntax-highlight" directive
-     is encountered in the reST document.
-     
-   * In contrast to the current odtwriter, there is no "on" argument:
-     
-     ``.. syntax-highlight:: LEXER`` 
-          makes highlighting active and sets the Pygments lexer to use.
-     
-     ``.. syntax-highlight:: off`` 
-          turns off highlighting of literal blocks
-   
-     In order to turn syntax highlighting on and set the
-     lexer, you will need to use this directive only once.
+The two parts of this proposal can be implemented independently, starting
+with writers supporting a "code-block" class for literal blocks.
+
 
 .. External links
 .. _docutils: http://docutils.sourceforge.net/ 
@@ -447,7 +463,11 @@ language in
     http://www.standards-schmandards.com/2005/fangs-093/ 
 .. _odtwriter: http://www.rexx.com/~dkuhlman/odtwriter.html 
 .. _pygments: http://pygments.org/ 
-.. _listings: http://tug.ctan.org/tex-archive/macros/latex/contrib/listings/ 
+.. _listings: http://www.ctan.org/tex-archive/help/Catalogue/entries/listings.html
+.. _fancyvrb: http://www.ctan.org/tex-archive/help/Catalogue/entries/fancyvrb.html
+.. _alltt: http://www.ctan.org/tex-archive/help/Catalogue/entries/alltt.html
+.. _moreverb: http://www.ctan.org/tex-archive/help/Catalogue/entries/moreverb.html
+.. _verbatim: http://www.ctan.org/tex-archive/help/Catalogue/entries/verbatim.html
 .. _languages and markup formats: http://pygments.org/languages 
 .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
 .. _`Docutils Document Tree`: 
