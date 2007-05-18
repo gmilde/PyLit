@@ -64,6 +64,7 @@
 #                    Provide "hooks" for pre- and postprocessing filters
 #                    Rename states to avoid confusion with formats:
 #                    "text" -> "documentation", "code" -> "code_block"
+# 
 # ::
 
 """pylit: bidirectional converter between a *text source* with embedded
@@ -77,15 +78,15 @@ _version = "0.3"
 
 # Introduction
 # ------------
-
+# 
 # PyLit is a bidirectional converter between two formats of a computer
 # program source:
 # 
 # * a (reStructured) text document with program code embedded in 
 #   code blocks, and
 # * a code source with documentation embedded in comment blocks
-
-
+# 
+# 
 # Requirements
 # ------------
 # 
@@ -173,15 +174,16 @@ defaults.header_string = '..'
 
 defaults.strip = False
       
-# Number of spaces to indent code blocks in `Code2Text.code`_. [#]_ ::
+# Number of spaces to indent code blocks in `Code2Text.code_block_handler`_.
+# [#]_ ::
 
 defaults.codeindent =  2
 
-# .. [#] In `Text2Code.code`_, the codeindent is determined by the
+# .. [#] In `Text2Code.code_block_handler`_, the codeindent is determined by the
 #        first recognized code line (leading comment or first indented literal
 #        block of the text source).
- 
- 
+#  
+#  
 # What to do if the outfile already exists? (ignored if `outfile` == '-')::
 
 defaults.overwrite = 'update'
@@ -191,8 +193,8 @@ defaults.overwrite = 'update'
 # :'yes':    overwrite eventually existing `outfile`,
 # :'update': fail if the `outfile` is newer than `infile`,
 # :'no':     fail if `outfile` exists.
-
-
+# 
+# 
 # Converter Classes
 # =================
 # 
@@ -265,15 +267,15 @@ class PyLitConverter(object):
 # 
 #        To convert a string into a suitable object, use its splitlines method
 #        with the optional `keepends` argument set to True.
- 
-
+#  
+# 
 # Converter.__iter__
 # ~~~~~~~~~~~~~~~~~~
 #  
 # Return an iterator for `self`. Iteration yields lines of converted data.
 # 
 # The iterator is a chain of iterators acting on `self.data` that:
-#
+# 
 # * preprocess
 # * collected lines into "blocks" separated by blank lines
 #   `Converter.collect_blocks`_
@@ -283,6 +285,7 @@ class PyLitConverter(object):
 #   method.
 # * split the block into lines again
 # * postprocess
+# 
 # ::
 
     def __iter__(self):
@@ -424,14 +427,14 @@ class Text2Code(PyLitConverter):
         """
     
 # Initialize data arguments
-#
+# 
 # Done here, so that every new iteration re-initializes them.
-
+# 
 # `state` is one of
 #   :"header": first block -> check for leading `header_string`
 #   :"documentation":   documentation part: comment out
 #   :"code_block":   literal blocks containing source code: unindent
-#
+# 
 # ::
        
         self.state = "header"
@@ -440,13 +443,14 @@ class Text2Code(PyLitConverter):
 #   * stripped from all 'code_block' lines. 
 #   * set in `Text2Code.code_block_handler`_ to the indent of first non-blank 
 #     code_block line
-#
+# 
 # ::
 
         self._codeindent = None  
 
 # `_textindent`
-#   * set by `Text2Code.text`_ to the minimal indent of a documentation block
+#   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
+#     documentation block
 #   * used in `Text2Code.set_state`_ to find the end of a code block
 # 
 # ::
@@ -472,7 +476,7 @@ class Text2Code(PyLitConverter):
 # The new state depends on the active state (from the last block) and
 # features of the current block. It is either "header", "documentation", or
 # "code_block".
-#
+# 
 # If the current state is "header" (first block), check for
 # the  `header_string`. Strip if present. ::
           
@@ -551,8 +555,8 @@ class Text2Code(PyLitConverter):
 # `ensure_trailing_blank_line` method (which also issues a warning)
 # 
 # 
-# Text2Code.code_handler
-# ~~~~~~~~~~~~~~~~~~~~~~
+# Text2Code.code_block_handler
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # The "code_block" handler is called with an indented literal block. It
 # removes leading whitespace up to the indentation of the first code line in
@@ -629,8 +633,8 @@ class Code2Text(PyLitConverter):
 
         self.code_block_marker = []
         
-# Test the state of the block with `Code2Text.block_is_documentation`_, return
-# it processed with the matching handler::
+# Determine the state of the block return it processed with the matching
+# handler::
 
         for block in blocks:
             self.set_state(block)
@@ -645,7 +649,7 @@ class Code2Text(PyLitConverter):
 # Code2Text.set_state
 # ~~~~~~~~~~~~~~~~~~~
 # Check if block is "header", "documentation", or "code_block":  
-#
+# 
 # A paragraph is "documentation", if every non-blank line starts with a matching
 # comment string (including whitespace except for commented blank lines) ::
 
@@ -712,6 +716,8 @@ class Code2Text(PyLitConverter):
 # 
 # If needed for the documentation, it is possible to quote the header in (or
 # after) the first documentation block, e.g. as `parsed literal`.
+# 
+# ::
 
     def header_handler(self, lines):
         """Set block as header"""
@@ -816,14 +822,14 @@ class Code2Text(PyLitConverter):
 
 # Filters
 # =======
-
+# 
 # Filters allow pre- and post-processing of the data to bring it in a format
 # suitable for the "normal" text<->code conversion. An example is conversion
 # of `C` ``/*`` ``*/`` comments into C++ ``//`` comments (and back).
-
+# 
 # Filters are generator functions that return an iterator that acts on a
 # `data` iterable and returns processed `data` items (lines).
-
+# 
 # The most basic filter is the identity filter, that returns its argument as
 # iterator::
 
