@@ -264,6 +264,13 @@ class IOTests:
             os.unlink(self.outpath)
         except OSError:
             pass
+    #
+    def get_output(self):
+        """read and return the content of the output file"""
+        outstream = file(self.outpath, 'r')
+        return outstream.read()
+
+
 
 class test_Streams(IOTests):
     def test_is_newer(self):
@@ -302,11 +309,14 @@ class test_Streams(IOTests):
         """should exit with usage info if no infile given"""
         try:
             (instream, outstream) = open_streams("")
-            assert False, "should rise SystemExit"
+            assert False, "should rise IOError"
         except IOError:
             pass
 
-## Another convenience function that returns a converter instance::
+## get_converter
+## ~~~~~~~~~~~~~
+
+## Return "right" converter instance (Text2Code or Code2Text instance)::
 
 def test_get_converter():
     # with default or txt2code
@@ -333,11 +343,6 @@ class test_Run_Doctest(IOTests):
 class test_Main(IOTests):
     """test default operation from command line
     """
-    def get_output(self):
-        """read and return the content of the output file"""
-        outstream = file(self.outpath, 'r')
-        return outstream.read()
-
     def test_text_to_code(self):
         """test conversion of text file to code file"""
         main(infile=self.txtpath, outfile=self.outpath)
@@ -351,36 +356,66 @@ class test_Main(IOTests):
         output = self.get_output()
         print repr(output)
         assert output == stripped_code
+    
+    def test_text_to_code_twice(self):
+        """conversion should work a second time"""
+        main(infile=self.txtpath, outfile=self.outpath)
+        main(infile=self.txtpath, outfile=self.outpath)
+        output = self.get_output()
+        print repr(output)
+        assert output == code
 
-    def test_main_code_to_text(self):
+    def test_code_to_text(self):
         """test conversion of code file to text file"""
         main(infile=self.codepath, outfile=self.outpath)
         output = self.get_output()
         assert output == text
 
-    def test_main_code_to_text_strip(self):
+    def test_code_to_text_strip(self):
         """test conversion of code file to stripped text file"""
         main(infile=self.codepath, outfile=self.outpath, strip=True)
         output = self.get_output()
         assert output == stripped_text
 
-    def test_main_diff(self):
+    def test_code_to_text_twice(self):
+        """conversion should work also a second time"""
+        main(infile=self.codepath, outfile=self.outpath)
+        main(infile=self.codepath, outfile=self.outpath)
+        output = self.get_output()
+        assert output == text
+
+    def test_diff(self):
         result = main(infile=self.codepath, diff=True)
         print "diff return value", result
         assert result is False # no differences found
 
-    def test_main_diff_with_differences(self):
+    def test_diff_with_differences(self):
         """diffing a file to itself should fail, as the input is converted"""
         result = main(infile=self.codepath, outfile=self.codepath, diff=True)
         print "diff return value", result
         assert result is True # differences found
 
-    def test_main_execute(self):
+    def test_execute(self):
         result = main(infile=self.txtpath, execute=True)
         print result
 
-    def test_main_execute_code(self):
+    def test_execute_code(self):
         result = main(infile=self.codepath, execute=True)
+
+
+class test_Programmatic_Use(IOTests):
+    """test various aspects of programmatic use"""
+    
+    def test_conversion(self):
+        (data, out_stream) = open_streams(self.txtpath)
+        print "data: %r"%data
+        print "out_stream: %r"%out_stream
+        converter = get_converter(data)
+        lines = converter()
+        print "output: %r"%lines
+        # lines = converter()
+        assert lines == codedata
+
 
 if __name__ == "__main__":
     nose.runmodule() # requires nose 0.9.1

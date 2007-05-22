@@ -144,8 +144,8 @@ codesamples = {}
 def check_converter(key, converter, output):
     print "E:", key
     extract = converter()
-    pprint(extract)
-    outstr = "".join(["".join(block) for block in extract])
+    print(extract)
+    outstr = "".join(extract)
     print "soll:", repr(output)
     print "ist: ", repr(outstr)
     assert output == outstr
@@ -173,15 +173,35 @@ def test_Code2Text_samples():
                    sample[2])
 
 
-## Pre and postprocessing filters
+## Pre and postprocessing filters (for testing the filter hooks)
+
+def r2l_filter(data):
+    print "applying r2l filter"
+    for line in data:
+        yield line.replace("r", "l")
+
+defaults.preprocessors["rl2text"] = r2l_filter
+
+def l2r_filter(data):
+    print "applying l2r filter"
+    for line in data:
+        yield line.replace("l", "r")
+
+defaults.preprocessors["text2rl"] = l2r_filter
 
 def x2u_filter(data):
+    print "applying x2u filter"
     for line in data:
         yield line.replace("x", "u")
 
+defaults.postprocessors["x2text"] = x2u_filter
+
 def u2x_filter(data):
+    print "applying u2x filter"
     for line in data:
         yield line.replace("u", "x")
+
+defaults.postprocessors["text2x"] = u2x_filter
 
 def test_x2u_filter():
     soll = text.replace("x", "u")
@@ -190,11 +210,6 @@ def test_x2u_filter():
     print "ist", repr(result)
     assert soll == result
 
-defaults.postprocessors["text2x"] = x2u_filter
-defaults.postprocessors["x2text"] = u2x_filter
-
-defaults.preprocessors["text2x"] = x2u_filter
-defaults.preprocessors["x2text"] = u2x_filter
 
 
 ## Text2Code
@@ -208,22 +223,41 @@ class test_Text2Code(object):
     
 ## base tests on the "long" test data ::
 
+    def test_call(self):
+        """Calling a Text2Code instance should return the converted data as list of lines"""
+        output = self.converter()
+        print repr(codedata)
+        print repr(output)
+        assert codedata == output
+        
+    def test_call_strip(self):
+        """strip=True should strip text parts"""
+        self.converter.strip = True
+        output = self.converter()
+        print repr(stripped_code.splitlines(True))
+        print repr(output)
+        assert stripped_code.splitlines(True) == output
+        
     def test_str(self):
         outstr = str(self.converter)
         print code,
         print outstr
         assert code == outstr
 
-    def test_Text2Code_strip(self):
-        """strip=True should strip text parts"""
+    def test_str_strip1(self):
+        """strip=True should strip text parts.
+        
+        Version 1 with `strip` given as optional argument"""
         outstr = str(Text2Code(textdata, strip=True))
         print "ist ", repr(outstr)
         print "soll", repr(stripped_code)
         # pprint(outstr)
         assert stripped_code == outstr
     
-    def test_Text2Code_strip2(self):
-        """strip=True should strip text parts"""
+    def test_str_strip2(self):
+        """strip=True should strip text parts 
+        
+        Version 2 with `strip` set after instantiation"""
         self.converter.strip = True
         outstr = str(self.converter)
         print "ist ", repr(outstr)
@@ -231,7 +265,7 @@ class test_Text2Code(object):
         # pprint(outstr)
         assert stripped_code == outstr
     
-    def test_Text2Code_malindented_code_line(self):
+    def test_malindented_code_line(self):
         """raise error if code line is less indented than code-indent"""
         data1 = ["..    #!/usr/bin/env python\n", # indent == 4 * " "
                 "\n",
@@ -271,42 +305,45 @@ class test_Text2Code(object):
         
     # Filters: test pre- and postprocessing of data
     
-    def test_get_preprocessor(self):
-        """test the language dependent preprocessor aquisation"""
-        preprocessor = self.converter.get_preprocessor()
+    def test_get_filter_preprocessor(self):
+        """should return filter from filter_set for language"""
+        preprocessor = self.converter.get_filter("preprocessors", "rl")
+        print preprocessor
+        assert preprocessor == l2r_filter
+
+    def test_get_filter_postprocessor(self):
+        """should return filter from filter_set for language"""
+        postprocessor = self.converter.get_filter("postprocessors", "x")
+        print postprocessor
+        assert postprocessor == u2x_filter
+
+    def test_get_filter_nonexisting_language_filter(self):
+        """should return identity_filter if language has no filter in set"""
+        preprocessor = self.converter.get_filter("preprocessors", "foo")
         print preprocessor
         assert preprocessor == identity_filter
-        self.converter.language = "x"
-        preprocessor = self.converter.get_preprocessor()
-        print preprocessor
-        assert preprocessor == x2u_filter
 
-    def test_get_postprocessor(self):
-        """test the language dependent postprocessor aquisation"""
-        postprocessor = self.converter.get_postprocessor()
-        print postprocessor
-        assert postprocessor == identity_filter
-        self.converter.language = "x"
-        postprocessor = self.converter.get_postprocessor()
-        print postprocessor
-        assert postprocessor == x2u_filter
-
+    def test_get_filter_nonexisting_filter_set(self):
+        """should return identity_filter if filter_set does not exist"""
+        processor = self.converter.get_filter("foo_filters", "foo")
+        print processor
+        assert processor == identity_filter
+        
     def test_preprocessor(self):
         """Preprocess data with registered preprocessor for language"""
-        outstr = str(Text2Code(textdata, language="x", comment_string="# "))
-        soll = "".join([line for line in x2u_filter(codedata)])
-        print "soll:", repr(soll)
-        print "ist: ", repr(outstr)
-        assert outstr == soll
-        outstr = str(Text2Code(textdata, language="x", comment_string="# "))
+        output = Text2Code(textdata, language="x", comment_string="# ")()
+        soll = [line for line in u2x_filter(codedata)]
+        print "soll: ", repr(soll)
+        print "ist:  ", repr(output)
+        assert output == soll
 
     def test_postprocessor(self):
         """Preprocess data with registered postprocessor for language"""
-        outstr = str(Text2Code(textdata, language="x", comment_string="# "))
-        soll = "".join([line for line in x2u_filter(codedata)])
+        output = Text2Code(textdata, language="x", comment_string="# ")()
+        soll = [line for line in u2x_filter(codedata)]
         print "soll:", repr(soll)
-        print "ist: ", repr(outstr)
-        assert outstr == soll
+        print "ist: ", repr(output)
+        assert output == soll
 
 ## Special Cases
 ## ~~~~~~~~~~~~~
@@ -401,6 +438,20 @@ textsamples["no header (start with text)"] = (
 print 'hello world'
 """)
 
+
+textsamples["no header (start with blank line)"] = (
+"""
+a classical example without header::
+
+  print 'hello world'
+""",
+"""# 
+# a classical example without header::
+
+print 'hello world'
+""")
+
+
 textsamples["standard header, followed by text"] = (
 """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
@@ -426,6 +477,8 @@ textsamples["standard header, followed by code"] = (
 
 print 'hello world'
 """)
+
+textsamples["null string"] = ("", "", "")
 
 ## Code2Text
 ## ---------
@@ -475,9 +528,9 @@ class test_Code2Text(object):
                    ("code_block", ["# \n"], "documentation"),
                    ("code_block", ["#\n"], "documentation"),
                    ("code_block", ["\n"], "documentation"),
-                   ("header", ["code_block\n"], "header"),
-                   ("header", ["# documentation\n"], "documentation"),
-                   ("documentation", ["code_block\n"], "first_code_block"),
+                   ("", ["code_block\n"], "header"),
+                   ("", ["# documentation\n"], "documentation"),
+                   ("documentation", ["code_block\n"], "code_block"),
                    ("documentation", ["# documentation\n"], "documentation"),
                   )
         print "comment string", repr(self.converter.comment_string)
@@ -491,9 +544,21 @@ class test_Code2Text(object):
 
 ## base tests on the "long" test strings ::
 
+    def test_call(self):
+        output = self.converter()
+        print repr(textdata)
+        print repr(output)
+        assert textdata == output
+
+    def test_call_strip(self):
+        output = Code2Text(codedata, strip=True)()
+        print repr(stripped_text.splitlines(True))
+        print repr(output)
+        assert stripped_text.splitlines(True) == output
+
     def test_str(self):
         """Test Code2Text class converting code->text"""
-        outstr = str(Code2Text(codedata))
+        outstr = str(self.converter)
         # print text
         print "soll:", repr(text)
         print "ist: ", repr(outstr)
@@ -504,7 +569,6 @@ class test_Code2Text(object):
     
         Should strip code blocks
         """
-        pprint(Code2Text(codedata, strip=True)())
         outstr = str(Code2Text(codedata, strip=True))
         print repr(stripped_text)
         print repr(outstr)
@@ -532,44 +596,50 @@ class test_Code2Text(object):
         print "ist: ", repr(outstr)
         assert outstr == soll
 
-    # Filters: test pre- and postprocessing of data
+    # Filters: test pre- and postprocessing of Code2Text data conversion
     
-    def test_get_preprocessor(self):
-        """test the language dependent preprocessor aquisation"""
-        preprocessor = self.converter.get_preprocessor()
+    def test_get_filter_preprocessor(self):
+        """should return Code2Text preprocessor for language"""
+        preprocessor = self.converter.get_filter("preprocessors", "rl")
+        print preprocessor
+        assert preprocessor == r2l_filter
+
+    def test_get_filter_postprocessor(self):
+        """should return Code2Text postprocessor for language"""
+        postprocessor = self.converter.get_filter("postprocessors", "x")
+        print postprocessor
+        assert postprocessor == x2u_filter
+
+    def test_get_filter_nonexisting_language_filter(self):
+        """should return identity_filter if language has no filter in set"""
+        preprocessor = self.converter.get_filter("preprocessors", "foo")
         print preprocessor
         assert preprocessor == identity_filter
-        self.converter.language = "x"
-        preprocessor = self.converter.get_preprocessor()
-        print preprocessor
-        assert preprocessor == u2x_filter
 
-    def test_get_postprocessor(self):
-        """test the language dependent postprocessor aquisation"""
-        postprocessor = self.converter.get_postprocessor()
-        print postprocessor
-        assert postprocessor == identity_filter
-        self.converter.language = "x"
-        postprocessor = self.converter.get_postprocessor()
-        print postprocessor
-        assert postprocessor == u2x_filter
-
+    def test_get_filter_nonexisting_filter_set(self):
+        """should return identity_filter if filter_set does not exist"""
+        processor = self.converter.get_filter("foo_filters", "foo")
+        print processor
+        assert processor == identity_filter
+        
     def test_preprocessor(self):
         """Preprocess data with registered preprocessor for language"""
-        outstr = str(Code2Text(codedata, language="x", comment_string="# "))
-        soll = "".join([line for line in u2x_filter(textdata)])
+        converter = Code2Text(codedata, language="rl", comment_string="# ")
+        print "preprocessor", converter.preprocessor
+        print "postprocessor", converter.postprocessor
+        output = converter()
+        soll = [line.replace("r", "l") for line in textdata]
+        print "ist: ", repr(output)
         print "soll:", repr(soll)
-        print "ist: ", repr(outstr)
-        assert outstr == soll
-        outstr = str(Code2Text(codedata, language="x", comment_string="# "))
+        assert output == soll
 
     def test_postprocessor(self):
-        """Preprocess data with registered postprocessor for language"""
-        outstr = str(Code2Text(codedata, language="x", comment_string="# "))
-        soll = "".join([line for line in u2x_filter(textdata)])
+        """Postprocess data with registered postprocessor for language"""
+        output = Code2Text(codedata, language="x", comment_string="# ")()
+        soll = [line.replace("x", "u") for line in textdata]
         print "soll:", repr(soll)
-        print "ist: ", repr(outstr)
-        assert outstr == soll
+        print "ist: ", repr(output)
+        assert output == soll
 
 
 ## Special cases
@@ -656,6 +726,7 @@ block1 = 'first block'
 text again
 """,
 """
+
 text again
 """)
 
@@ -675,6 +746,7 @@ block1 = 'first block'
   # still comment
 """,
 """
+
 """)
 
 ## missing literal block marker
