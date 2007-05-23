@@ -14,7 +14,7 @@
 # 
 # .. sectnum::
 # .. contents::
-
+# 
 # Frontmatter
 # ===========
 # 
@@ -55,8 +55,8 @@
 # :2007-03-19: 0.3.4 Documentation update,
 #                    separate `execute` function.
 # :2007-03-21:       Code cleanup in `Text2Code.__iter__`.
-# :2007-03-23: 0.3.5 Removed "css" from languages after learning that 
-#                    there is no C++ style "// " comment in css2.
+# :2007-03-23: 0.3.5 Removed "css" from known languages after learning that 
+#                    there is no C++ style "// " comment string in css2.
 # :2007-04-24: 0.3.6 Documentation update.
 # :2007-05-18: 0.4   Implement Converter.__iter__ as stack of iterator 
 #                    generators. Iterating over a converter instance now 
@@ -66,7 +66,8 @@
 #                    "text" -> "documentation", "code" -> "code_block".
 # :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganization, 
 #                    rename Converter -> TextCodeConverter.
-#                    
+# :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
+#                    TextCodeConverter.converter
 #              
 # ::
 
@@ -222,7 +223,7 @@ defaults.postprocessors = {}
 defaults.codeindent =  2
 
 # In `Text2Code.code_block_handler`_, the codeindent is determined by the
-# first recognized code line (leading comment or first indented literal block
+# first recognized code line (header or first indented literal block
 # of the text source).
 #  
 # defaults.overwrite
@@ -246,10 +247,10 @@ defaults.overwrite = 'update'
 # transform documentation and code blocks. For this task, only a very limited
 # parsing is needed. PyLit's parser assumes:
 # 
-# * indented literal blocks in a text source are code blocks.
+# * `indented literal blocks`_ in a text source are code blocks.
 # 
-# * comment lines that start with a matching comment string in a code source
-#   are documentation blocks.
+# * comment blocks in a code source where every line starts with a matching
+#   comment string are documentation blocks.
 # 
 # TextCodeConverter
 # -----------------
@@ -260,11 +261,8 @@ class TextCodeConverter(object):
     """
 
 # The parent class defines data attributes and functions used in both
-# 
-# `Text2Code`_ 
-#  converting a text source to executable code source, and
-# `Code2Text`_ 
-#  converting commented code to a text source.
+# `Text2Code`_ converting a text source to executable code source, and
+# `Code2Text`_ converting commented code to a text source.
 #   
 # Data attributes
 # ~~~~~~~~~~~~~~~
@@ -277,19 +275,22 @@ class TextCodeConverter(object):
 
     language = defaults.fallback_language
     comment_strings = defaults.comment_strings
-    comment_string = "" # set in __init__
+    comment_string = "" # set in __init__ (if empty)
     codeindent =  defaults.codeindent
     header_string = defaults.header_string
     strip = defaults.strip
+    state = "" # type of current block, see `TextCodeConverter.convert`_
 
+# Interface methods
+# ~~~~~~~~~~~~~~~~~
+#   
 # TextCodeConverter.__init__
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# """"""""""""""""""""""""""
 # 
-# Initializing sets up the `data` attribute, an iterable object yielding lines
-# of the source to convert. [1]_ Additional keyword arguments are stored as
-# data attributes, overwriting the class defaults. If not given as keyword
-# argument, `comment_string` is set to the language's default comment
-# string::
+# Initializing sets the `data` attribute, an iterable object yielding lines
+# of the source to convert. [1]_ Additional keyword arguments are stored
+# as instance variables, overwriting the class defaults. If still empty,
+# `comment_string` is set accordign to the `language`::
 
     def __init__(self, data, **keyw):
         """data   --  iterable data object 
@@ -308,20 +309,25 @@ class TextCodeConverter(object):
 #        or code source.
 # 
 #        To convert a string into a suitable object, use its splitlines method
-#        with the optional `keepends` argument set to True.
+#        like ``"2 lines\nof source".splitlines(True)``.
 #  
 # 
 # TextCodeConverter.__iter__
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# """"""""""""""""""""""""""
 #  
-# Return an iterator for `self`. Iteration yields lines of converted data.
+# Return an iterator for the instance. Iteration yields lines of converted
+# data.
 # 
 # The iterator is a chain of iterators acting on `self.data` that does
 # 
-# * preprocess
+# * preprocessing
 # * text<->code format conversion
-# * postprocess
+# * postprocessing
 # 
+# Pre- and postprocessing are only performed, if filters for
+# `self.language` are registered in `defaults.preprocessors`_ and|or
+# `defaults.postprocessors`_. The filters must accept an iterable as first
+# argument and yield the processed input data linewise.
 # ::
 
     def __iter__(self):
@@ -331,7 +337,7 @@ class TextCodeConverter(object):
 
 
 # TextCodeConverter.__call__
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# """"""""""""""""""""""""""
 # The special `__call__` method allows the use of class instances as callable
 # objects. It returns the converted data as list of lines::
 
@@ -341,19 +347,75 @@ class TextCodeConverter(object):
 
 
 # TextCodeConverter.__str__
-# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# """""""""""""""""""""""""
 # Return converted data as string::
 
     def __str__(self):
         return "".join(self())
 
 
-# TextCodeConverter.get_filter
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Helpers and convenience methods
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Filter the  data by wrapping it in a language-specific pre- or
-# post-processing iterator. The filter must accept an iterable as first
-# argument and yield the processed input data linewise::
+# TextCodeConverter.convert
+# """""""""""""""""""""""""
+# 
+# The `convert` method generates an iterator that does the actual code-to-text
+# conversion::
+
+    def convert(self, lines):
+        """Iterate over lists of text lines and convert them to code format
+        """
+        
+# Initialise internal data arguments. (Done here, so that every new iteration
+# re-initialises them.)
+# 
+# `state` 
+#   the "type" of the currently processed block of lines. One of
+#   
+#   :"":              initial state: check for header,
+#   :"header":        leading code block: strip `header_string`,
+#   :"documentation": documentation part: comment out,
+#   :"code_block":    literal blocks containing source code: unindent.
+#   
+# `_codeindent`
+#   * Do not confuse the internal attribute `_codeindent` with the configurable
+#     `codeindent` (without the leading underscore).
+#   * `_codeindent` is set in `Text2Code.code_block_handler`_ to the indent of
+#     first non-blank "code_block" line and stripped from all "code_block" lines
+#     in the text-to-code conversion,
+#   * `codeindent` is set in `__init__` to `defaults.codeindent`_ and added to
+#     "code_block" lines in the code-to-text conversion.
+#        
+# `_textindent`
+#   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
+#     documentation block,
+#   * used in `Text2Code.set_state`_ to find the end of a code block.
+# 
+# `code_block_marker_missing`
+#   If the last paragraph of a documentation block does not end with a
+#   "code_block_marker" (the literal-block marker ``::``), it must
+#   be added (otherwise, the back-conversion fails.).
+#   `code_block_marker_missing` is set by `Code2Text.documentation_handler`_
+#   and evaluated by `Code2Text.code_block_handler`_.
+#       
+# ::
+         
+        self.state = ""
+        self._codeindent = 0
+        self._textindent = 0
+        self.code_block_marker_missing = False
+
+# Determine the state of the block and convert with the matching "handler"::
+
+        for block in self.collect_blocks(lines):
+            self.set_state(block)
+            for line in getattr(self, self.state+"_handler")(block):
+                yield line
+
+# TextCodeConverter.get_filter
+# """"""""""""""""""""""""""""
+# ::
 
     def get_filter(self, filter_set, language):
         """Return language specific filter"""
@@ -372,8 +434,8 @@ class TextCodeConverter(object):
 
 
 # TextCodeConverter.get_indent
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Return the number of leading spaces in `line` after expanding tabs ::
+# """"""""""""""""""""""""""""
+# Return the number of leading spaces in `line`::
 
     def get_indent(self, line):
         """Return the indentation of `string`.
@@ -383,7 +445,7 @@ class TextCodeConverter(object):
 
 
 # TextCodeConverter.collect_blocks
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# """"""""""""""""""""""""""""""""
 # 
 # A generator function to aggregate "paragraphs" (blocks separated by blank
 # lines)::
@@ -409,73 +471,28 @@ class TextCodeConverter(object):
 # Text2Code
 # ---------
 # 
-# The `Text2Code` class separates code blocks (indented literal blocks) from
-# documentation. Code blocks are unindented, documentation is commented
-# (or filtered, if the ``strip`` option is True.
+# The `Text2Code` converter separates *code-blocks* [#]_ from *documentation*.
+# Code blocks are unindented, documentation is commented (or filtered, if the
+# ``strip`` option is True).
 # 
-# Only `indented literal blocks` are extracted. `quoted literal blocks` and
-# `pydoc blocks` are treated as text. This allows the easy inclusion of
-# examples: [#]_
+# .. [#] Only `indented literal blocks`_ are considered code-blocks. `quoted
+#        literal blocks`_, `parsed-literal blocks`_, and `doctest blocks`_ are
+#        treated as part of the documentation. This allows the inclusion of
+#        examples: 
 # 
-#    >>> 23 + 3
-#    26
+#           >>> 23 + 3
+#           26
 # 
-# .. [#] Mark that there is no double colon before the doctest block in
-#        the text source.
+#        Mark that there is no double colon before the doctest block in the
+#        text source.
 # 
-# Using the full blown docutils_ rst parser would introduce a large overhead
-# and slow down the conversion.
-# ::
+# The class inherits the interface and helper functions from
+# TextCodeConverter_ and adds functions specific to the text-to-code format
+# conversion::
 
 class Text2Code(TextCodeConverter):
     """Convert a (reStructured) text source to code source
     """
-
-# Text2Code.convert
-# ~~~~~~~~~~~~~~~~~
-# This is the core state machine of the converter class::
-
-    def convert(self, lines):
-        """Iterate over lists of text lines and convert them to code format
-        """
-# Initialize data arguments
-# 
-# Done here, so that every new iteration re-initializes them.
-# 
-# `state` is one of
-#   :"header": first block -> check for leading `header_string`
-#   :"documentation":   documentation part: comment out
-#   :"code_block":   literal blocks containing source code: unindent
-# 
-# ::
-       
-        self.state = ""
-
-# `codeindent`
-#   * stripped from all 'code_block' lines. 
-#   * set in `Text2Code.code_block_handler`_ to the indent of first non-blank 
-#     code_block line
-# 
-# ::
-
-        self._codeindent = None  
-
-# `_textindent`
-#   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
-#     documentation block
-#   * used in `Text2Code.set_state`_ to find the end of a code block
-# 
-# ::
-
-        self._textindent = 0
-
-# Determine the state of the block and convert with the matching "handler"::
-
-        for block in self.collect_blocks(lines):
-            self.set_state(block)
-            for line in getattr(self, self.state+"_handler")(block):
-                yield line
-
 
 # Text2Code.set_state
 # ~~~~~~~~~~~~~~~~~~~~~
@@ -484,7 +501,10 @@ class Text2Code(TextCodeConverter):
     def set_state(self, block):
         """Determine state of `block`. Set `self.state`
         """
-    
+
+# `set_state` is used inside an iteration. Hence, if we are out of data, a
+# StopItertion exception should be raised::
+ 
         if not block:
             raise StopIteration
 
@@ -504,7 +524,7 @@ class Text2Code(TextCodeConverter):
 
 # If the current state is "documentation", the next block is also
 # documentation. The end of a documentation part is detected in the
-# `Text2Code.documentation_handler`::
+# `Text2Code.documentation_handler`_::
 
         # elif self.state == "documentation":
         #    self.state = "documentation"
@@ -515,6 +535,7 @@ class Text2Code(TextCodeConverter):
 
         elif self.state in ["code_block", "header"]:
             indents = [self.get_indent(line) for line in block]
+            # print "set_state:", indents, self._textindent
             if indents and min(indents) <= self._textindent:
                 self.state = 'documentation'
             else:
@@ -541,19 +562,19 @@ class Text2Code(TextCodeConverter):
 # Text2Code.documentation_handler
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The 'documentation' handler processes everything that is not an indented
-# literal comment. Documentation is quoted with `self.comment_string` or
-# filtered (with `--strip=True`). ::
+# The 'documentation' handler processes everything that is not recognized as
+# "code_block". Documentation is quoted with `self.comment_string` 
+# (or filtered with `--strip=True`). ::
 
     def documentation_handler(self, lines):
         """Convert documentation blocks from text to code format
         """
 
-        lines = [self.comment_string + line for line in lines]
-
-# Test for the end of the documentation block: does the second last line end with
-# `::` but is neither a comment nor a directive?
-# If end-of-documentation marker is detected, 
+# Test for the end of the documentation block: does the second last line end
+# with `::` but is neither a comment nor a directive? 
+# 
+# If end-of-documentation
+# marker is detected, 
 # 
 # * set state to 'code_block'
 # * set `self._textindent` (needed by `Text2Code.set_state`_ to find the
@@ -563,23 +584,19 @@ class Text2Code(TextCodeConverter):
 # 
 # TODO: allow different code marking directives (for syntax color etc)
 # ::
-
-        try:
-            line = lines[-2]
-        except IndexError:  # len(lines < 2), e.g. last line of document
-            pass
-        else:
-            if (line.rstrip().endswith("::") 
+                
+        endnum = len(lines) - 2
+        for (num, line) in enumerate(lines):
+            if not self.strip:
+                if self.state == "code_block":
+                    yield line
+                else:
+                    yield self.comment_string + line
+            if (num == endnum
+                and line.rstrip().endswith("::") 
                 and not line.lstrip().startswith("..")):
                 self.state = "code_block"
                 self._textindent = self.get_indent(line)
-                lines[-1] = lines[-1].replace(self.comment_string, "", 1)
-
-        if self.strip:
-            return
-        
-        for line in lines:
-            yield line
     
 # TODO: Ensure a trailing blank line? Would need to test all
 # documentation lines for end-of-documentation marker and add a line by calling the
@@ -601,7 +618,8 @@ class Text2Code(TextCodeConverter):
 # If still unset, determine the indentation of code blocks from first non-blank
 # code line::
 
-        if self._codeindent is None:
+        print "Txt2Code.code_block_handler: ", self._codeindent
+        if self._codeindent == 0:
             self._codeindent = self.get_indent(block[0])
 
 # Yield unindented lines::
@@ -620,47 +638,17 @@ class Text2Code(TextCodeConverter):
 # Code2Text
 # ---------
 # 
-# The `Code2Text` class does the opposite of `Text2Code`_ -- it processes
-# valid source code, extracts documentation from comment blocks, and puts
-# program code in literal blocks. 
+# The `Code2Text` converter does the opposite of `Text2Code`_ -- it processes
+# a source in "code format" (i.e. in a programming language), extracts
+# documentation from comment blocks, and puts program code in literal blocks. 
 # 
-# The class is derived from the TextCodeConverter state machine and adds  an
-# `__iter__` method as well as handlers for "documentation", and "code_block"
-# states. ::
+# The class inherits the interface and helper functions from
+# TextCodeConverter_ and adds functions specific to the text-to-code format
+# conversion::
 
 class Code2Text(TextCodeConverter):
     """Convert code source to text source
     """
-
-# Code2Text.convert
-# ~~~~~~~~~~~~~~~~~
-# ::
-
-    def convert(self, lines):
-
-# (re) set initial state. The leading block can be either "documentation" or
-# "header". This will be set by `Code2Text.set_state`_.
-# 
-# ::
-
-        self.state = ""
-
-# If the last paragraph of a documentation block does not end with a
-# "code_block_marker" (by default, the literal-block marker ``::``), it
-# must be added (otherwise, the back-conversion fails.).
-# `code_block_marker_missing` is set by `Code2Text.documentation_handler`_
-# and evaluated by `Code2Text.code_block_handler`_. ::
-
-        self.code_block_marker_missing = False
-        
-# Determine the state of the block return it processed with the matching
-# handler::
-
-        for block in self.collect_blocks(lines):
-            self.set_state(block)
-            for line in getattr(self, self.state+"_handler")(block):
-                yield line
-
 
 # Code2Text.set_state
 # ~~~~~~~~~~~~~~~~~~~
@@ -1448,8 +1436,7 @@ if __name__ == '__main__':
 #   - Use a `parsed-literal block`_ directive if there is no "accidential"
 #     markup in the literal code
 #     
-#   - Use a `line block`_ directive or the `line block syntax`_
-#     and mark all lines as `inline literals`_.
+#   - Use a `line block`_ and mark all lines as `inline literals`_.
 # 
 #   - Python session examples and doctests can use `doctest block`_ syntax 
 #   
@@ -1498,15 +1485,24 @@ if __name__ == '__main__':
 # 
 # .. References
 # 
-# .. _docutils: http://docutils.sourceforge.net/
-# .. _doctest block: 
+# .. _docutils: 
+#     http://docutils.sourceforge.net/
+# .. _indented literal block: 
+# .. _indented literal blocks: 
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#indented-literal-blocks
+# .. _quoted literal block:
+# .. _quoted literal blocks:
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#quoted-literal-blocks
+# .. _doctest block:
+# .. _doctest blocks: 
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
+# .. _parsed-literal blocks:
 # .. _parsed-literal block: 
 #     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
-# .. _line block: 
-#     http://docutils.sourceforge.net/docs/ref/rst/directives.html#line-block
-# .. _line block syntax: 
+# .. _line block:
+# .. _line blocks:
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks
+# .. _inline literal:
 # .. _inline literals:
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals
 # .. _pygments: http://pygments.org/

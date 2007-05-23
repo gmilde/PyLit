@@ -34,6 +34,7 @@
 """pylit_test.py: test the "literal python" module"""
 
 from pprint import pprint
+import operator
 from pylit import *
 import nose
 
@@ -212,6 +213,25 @@ def test_x2u_filter():
 
 
 
+## TextCodeConverter
+## -----------------
+
+class test_TextCodeConverter(object):
+    """Test the TextCodeConverter parent class"""
+        
+    def test_get_indent(self):
+        converter = TextCodeConverter(textdata)        
+        assert converter.get_indent("foo") == 0
+        assert converter.get_indent(" foo") == 1
+        assert converter.get_indent("  foo") == 2
+    
+    def test_collect_blocks(self):
+        converter = TextCodeConverter(textdata)
+        textblocks = [block for block in converter.collect_blocks(textdata)]
+        print textblocks
+        assert len(textblocks) == 7, "text sample has 7 blocks"
+        assert reduce(operator.__add__, textblocks) == textdata
+
 ## Text2Code
 ## ---------
 
@@ -220,6 +240,76 @@ class test_Text2Code(object):
 
     def setUp(self):
         self.converter = Text2Code(textdata)
+
+## test helper funs ::
+
+    def test_set_state_empty(self):
+        try:
+            self.converter.set_state([])
+            raise AssertionError, "should raise StopIteration"
+        except StopIteration:
+            pass
+
+    def test_set_state_header(self):
+        """test for "header" or "documentation" for first block"""
+        self.converter.state = "" # normally set by the `convert` method
+        self.converter.set_state([".. header", " block"])
+        assert self.converter.state == "header"
+        self.converter.state = "" # normally set by the `convert` method
+        self.converter.set_state(["documentation", "block"])
+        assert self.converter.state == "documentation"
+
+    def test_set_state_code_block(self):
+        """test for "header" or "documentation" for "code_block" """
+        # normally set by the `convert` method
+        self.converter._textindent = 0
+        self.converter.state = "code_block"
+        self.converter.set_state(["documentation", "  block"])
+        assert self.converter.state == "documentation"
+
+        self.converter.state = "code_block"
+        self.converter.set_state(["  documentation", "block"])
+        assert self.converter.state == "documentation"
+        
+        self.converter.state = "code_block"
+        self.converter.set_state(["  code", "  block"])
+        print self.converter.state
+        assert self.converter.state == "code_block"
+
+    def test_header_handler(self):
+        """should strip header-string from header"""
+        self.converter._codeindent = 0
+        sample = [".. header", " block"]
+        lines = [line for line in self.converter.header_handler(sample)]
+        print lines
+        assert lines == ["header", "block"]
+
+    def test_documentation_handler(self):
+        """should add comment string to documentation"""
+        sample = ["doc", "block", ""]
+        lines = [line for line 
+                  in self.converter.documentation_handler(sample)]
+        print lines
+        assert lines == ["# doc", "# block", "# "]
+    
+    def test_documentation_handler_set_state(self):
+        """should add comment string to documentation"""
+        sample = ["doc", "block::", ""]
+        lines = [line for line 
+                  in self.converter.documentation_handler(sample)]
+        print lines
+        assert lines == ["# doc", "# block::", ""]
+        assert self.converter.state == "code_block"
+        
+    def test_code_block_handler(self):
+        """should un-indent code-blocks"""
+        self.converter._codeindent = 0 # normally set in `convert`
+        sample = ["  code", "  block", ""]
+        lines = [line for line 
+                  in self.converter.code_block_handler(sample)]
+        print lines
+        assert lines == ["code", "block", ""]
+    
     
 ## base tests on the "long" test data ::
 
@@ -240,8 +330,8 @@ class test_Text2Code(object):
         
     def test_str(self):
         outstr = str(self.converter)
-        print code,
-        print outstr
+        print repr(code)
+        print repr(outstr)
         assert code == outstr
 
     def test_str_strip1(self):
