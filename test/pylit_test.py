@@ -407,6 +407,12 @@ class test_Text2Code(object):
         print postprocessor
         assert postprocessor == u2x_filter
 
+    def test_get_css_postprocessor(self):
+        """should return filter from filter_set for language"""
+        postprocessor = self.converter.get_filter("postprocessors", "css")
+        print postprocessor
+        assert postprocessor == dumb_c_postprocessor
+        
     def test_get_filter_nonexisting_language_filter(self):
         """should return identity_filter if language has no filter in set"""
         preprocessor = self.converter.get_filter("preprocessors", "foo")
@@ -694,6 +700,12 @@ class test_Code2Text(object):
         print preprocessor
         assert preprocessor == r2l_filter
 
+    def test_get_css_preprocessor(self):
+        """should return filter from filter_set for language"""
+        preprocessor = self.converter.get_filter("preprocessors", "css")
+        print preprocessor
+        assert preprocessor == dumb_c_preprocessor
+        
     def test_get_filter_postprocessor(self):
         """should return Code2Text postprocessor for language"""
         postprocessor = self.converter.get_filter("postprocessors", "x")
@@ -762,7 +774,7 @@ more text
 
 ## No blank line after text
 ## ''''''''''''''''''''''''
-## 
+##
 ## If a matching comment precedes oder follows a code line (i.e. any line
 ## without matching comment) without a blank line inbetween, it counts as code
 ## line.
@@ -924,6 +936,42 @@ print 'hello world'
   print 'hello world'
 """,
 "")
+
+
+## Filter tests
+## ------------
+
+css_code = ['/* import the default docutils style sheet */\n',
+            '/* --------------------------------------- */\n',
+            '\n',
+            '/* :: */\n',
+            '\n',
+            '/*comment*/\n',
+            '@import url("html4css1.css"); /* style */\n']
+            
+css_filtered_code = ['// import the default docutils style sheet\n',
+                     '// ---------------------------------------\n',
+                     '\n',
+                     '// ::\n',
+                     '\n',
+                     '/*comment*/\n', 
+                     '@import url("html4css1.css"); /* style */\n']
+
+def test_dumb_c_preprocessor():
+    """convert `C` to `C++` comments"""
+    output = [line for line in dumb_c_preprocessor(css_code)]
+    print "ist:  %r"%output
+    print "soll: %r"%css_filtered_code
+    assert output == css_filtered_code
+
+def test_dumb_c_postprocessor():
+    """convert `C++` to `C` comments"""
+    output = [line for line in dumb_c_postprocessor(css_filtered_code)]
+    print "ist:  %r"%output
+    print "soll: %r"%css_code
+    assert output == css_code
+
+
 
 if __name__ == "__main__":
     nose.runmodule() # requires nose 0.9.1

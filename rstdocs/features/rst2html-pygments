@@ -8,7 +8,7 @@
 # suggestion taken from the pygments_ documentation.
 
 """
-A front end to docutils, producing HTML with colorized code using pygments
+A front end to docutils, producing HTML with syntax colouring using pygments
 """
 
 try:
@@ -20,10 +20,11 @@ except:
 from docutils.core import publish_cmdline, default_description
 
 description = ('Generates (X)HTML documents from standalone reStructuredText '
-               'sources. Uses `pygments` to colorize code. '
-               'Needs an adapted stylesheet' + default_description)
+               'sources. Uses `pygments` to colorize the content of'
+               '"code-block" directives. Needs an adapted stylesheet' 
+               + default_description)
 
-# Define a new directive `sourcecode` that uses the `pygments` source
+# Define a new directive `code-block` that uses the `pygments` source
 # highlighter to render code in color. 
 #
 # Code from the `pygments`_ documentation for `Using Pygments in ReST
@@ -48,7 +49,7 @@ def pygments_directive(name, arguments, options, content, lineno,
     return [nodes.raw('', parsed, format='html')]
 pygments_directive.arguments = (1, 0, 1)
 pygments_directive.content = 1
-directives.register_directive('sourcecode', pygments_directive)
+directives.register_directive('code-block', pygments_directive)
 
 # Call the docutils publisher to render the input as html::
 

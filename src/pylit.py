@@ -67,7 +67,12 @@
 # :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganization, 
 #                    rename Converter -> TextCodeConverter.
 # :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
-#                    TextCodeConverter.converter
+#                    TextCodeConverter.converter.
+#              0.4.3 Replaced use of defaults.code_extensions with
+#                    values.languages.keys().
+#                    Removed spurious `print` statement in code_block_handler.
+#                    Added basic support for 'c' and 'css' languages
+#                    with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
 #              
 # ::
 
@@ -133,16 +138,18 @@ defaults = optparse.Values()
 # defaults.languages
 # ~~~~~~~~~~~~~~~~~~
 # 
-# Mapping of code file extension to code language::
+# Mapping of code file extension to code language.
+# Used by `OptionValues.complete`_ to set the `defaults.language`. 
+# The ``--language`` command line option or setting ``defaults.language`` in
+# programmatic use override this auto-setting feature. ::
 
 defaults.languages  = {".py": "python", 
                        ".sl": "slang", 
-                       ".c": "c++"}
+                       ".css": "css",
+                       ".c": "c",
+                       ".cc": "c++"}
 
-# Used by `OptionValues.complete`_ to set the `defaults.language`. The
-#  ``--language`` command line option or setting ``defaults.language`` in
-#  programmatic use overrides this auto-setting feature.
-# 
+
 # defaults.fallback_language
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -151,25 +158,16 @@ defaults.languages  = {".py": "python",
 
 defaults.fallback_language = "python"
 
-# defaults.code_extensions
-# ~~~~~~~~~~~~~~~~~~~~~~~~
-# 
-# List of known extensions for source code files::
-
-defaults.code_extensions = defaults.languages.keys()
-
-# Used in `OptionValues.complete`_ to auto-determine the conversion direction
-# from the input and output file names.
-#   
 # defaults.text_extensions
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# List of known extensions of (reStructured) text files::
+# List of known extensions of (reStructured) text files.
+# Used by `OptionValues._get_outfile` to auto-determine the output filename. 
+# ::
  
 defaults.text_extensions = [".txt"]
 
-# Used by `OptionValues._get_outfile` to auto-determine the output filename.
-#   
+ 
 # defaults.comment_strings
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
@@ -178,6 +176,8 @@ defaults.text_extensions = [".txt"]
 
 defaults.comment_strings = {"python": '# ',
                             "slang":  '% ', 
+                            "css":    '// ',
+                            "c":      '// ',
                             "c++":    '// '}  
 
 # Used in Code2Text_ to recognise text blocks and in Text2Code_ to format
@@ -204,7 +204,8 @@ defaults.strip = False
 # defaults.preprocessors
 # ~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Preprocess the data with language-specific filters_::
+# Preprocess the data with language-specific filters_
+# Set below in Filters_::
 
 defaults.preprocessors = {}
 
@@ -324,8 +325,8 @@ class TextCodeConverter(object):
 # * text<->code format conversion
 # * postprocessing
 # 
-# Pre- and postprocessing are only performed, if filters for
-# `self.language` are registered in `defaults.preprocessors`_ and|or
+# Pre- and postprocessing are only performed, if filters for the current
+# language are registered in `defaults.preprocessors`_ and|or
 # `defaults.postprocessors`_. The filters must accept an iterable as first
 # argument and yield the processed input data linewise.
 # ::
@@ -360,11 +361,14 @@ class TextCodeConverter(object):
 # TextCodeConverter.convert
 # """""""""""""""""""""""""
 # 
-# The `convert` method generates an iterator that does the actual code-to-text
-# conversion::
+# The `convert` method generates an iterator that does the actual  code <-->
+# text format conversion. The converted data is yielded line-wise and the
+# instance's `status` argument indicates whether the current line is "header",
+# "documentation", or "code_block"::
 
-    def convert(self, lines):
-        """Iterate over lists of text lines and convert them to code format
+    def convert(self, lines): 
+        """Iterate over lines of a program document and convert
+        between "text" and "code" format 
         """
         
 # Initialise internal data arguments. (Done here, so that every new iteration
@@ -546,8 +550,51 @@ class Text2Code(TextCodeConverter):
 # split and push-back of the documentation part)?
 # 
 # Text2Code.header_handler
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
+# Sometimes code needs to remain on the first line(s) of the document to be
+# valid. The most common example is the "shebang" line that tells a POSIX
+# shell how to process an executable file::
+
+#!/usr/bin/env python
+
+# In Python, the special comment to indicate the encoding, e.g. 
+# ``# -*- coding: iso-8859-1 -*-``, must occure before any other comment 
+# or code too.
+# 
+# If we want to keep the line numbers in sync for text and code source, the
+# reStructured Text markup for these header lines must start at the same line
+# as the first header line. Therfore, header lines could not be marked as
+# literal block (this would require the ``::`` and an empty line above the
+# code_block).
+# 
+# OTOH, a comment may start at the same line as the comment marker and it
+# includes subsequent indented lines. Comments are visible in the reStructured
+# Text source but hidden in the pretty-printed output.
+# 
+# With a header converted to comment in the text source, everything before
+# the first documentation block (i.e. before the first paragraph using the
+# matching comment string) will be hidden away (in HTML or PDF output). 
+# 
+# This seems a good compromise, the advantages
+# 
+# * line numbers are kept
+# * the "normal" code_block conversion rules (indent/unindent by `codeindent` apply
+# * greater flexibility: you can hide a repeating header in a project
+#   consisting of many source files.
+# 
+# set off the disadvantages
+# 
+# - it may come as surprise if a part of the file is not "printed",
+# - one more syntax element to learn for rst newbees to start with pylit,
+#   (however, starting from the code source, this will be auto-generated)
+# 
+# In the case that there is no matching comment at all, the complete code
+# source will become a comment -- however, in this case it is not very likely
+# the source is a literate document anyway.
+# 
+# If needed for the documentation, it is possible to quote the header in (or
+# after) the first documentation block, e.g. as `parsed literal`.
 # ::
 
     def header_handler(self, lines):
@@ -573,13 +620,12 @@ class Text2Code(TextCodeConverter):
 # Test for the end of the documentation block: does the second last line end
 # with `::` but is neither a comment nor a directive? 
 # 
-# If end-of-documentation
-# marker is detected, 
+# If end-of-documentation marker is detected, 
 # 
 # * set state to 'code_block'
 # * set `self._textindent` (needed by `Text2Code.set_state`_ to find the
 #   next "documentation" block)
-# * remove the comment from the last line again (it's a separator between documentation
+# * do not comment the last line (the blank line separating documentation
 #   and code blocks).
 # 
 # TODO: allow different code marking directives (for syntax color etc)
@@ -598,8 +644,8 @@ class Text2Code(TextCodeConverter):
                 self.state = "code_block"
                 self._textindent = self.get_indent(line)
     
-# TODO: Ensure a trailing blank line? Would need to test all
-# documentation lines for end-of-documentation marker and add a line by calling the
+# TODO: Ensure a trailing blank line? Would need to test all documentation
+# lines for end-of-documentation marker and add a line by calling the
 # `ensure_trailing_blank_line` method (which also issues a warning)
 # 
 # 
@@ -618,17 +664,13 @@ class Text2Code(TextCodeConverter):
 # If still unset, determine the indentation of code blocks from first non-blank
 # code line::
 
-        print "Txt2Code.code_block_handler: ", self._codeindent
         if self._codeindent == 0:
             self._codeindent = self.get_indent(block[0])
 
-# Yield unindented lines::
+# Yield unindented lines after check whether we can safely unindent. If the
+# line is less indented then `_codeindent`, something got wrong. ::
 
         for line in block:
-
-# Check if we can safely unindent. If the line is less indented then
-# `_codeindent`, something got wrong. ::
-
             if line.lstrip() and self.get_indent(line) < self._codeindent:
                 raise ValueError, "code block contains line less indented " \
                       "than %d spaces \n%r"%(self._codeindent, block)
@@ -643,7 +685,7 @@ class Text2Code(TextCodeConverter):
 # documentation from comment blocks, and puts program code in literal blocks. 
 # 
 # The class inherits the interface and helper functions from
-# TextCodeConverter_ and adds functions specific to the text-to-code format
+# TextCodeConverter_ and adds functions specific to the text-to-code  format
 # conversion::
 
 class Code2Text(TextCodeConverter):
@@ -655,18 +697,18 @@ class Code2Text(TextCodeConverter):
 # 
 # Check if block is "header", "documentation", or "code_block":  
 # 
-# A paragraph is "documentation", if every non-blank line starts with a matching
-# comment string (including whitespace except for commented blank lines) ::
+# A paragraph is "documentation", if every non-blank line starts with a
+# matching comment string (including whitespace except for commented blank
+# lines) ::
 
     def set_state(self, block):
         """Determine state of `block`."""
         for line in block:
-            # skip documentation lines (commented or blank)
-            if line.startswith(self.comment_string):
-                continue
-            if not line.rstrip():  # blank line
-                continue
-            if line.rstrip() == self.comment_string.rstrip(): # blank comment
+            # skip documentation lines (commented, blank or blank comment)
+            if (line.startswith(self.comment_string)
+                or not line.rstrip()
+                or line.rstrip() == self.comment_string.rstrip()
+                ):
                 continue
             # non-documentation line found: the block is "header" or "code_block"
             if self.state == "":
@@ -681,49 +723,8 @@ class Code2Text(TextCodeConverter):
 # Code2Text.header_handler
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Sometimes code needs to remain on the first line(s) of the document to be
-# valid. The most common example is the "shebang" line that tells a POSIX
-# shell how to process an executable file::
-
-#!/usr/bin/env python
-
-# In Python, the ``# -*- coding: iso-8859-1 -*-`` line must occure before any
-# other comment or code.
-# 
-# If we want to keep the line numbers in sync for text and code source, the
-# reStructured Text markup for these header lines must start at the same line
-# as the first header line. Therfore, header lines could not be marked as
-# literal block (this would require the ``::`` and an empty line above the code_block).
-# 
-# OTOH, a comment may start at the same line as the comment marker and it
-# includes subsequent indented lines. Comments are visible in the reStructured
-# Text source but hidden in the pretty-printed output.
-# 
-# With a header converted to comment in the text source, everything before the
-# first documentation block (i.e. before the first paragraph using the matching comment
-# string) will be hidden away (in HTML or PDF output). 
-# 
-# This seems a good compromise, the advantages
-# 
-# * line numbers are kept
-# * the "normal" code_block conversion rules (indent/unindent by `codeindent` apply
-# * greater flexibility: you can hide a repeating header in a project
-#   consisting of many source files.
-# 
-# set off the disadvantages
-# 
-# - it may come as surprise if a part of the file is not "printed",
-# - one more syntax element to learn for rst newbees to start with pylit,
-#   (however, starting from the code source, this will be auto-generated)
-# 
-# In the case that there is no matching comment at all, the complete code
-# source will become a comment -- however, in this case it is not very likely
-# the source is a literate document anyway.
-# 
-# If needed for the documentation, it is possible to quote the header in (or
-# after) the first documentation block, e.g. as `parsed literal`.
-# 
-# ::
+# Handle a leading code block. (See `Text2Code.header_handler`_ for a
+# discussion of the "header" state.) ::
 
     def header_handler(self, lines):
         """Format leading code block"""
@@ -839,15 +840,94 @@ class Code2Text(TextCodeConverter):
 # Filters allow pre- and post-processing of the data to bring it in a format
 # suitable for the "normal" text<->code conversion. An example is conversion
 # of `C` ``/*`` ``*/`` comments into C++ ``//`` comments (and back).
+# Another example is the conversion of `C` ``/*`` ``*/`` comments into C++
+# ``//`` comments (and back).
 # 
-# Filters are generator functions that return an iterator that acts on a
-# `data` iterable and returns processed `data` items (lines).
+# Filters are generator functions that return an iterator acting on a
+# `data` iterable and yielding processed `data` lines.
+# 
+# identity_filter
+# ---------------
 # 
 # The most basic filter is the identity filter, that returns its argument as
 # iterator::
 
 def identity_filter(data):
+    """return data iterator without any processing"""
     return iter(data)
+
+# dumb_c_preprocessor
+# -------------------
+# 
+# This is a basic filter to convert `C` to `C++` comments. Works line-wise and
+# only converts lines that
+# 
+# * start with ``/* `` and 
+# * end with `` */`` (followed by whitespace only)
+# 
+# A more sophisticated version would also 
+# 
+# * convert multi-line comments
+#   
+#   + Keep indentation or strip 3 leading spaces?
+#   
+# * account for nested comments
+# 
+# * only convert comments that are separated from code by a blank line
+# 
+# ::
+
+def dumb_c_preprocessor(data):
+    """change `C` ``/* `` `` */`` comments into C++ ``// `` comments"""
+    comment_string = defaults.comment_strings["c++"]
+    boc_string = "/* "
+    eoc_string = " */"
+    for line in data:
+        if (line.startswith(boc_string)
+            and line.rstrip().endswith(eoc_string)
+           ):
+            line = line.replace(boc_string, comment_string, 1)
+            line = "".join(line.rsplit(eoc_string, 1))
+        yield line
+
+# Unfortunately, the `replace` method of strings does not support negative
+# numbers for the `count` argument:
+# 
+# >>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
+# 
+# However, there is the `rsplit` method, that can be used together with `join`:
+# 
+# >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
+
+
+# dumb_c_postprocessor
+# -------------------
+#
+# Undo the preparations by the dumb_c_preprocessor and re-insert valid comment
+# delimiters ::
+
+def dumb_c_postprocessor(data):
+    """change C++ ``// `` comments into `C` ``/* `` `` */`` comments"""
+    comment_string = defaults.comment_strings["c++"]
+    boc_string = "/* "
+    eoc_string = " */"
+    for line in data:
+        if line.rstrip() == comment_string.rstrip():
+            line = line.replace(comment_string, "", 1)
+        elif line.startswith(comment_string):
+            line = line.replace(comment_string, boc_string, 1)
+            line = line.rstrip() + eoc_string + "\n"
+        yield line
+
+
+# register filters
+# ----------------
+
+defaults.preprocessors['c2text'] = dumb_c_preprocessor
+defaults.preprocessors['css2text'] = dumb_c_preprocessor
+defaults.postprocessors['text2c'] = dumb_c_postprocessor
+defaults.postprocessors['text2css'] = dumb_c_postprocessor
+
 
 # Command line use
 # ================
@@ -1047,7 +1127,7 @@ class PylitOptions(object):
             in_extension = os.path.splitext(values.infile)[1]
             if in_extension in values.text_extensions:
                 values.txt2code = True
-            elif in_extension in values.code_extensions:
+            elif in_extension in values.languages.keys():
                 values.txt2code = False
 
 # Auto-determine the output file name::
@@ -1098,7 +1178,7 @@ class PylitOptions(object):
         (base, ext) = os.path.splitext(values.infile)
         if ext in values.text_extensions: 
             return base # strip
-        if ext in values.code_extensions or values.txt2code == False:
+        if ext in values.languages.keys() or values.txt2code == False:
             return values.infile + values.text_extensions[0] # add
         # give up
         return values.infile + ".out"

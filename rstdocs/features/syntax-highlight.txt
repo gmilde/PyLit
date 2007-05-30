@@ -403,6 +403,22 @@ This proposal consists of two independent parts:
   Alternatively, define a new "literal-block-classes" directive instead of
   (or in addition to) a settings key.
 
+The "class" directive can already be used to specify classes of a literal
+block, e.g.::
+ 
+  colourful Python code
+
+  .. class:: code-block python
+     
+  ::
+  
+     def hello():
+         print "hello world"
+
+which means that a highlight-enhanced writer that works with backwards
+compatible documents is possible without changes to the reStructured
+text syntax.
+
 Motivation
 ''''''''''
 
@@ -423,21 +439,6 @@ for source code blocks seems *the right thing*:
   
 This solves the problem of compatibility with "non-enhanced" writers that do
 not provide syntax highlight. 
-
-The "class" directive can already be used to specify classes of a literal
-block::
- 
-  colourful Python code
-
-  .. class:: code-block python
-     
-  ::
-  
-     def hello():
-         print "hello world"
-
-I. e. a highlight-enhanced writer that works with backwards compatible
-documents is already possible.
 
 However, an extra "class" directive for every code block is a rather
 bulky syntax for literate programming or documenting code, especially as

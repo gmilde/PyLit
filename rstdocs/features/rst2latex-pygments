@@ -8,7 +8,7 @@
 # suggestion taken from the pygments_ documentation.
 
 """
-A front end to docutils, producing LaTeX with colorized code using pygments
+A front end to docutils, producing LaTeX with syntax colouring using pygments
 """
 
 try:
@@ -20,8 +20,9 @@ except:
 from docutils.core import publish_cmdline, default_description
 
 description = ('Generates LaTeX documents from standalone reStructuredText '
-               'sources. Uses `pygments` to colorize code. '
-               'Needs an adapted stylesheet' + default_description)
+               'sources. Uses `pygments` to colorize the content of'
+               '"code-block" directives. Needs an adapted stylesheet' 
+               + default_description)
 
 # Define a new directive `code-block` that uses the `pygments` source
 # highlighter to render code in color. 

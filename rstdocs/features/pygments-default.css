@@ -8,9 +8,8 @@
 /* This stylesheet provides syntax highlight for documents generated with a */
 /* pygments_ enhanced reStructured Text -> html converter. */
 
-/* import the default docutils style sheet */
+/* Import the default docutils style sheet */
 /* --------------------------------------- */
-
 /* :: */
 
 @import url("/stylesheets/html4css1.css");         
@@ -19,7 +18,7 @@
 /* --------------------- */
 
 /* Content copied from the `html4css1.css` rule for literal blocks. */
-/* Selector adapted to the output of Pygments_. */
+/* Selector adapted to the output of Pygments_. :: */
 
 div.highlight {
   margin-left: 2em ;
@@ -93,4 +92,4 @@ div.highlight {
 .vi { color: #B8860B } /* Name.Variable.Instance */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
 
-/* .. _pygments:  http://pygments.org/  */
+/* .. _pygments:  http://pygments.org/ */
