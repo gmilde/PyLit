@@ -12,6 +12,7 @@
       file: pygments-default.css
       file: pygments-default.sty
       file: literal-blocks.pdf
+      file: pygments_with_docutils.py
   /restindex
 
 Syntax Highlight
@@ -147,6 +148,58 @@ configurable "code block marker" instead of the hard coded double colon
 pylit.py.)
 
 __ ../examples/pylit.py.html#code-block-directive
+
+
+Future support of a code-block directive in docutils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is currently discussion in the docutils users list about adding
+syntax highlight support to docutils. There is agreement about the
+introduction of a code-block directive but details need to be settled
+still.
+
+The `pygments enhanced docutils front-ends`_ introduce "writer-dependent"
+directives, which is not desirable. 
+A future implementation in docutils will parse the content of the
+code-block directive in a "literal-block" doctree element with subnodes
+for the tokens. For example, the code::
+
+  def my_function():
+      "just a test"
+      print 8/2
+
+will be transformed into a doctree similar to (xml rendering)::
+
+  <document source="generated">
+    <literal_block 
+      classes="sourcecode python" 
+      raw_source='def my_function():\n    "just a test"\n    print 8/2\n'
+      xml:space="preserve">
+        <inline classes="keyword">def</inline> 
+        <inline classes="name function">my_function</inline>
+        <inline classes="punctuation">(</inline>
+        <inline classes="punctuation">)</inline>
+        <inline classes="punctuation">:</inline>
+        <inline classes="literal string">&quot;</inline>
+        <inline classes="literal string">just a test</inline>
+        <inline classes="literal string">&quot;</inline>
+        <inline classes="keyword">print</inline> 
+        <inline classes="literal number integer">8</inline>
+        <inline classes="operator">/</inline>
+        <inline classes="literal number integer">2</inline>
+    </literal_block>
+  </document>
+
+
+(This example is produced by the "proof of concept" script
+`pygments_with_docutils.py`_ based on code by Felix Wiemann.) 
+
+The writers would then use the class information to render the tokens
+accordingly.
+
+* The HTML writer is up to date and only needs an adapted CSS style sheet.
+
+* The LaTeX writer currently fails to handle this doctree element.
 
 
 Using the listings LaTeX package
@@ -486,3 +539,5 @@ with writers supporting a "code-block" class for literal blocks.
 .. _pygments-default.css.txt: pygments-default.css.txt
 .. _pygments-default.css.html: pygments-default.css.html
 .. _pygments-default.sty: pygments-default.sty
+.. _pygments_with_docutils.py: pygments_with_docutils.py
+
