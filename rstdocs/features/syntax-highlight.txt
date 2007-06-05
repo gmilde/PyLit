@@ -11,15 +11,17 @@
       file: for-else-test.py.html
       file: pygments-default.css
       file: pygments-default.sty
-      file: code-block.css
+      file: pygments_docutils_formatter.py
+      file: pygments_code_block_directive.py
+      file: pygments_code_block_directive.py.html
+      file: rst2html-highlight
       file: myfunction.py.txt
       file: myfunction.py.xml
+      file: myfunction.py.pseudoxml
       file: myfunction.py.html
       file: myfunction.py.tex
-      file: pygments_code_block_directive.py
-      file: rst2html-code-block
+      file: myfunction.py.newlatex2.tex
       file: literal-blocks.pdf
-      file: pygments_with_docutils.py
   /restindex
 
 Syntax Highlight
@@ -210,8 +212,8 @@ Stylesheets:
 Proposal for a code-block directive in docutils
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a `post to the docutils users list`__, David Goodger wrote (after an all too
-long discussion):
+In a `post to the docutils users list`__, David Goodger wrote (after an all
+too long discussion):
 
   Here are my pronouncements:
   
@@ -228,43 +230,67 @@ long discussion):
   
 __ http://article.gmane.org/gmane.text.docutils.user/3923
 
-Felix Wiemann provided a `proof of concept script`_ that utilizes the
-pygments_ parser to do this. In contrast to the `pygments enhanced docutils
-front-ends`_, this script produces a <literal_block> doctree element
-with <inline> nodes instead of <raw> element, i.e. it is independent of the
-output format.
 
-A modified version, `pygments_with_docutils.py`_, parses the small example
-file `myfunction.py.txt`_ into a "rich" doctree (`myfunction.py.xml`_).
+Parsing
+"""""""
+
+Felix Wiemann provided a `proof of concept`_ script that utilizes the
+pygments_ parser to parse a source code string and store the result in a
+"rich" <literal_block> element with "classified" <inline> nodes.
+
+A modified version, `pygments_code_block_directive`_, (source:
+`pygments_code_block_directive.py`_), defines and registers a "code-block"
+directive that parses its content, stores it in a <literal_block>. It uses a
+DocutilsFormatter (`pygments_docutils_formatter.py`_) to classify the tokens
+using short CSS class names identical to pygments HTML output.
+
+The XML rendering of the small example file `myfunction.py.txt`_ looks like
+`myfunction.py.xml`_.
+
+Writing
+"""""""
 
 The writers can use the class information in the <inline> elements to render
-the tokens accordingly.
+the tokens. They should ignore the class information if they are unable to
+use it or to pass it on.
 
-* The HTML writer only needs an adapted CSS style sheet.
-  
-  * The rst2html-code-block_ front end registers the "code-block" directive and
+HTML
+  The "html" writer works out of the box. 
+
+  * The rst2html-highlight_ front end registers the "code-block" directive and
     converts an input file to html. 
-  
-  * The `code-block.css`_ stylesheet provides the layout information.
-  
+  * Styling is done with the adapted CSS style sheet `pygments-default.css`_
+    based on docutils' default stylesheet and the output of 
+    ``pygmentize -S default -f html``.
   * The result looks like `myfunction.py.html`_.
 
-* The LaTeX writer currently fails to handle the "classified" <inline>
-  doctree elements.
-
-  The result looks like `myfunction.py.tex`_.
+LaTeX
+  Latex writers must be updated to handle the "rich" <literal_block> element
+  correct.
+  
+  * The "latex" writer currently fails to handle the "classified" <inline>
+    doctree elements. The output `myfunction.py.tex`_ contains undefined
+    control sequences ``\docutilsroleNone``.
+  
+  * The "newlatex2e" writer produces a valid LaTeX document
+    (`myfunction.py.newlatex2e.tex`_). However the `pdflatex` output looks
+    mixed up a bit (`myfunction.py.newlatex2e.pdf`_). The pygments-produced
+    style file will not work with "newlatex2e" output.
   
 
-.. _proof of concept script:
+.. _proof of concept:
      http://article.gmane.org/gmane.text.docutils.user/3689
-  
-.. _pygments_with_docutils.py: pygments_with_docutils.py
+.. _pygments_code_block_directive.py: pygments_code_block_directive.py
+.. _pygments_code_block_directive: pygments_code_block_directive.py.html
 .. _myfunction.py.txt: myfunction.py.txt
 .. _myfunction.py.xml: myfunction.py.xml
 .. _myfunction.py.html: myfunction.py.html
 .. _myfunction.py.tex: myfunction.py.tex
-.. _rst2html-code-block: rst2html-code-block
+.. _myfunction.py.newlatex2e.tex: myfunction.py.newlatex2e.tex
+.. _myfunction.py.newlatex2e.pdf: myfunction.py.newlatex2e.pdf
+.. _rst2html-highlight: rst2html-highlight
 .. _code-block.css: code-block.css
+
 
 Configurable literal block directive
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -487,5 +513,5 @@ Some considerations about the implementation:
 .. _pygments-default.css.txt: pygments-default.css.txt
 .. _pygments-default.css.html: pygments-default.css.html
 .. _pygments-default.sty: pygments-default.sty
-.. _pygments_with_docutils.py: pygments_with_docutils.py
+.. _pygments_code_block_directive.py: pygments_code_block_directive.py
 
