@@ -68,11 +68,14 @@
 #                    rename Converter -> TextCodeConverter.
 # :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
 #                    TextCodeConverter.converter.
-#              0.4.3 Replaced use of defaults.code_extensions with
+# :2007-05-30: 0.4.3 Replaced use of defaults.code_extensions with
 #                    values.languages.keys().
 #                    Removed spurious `print` statement in code_block_handler.
 #                    Added basic support for 'c' and 'css' languages
 #                    with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
+# :2007-06-06: 0.5   Moved `collect_blocks`_ out of `TextCodeConverter`_,
+#                    bugfix: collect all trailing blank lines into a block.
+#                    Expand tabs with `expandtabs_filter`_.
 #              
 # ::
 
@@ -82,7 +85,7 @@ computer code and a *code source* with embedded documentation.
 
 __docformat__ = 'restructuredtext'
 
-_version = "0.3"
+_version = "0.5"
 
 
 # Introduction
@@ -239,8 +242,19 @@ defaults.overwrite = 'update'
 #  :'yes':    overwrite eventually existing `outfile`,
 #  :'update': fail if the `outfile` is newer than `infile`,
 #  :'no':     fail if `outfile` exists.
+#  
 # 
+# Extensions
+# ----------
 # 
+# Try to import optional extensions::
+
+try:
+    import pylit_elisp
+except ImportError:
+    pass
+
+
 # Converter Classes
 # =================
 # 
@@ -412,10 +426,11 @@ class TextCodeConverter(object):
 
 # Determine the state of the block and convert with the matching "handler"::
 
-        for block in self.collect_blocks(lines):
+        for block in collect_blocks(expandtabs_filter(lines)):
             self.set_state(block)
             for line in getattr(self, self.state+"_handler")(block):
                 yield line
+
 
 # TextCodeConverter.get_filter
 # """"""""""""""""""""""""""""
@@ -444,32 +459,7 @@ class TextCodeConverter(object):
     def get_indent(self, line):
         """Return the indentation of `string`.
         """
-        # line = line.expandtabs() # now done in `collect_blocks`
         return len(line) - len(line.lstrip())
-
-
-# TextCodeConverter.collect_blocks
-# """"""""""""""""""""""""""""""""
-# 
-# A generator function to aggregate "paragraphs" (blocks separated by blank
-# lines)::
-
-    def collect_blocks(self, lines):
-        """collect lines in a list 
-        
-        yield list for each paragraph, i.e. block of lines seperated by a
-        blank line (whitespace only).
-        
-        Also expand hard-tabs as these will lead to errors in indentation
-        (see `str.expandtabs`).
-        """
-        block = []
-        for line in lines:
-            block.append(line.expandtabs())
-            if not line.rstrip():
-                yield block
-                block = []
-        yield block
 
 
 # Text2Code
@@ -708,15 +698,19 @@ class Code2Text(TextCodeConverter):
             if (line.startswith(self.comment_string)
                 or not line.rstrip()
                 or line.rstrip() == self.comment_string.rstrip()
-                ):
+               ):
                 continue
-            # non-documentation line found: the block is "header" or "code_block"
+            # non-commented line found:
             if self.state == "":
                 self.state = "header"
             else:
                 self.state = "code_block"
             break
         else:
+            # no code line found
+            # keep state if the block is just a blank line
+            # if len(block) == 1 and self._is_blank_codeline(line):
+            #     return
             self.state = "documentation"
 
 
@@ -853,8 +847,51 @@ class Code2Text(TextCodeConverter):
 # iterator::
 
 def identity_filter(data):
-    """return data iterator without any processing"""
+    """Return data iterator without any processing"""
     return iter(data)
+
+# expandtabs_filter
+# -----------------
+# 
+# Expand hard-tabs in every line of `data` (cf. `str.expandtabs`).
+# 
+# This filter is applied to the input data by `TextCodeConverter.convert`_ as
+# hard tabs can lead to errors when the indentation is changed. ::
+
+def expandtabs_filter(data):
+    """Yield data tokens with hard-tabs expanded"""
+    for line in data:
+        yield line.expandtabs()
+
+
+# collect_blocks
+# --------------
+# 
+# A filter to aggregate "paragraphs" (blocks separated by blank
+# lines). Yields lists of lines::
+
+def collect_blocks(lines):
+    """collect lines in a list 
+    
+    yield list for each paragraph, i.e. block of lines separated by a
+    blank line (whitespace only).
+    
+    Trailing blank lines are collected as well.
+    """
+    blank_line_reached = False
+    block = []
+    for line in lines:
+        if blank_line_reached and line.rstrip():
+            yield block
+            blank_line_reached = False
+            block = [line]
+            continue
+        if not line.rstrip():
+            blank_line_reached = True
+        block.append(line)
+    yield block
+
+
 
 # dumb_c_preprocessor
 # -------------------
@@ -862,8 +899,7 @@ def identity_filter(data):
 # This is a basic filter to convert `C` to `C++` comments. Works line-wise and
 # only converts lines that
 # 
-# * start with ``/* `` and 
-# * end with `` */`` (followed by whitespace only)
+# * start with "/\* " and end with " \*/" (followed by whitespace only)
 # 
 # A more sophisticated version would also 
 # 
@@ -898,11 +934,11 @@ def dumb_c_preprocessor(data):
 # However, there is the `rsplit` method, that can be used together with `join`:
 # 
 # >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
-
-
+# 
+# 
 # dumb_c_postprocessor
-# -------------------
-#
+# --------------------
+# 
 # Undo the preparations by the dumb_c_preprocessor and re-insert valid comment
 # delimiters ::
 
@@ -922,6 +958,8 @@ def dumb_c_postprocessor(data):
 
 # register filters
 # ----------------
+# 
+# ::
 
 defaults.preprocessors['c2text'] = dumb_c_preprocessor
 defaults.preprocessors['css2text'] = dumb_c_preprocessor

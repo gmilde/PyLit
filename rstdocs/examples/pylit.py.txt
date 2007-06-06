@@ -64,15 +64,18 @@ Changelog
                    Provide "hooks" for pre- and postprocessing filters.
                    Rename states to avoid confusion with formats:
                    "text" -> "documentation", "code" -> "code_block".
-:2007-05-22: 0.4.1 `Converter.__iter__`: cleanup and reorganization, 
+:2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganization, 
                    rename Converter -> TextCodeConverter.
 :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
                    TextCodeConverter.converter.
 :2007-05-30: 0.4.3 Replaced use of defaults.code_extensions with
                    values.languages.keys().
                    Removed spurious `print` statement in code_block_handler.
-                   Basic support for 'c' and 'css' languages
+                   Added basic support for 'c' and 'css' languages
                    with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
+:2007-06-06: 0.5   Moved `collect_blocks`_ out of `TextCodeConverter`_,
+                   bugfix: collect all trailing blank lines into a block.
+                   Expand tabs with `expandtabs_filter`_.
              
 ::
 
@@ -82,9 +85,9 @@ Changelog
   
   __docformat__ = 'restructuredtext'
   
-  _version = "0.3"
+  _version = "0.5"
   
-
+  
 Introduction
 ------------
 
@@ -149,7 +152,7 @@ programmatic use override this auto-setting feature. ::
                          ".c": "c",
                          ".cc": "c++"}
   
-
+  
 defaults.fallback_language
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -167,7 +170,7 @@ Used by `OptionValues._get_outfile` to auto-determine the output filename.
  
   defaults.text_extensions = [".txt"]
   
- 
+   
 defaults.comment_strings
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -239,8 +242,19 @@ Recognized values:
  :'yes':    overwrite eventually existing `outfile`,
  :'update': fail if the `outfile` is newer than `infile`,
  :'no':     fail if `outfile` exists.
+ 
 
+Extensions
+----------
 
+Try to import optional extensions::
+
+  try:
+      import pylit_elisp
+  except ImportError:
+      pass
+  
+  
 Converter Classes
 =================
 
@@ -336,7 +350,7 @@ argument and yield the processed input data linewise.
           """
           return self.postprocessor(self.convert(self.preprocessor(self.data)))
   
-
+  
 TextCodeConverter.__call__
 """"""""""""""""""""""""""
 The special `__call__` method allows the use of class instances as callable
@@ -346,7 +360,7 @@ objects. It returns the converted data as list of lines::
           """Iterate over state-machine and return results as list of lines"""
           return [line for line in self]
   
-
+  
 TextCodeConverter.__str__
 """""""""""""""""""""""""
 Return converted data as string::
@@ -354,7 +368,7 @@ Return converted data as string::
       def __str__(self):
           return "".join(self())
   
-
+  
 Helpers and convenience methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -412,10 +426,11 @@ re-initialises them.)
   
 Determine the state of the block and convert with the matching "handler"::
 
-          for block in self.collect_blocks(lines):
+          for block in collect_blocks(expandtabs_filter(lines)):
               self.set_state(block)
               for line in getattr(self, self.state+"_handler")(block):
                   yield line
+  
   
 TextCodeConverter.get_filter
 """"""""""""""""""""""""""""
@@ -436,7 +451,7 @@ TextCodeConverter.get_filter
               pass
           return identity_filter
   
-
+  
 TextCodeConverter.get_indent
 """"""""""""""""""""""""""""
 Return the number of leading spaces in `line`::
@@ -444,34 +459,9 @@ Return the number of leading spaces in `line`::
       def get_indent(self, line):
           """Return the indentation of `string`.
           """
-          # line = line.expandtabs() # now done in `collect_blocks`
           return len(line) - len(line.lstrip())
   
-
-TextCodeConverter.collect_blocks
-""""""""""""""""""""""""""""""""
-
-A generator function to aggregate "paragraphs" (blocks separated by blank
-lines)::
-
-      def collect_blocks(self, lines):
-          """collect lines in a list 
-          
-          yield list for each paragraph, i.e. block of lines seperated by a
-          blank line (whitespace only).
-          
-          Also expand hard-tabs as these will lead to errors in indentation
-          (see `str.expandtabs`).
-          """
-          block = []
-          for line in lines:
-              block.append(line.expandtabs())
-              if not line.rstrip():
-                  yield block
-                  block = []
-          yield block
   
-
 Text2Code
 ---------
 
@@ -605,7 +595,7 @@ after) the first documentation block, e.g. as `parsed literal`.
           for line in self.code_block_handler(lines):
               yield line
   
-
+  
 Text2Code.documentation_handler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -676,7 +666,7 @@ line is less indented then `_codeindent`, something got wrong. ::
                         "than %d spaces \n%r"%(self._codeindent, block)
               yield line.replace(" "*self._codeindent, "", 1)
   
-
+  
 Code2Text
 ---------
 
@@ -708,18 +698,22 @@ lines) ::
               if (line.startswith(self.comment_string)
                   or not line.rstrip()
                   or line.rstrip() == self.comment_string.rstrip()
-                  ):
+                 ):
                   continue
-              # non-documentation line found: the block is "header" or "code_block"
+              # non-commented line found:
               if self.state == "":
                   self.state = "header"
               else:
                   self.state = "code_block"
               break
           else:
+              # no code line found
+              # keep state if the block is just a blank line
+              # if len(block) == 1 and self._is_blank_codeline(line):
+              #     return
               self.state = "documentation"
   
-
+  
 Code2Text.header_handler
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -772,7 +766,7 @@ has a comment string without trailing whitespace::
                   line = line.replace(stripped_comment_string, "", 1)
               yield line
   
-
+  
 Code2Text.code_block_handler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -794,8 +788,8 @@ indentation is controled by `self.codeindent` (default 2).  ::
           for line in lines:
               yield " "*self.codeindent + line
   
-
-
+  
+  
 Code2Text.strip_literal_marker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -853,8 +847,51 @@ The most basic filter is the identity filter, that returns its argument as
 iterator::
 
   def identity_filter(data):
-      """return data iterator without any processing"""
+      """Return data iterator without any processing"""
       return iter(data)
+  
+expandtabs_filter
+-----------------
+
+Expand hard-tabs in every line of `data` (cf. `str.expandtabs`).
+
+This filter is applied to the input data by `TextCodeConverter.convert`_ as
+hard tabs can lead to errors when the indentation is changed. ::
+
+  def expandtabs_filter(data):
+      """Yield data tokens with hard-tabs expanded"""
+      for line in data:
+          yield line.expandtabs()
+  
+  
+collect_blocks
+--------------
+
+A filter to aggregate "paragraphs" (blocks separated by blank
+lines). Yields lists of lines::
+
+  def collect_blocks(lines):
+      """collect lines in a list 
+      
+      yield list for each paragraph, i.e. block of lines separated by a
+      blank line (whitespace only).
+      
+      Trailing blank lines are collected as well.
+      """
+      blank_line_reached = False
+      block = []
+      for line in lines:
+          if blank_line_reached and line.rstrip():
+              yield block
+              blank_line_reached = False
+              block = [line]
+              continue
+          if not line.rstrip():
+              blank_line_reached = True
+          block.append(line)
+      yield block
+  
+  
   
 dumb_c_preprocessor
 -------------------
@@ -862,8 +899,7 @@ dumb_c_preprocessor
 This is a basic filter to convert `C` to `C++` comments. Works line-wise and
 only converts lines that
 
-* start with ``"/* "`` and 
-* end with ``" */"`` (followed by whitespace only)
+* start with "/\* " and end with " \*/" (followed by whitespace only)
 
 A more sophisticated version would also 
 
@@ -895,7 +931,7 @@ numbers for the `count` argument:
 
 >>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
 
-However, the `rsplit` method can be used together with `join`:
+However, there is the `rsplit` method, that can be used together with `join`:
 
 >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
 
@@ -919,7 +955,7 @@ delimiters ::
               line = line.rstrip() + eoc_string + "\n"
           yield line
   
-
+  
 register filters
 ----------------
 
@@ -930,7 +966,7 @@ register filters
   defaults.postprocessors['text2c'] = dumb_c_postprocessor
   defaults.postprocessors['text2css'] = dumb_c_postprocessor
   
-
+  
 Command line use
 ================
 
@@ -1022,7 +1058,7 @@ more concise ``options.OPTION``, we define `__getattr__` [#]_ ::
           """Return default value for non existing options"""
           return None
   
-
+  
 .. [#] The special method `__getattr__` is only called when an attribute
        lookup has not found the attribute in the usual places (i.e. it is
        not an instance attribute nor is it found in the class tree for
@@ -1073,7 +1109,7 @@ Instantiation
                        help="convert text source to code source")
           self.parser = p
   
-
+  
 PylitOptions.parse_args
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1199,8 +1235,8 @@ arguments are passed to `PylitOptions.parse_args`_ as default values. ::
           values = self.parse_args(args, **keyw)
           return self.complete_values(values)
   
-
-
+  
+  
 Helper functions
 ----------------
 
@@ -1273,7 +1309,7 @@ is_newer
           return None
       return mtime1 > mtime2
   
-
+  
 get_converter
 ~~~~~~~~~~~~~
 
@@ -1285,7 +1321,7 @@ Get an instance of the converter state machine::
       else:
           return Code2Text(data, **keyw)
   
-
+  
 Use cases
 ---------
 
@@ -1321,7 +1357,7 @@ Use the doctest Advanced API to do all doctests in a given string::
           print "%d failures in %d tests"%(runner.failures, runner.tries)
       return runner.failures, runner.tries
   
-
+  
 diff
 ~~~~
 
@@ -1371,7 +1407,7 @@ diff
           print "no differences found"
       return is_different
   
-
+  
 execute
 ~~~~~~~
 
@@ -1389,7 +1425,7 @@ Doesnot work with `eval`, as code is not just one expression. ::
       # print "executing " + options.infile
       exec data
   
-
+  
 main
 ----
 
@@ -1467,7 +1503,7 @@ information is equal. [#]_ ::
       ## print "mtime", os.path.getmtime(options.infile),  options.infile 
       ## print "mtime", os.path.getmtime(options.outfile), options.outfile
   
-
+  
 .. [#] Make sure the corresponding file object (here `out_stream`) is
        closed, as otherwise the change will be overwritten when `close` is 
        called afterwards (either explicitely or at program exit).
@@ -1478,13 +1514,13 @@ Rename the infile to a backup copy if ``--replace`` is set::
       if options.replace:
           os.rename(options.infile, options.infile + "~")
           
-
+  
 Run main, if called from the command line::
 
   if __name__ == '__main__':
       main()
    
-
+  
 Open questions
 ==============
 
@@ -1504,6 +1540,8 @@ Options
 
 * Is it sensible to offer the `header_string` option also as command line
   option?
+
+* Configurable 
   
 Parsing Problems
 ----------------------

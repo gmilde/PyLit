@@ -142,23 +142,23 @@ codesamples = {}
 
 ## Auxiliary function to test the textsamples and codesamples::
 
-def check_converter(key, converter, output):
-    print "E:", key
-    extract = converter()
-    print(extract)
-    outstr = "".join(extract)
-    print "soll:", repr(output)
-    print "ist: ", repr(outstr)
-    assert output == outstr
+def check_converter(msg, converter, sample):
+    print msg
+    output = converter()
+    print(output)
+    outstr = "".join(output)
+    print "soll: %r" % sample
+    print "ist:  %r" % outstr
+    assert sample == outstr
 
 ## Test generator for textsample tests::
 
 def test_Text2Code_samples():
     for key, sample in textsamples.iteritems():
-        yield (check_converter, key,
+        yield (check_converter, "E: textsample[%r]"%key,
                Text2Code(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
-            yield (check_converter, key,
+            yield (check_converter, "E: textsample[%r] (stripped)"%key,
                    Text2Code(sample[0].splitlines(True), strip=True),
                    sample[2])
 
@@ -166,10 +166,10 @@ def test_Text2Code_samples():
 
 def test_Code2Text_samples():
     for key, sample in codesamples.iteritems():
-        yield (check_converter, key,
+        yield (check_converter, "E: codesample[%r]"%key,
                Code2Text(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
-            yield (check_converter, key,
+            yield (check_converter, "E: codesample[%r] (stripped)"%key,
                    Code2Text(sample[0].splitlines(True), strip=True),
                    sample[2])
 
@@ -225,13 +225,6 @@ class test_TextCodeConverter(object):
         assert converter.get_indent(" foo") == 1
         assert converter.get_indent("  foo") == 2
     
-    def test_collect_blocks(self):
-        converter = TextCodeConverter(textdata)
-        textblocks = [block for block in converter.collect_blocks(textdata)]
-        print textblocks
-        assert len(textblocks) == 7, "text sample has 7 blocks"
-        assert reduce(operator.__add__, textblocks) == textdata
-
 ## Text2Code
 ## ---------
 
@@ -576,6 +569,30 @@ print 'hello world'
 
 textsamples["null string"] = ("", "", "")
 
+
+textsamples["no header, code with subsequent blank lines"] = (
+"""documentation::
+
+  first code line
+  
+  
+  after 2 blank lines
+""",
+"""# documentation::
+
+first code line
+
+
+after 2 blank lines
+""",
+"""\
+first code line
+
+
+after 2 blank lines
+""")
+
+
 ## Code2Text
 ## ---------
 ## 
@@ -616,18 +633,24 @@ class test_Code2Text(object):
 ## ::
 
     def test_set_state(self):
-        samples = (("code_block", ["code_block\n"], "code_block"),
-                   ("code_block", ["#code_block\n"], "code_block"),
-                   ("code_block", ["## code_block\n"], "code_block"),
-                   ("code_block", ["# documentation\n"], "documentation"),
-                   ("code_block", ["#  documentation\n"], "documentation"),
-                   ("code_block", ["# \n"], "documentation"),
-                   ("code_block", ["#\n"], "documentation"),
-                   ("code_block", ["\n"], "documentation"),
-                   ("", ["code_block\n"], "header"),
-                   ("", ["# documentation\n"], "documentation"),
-                   ("documentation", ["code_block\n"], "code_block"),
-                   ("documentation", ["# documentation\n"], "documentation"),
+        samples = (# old state     sample            new state 
+                   ("",              ["code_block\n"],  "header"),
+                   ("",              ["# docu\n"],      "documentation"),
+                   ("documentation", ["code_block\n"],  "code_block"),
+                   ("documentation", ["# docu\n"],      "documentation"),
+                   ("documentation", ["# \n"],          "documentation"),
+                   ("documentation", ["#\n"],           "documentation"),
+                   ("documentation", ["\n"],            "documentation"),
+                   ("code_block",    ["code_block\n"],  "code_block"),
+                   ("code_block",    ["#code_block\n"], "code_block"),
+                   ("code_block",    ["## code\n"],     "code_block"),
+                   ("code_block",    ["# docu\n"],      "documentation"),
+                   ("code_block",    ["#  docu\n"],     "documentation"),
+                   # These are obsolete since collect_block collects all
+                   # trailing blank lines.
+                   # ("code_block",    ["# \n"],          "code_block"),
+                   # ("code_block",    ["#\n"],           "code_block"),
+                   # ("code_block",    ["\n"],            "code_block"),
                   )
         print "comment string", repr(self.converter.comment_string)
         for (old_state, lines, soll) in samples:
@@ -851,6 +874,27 @@ block1 = 'first block'
 
 """)
 
+codesamples["no header, code with subsequent blank lines"] = (
+"""# documentation::
+
+first code line
+
+
+after 2 blank lines
+""",
+"""documentation::
+
+  first code line
+  
+  
+  after 2 blank lines
+""",
+"""documentation:
+
+""")
+
+
+
 ## missing literal block marker
 ## ''''''''''''''''''''''''''''
 ## 
@@ -938,8 +982,44 @@ print 'hello world'
 "")
 
 
-## Filter tests
+## Filters
 ## ------------
+
+def test_identity_filter():
+    """Should return iterator of `data`"""
+    # TODO: how to test this?
+    filtered = identity_filter(textdata)
+    assert [line for line in textdata] == [line for line in filtered]
+    
+def test_expandtabs_filter():
+    """Should yield lines with tabs expanded"""
+    sample = ["\tfoo", "bar", "baff\t\tme"]
+    filtered = [line for line in expandtabs_filter(sample)]
+    print filtered
+    assert "x".join(sample).expandtabs() == "x".join(filtered)
+    
+def test_collect_blocks():
+    """Should yield lists of lines separated by blank lines"""
+    sample1 = ["1. block",
+               "second line",
+               "",
+               "2. block",
+               "",
+               "\n"
+               "3. block, after 2 blank lines",
+               "blank line follows",
+               ""]
+    sample2 = [" ",
+               "2. block (after blank)",
+               " ",
+               "3. block"]
+    for sample in [sample1, sample2]:
+        blocks = [block for block in collect_blocks(sample)]
+        print blocks
+        assert len(blocks) == 3, "sample has 3 blocks"
+        # joining the text-blocks should reconstruct sample
+        assert reduce(operator.__add__, blocks) == sample
+
 
 css_code = ['/* import the default docutils style sheet */\n',
             '/* --------------------------------------- */\n',

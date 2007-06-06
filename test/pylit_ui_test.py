@@ -30,11 +30,10 @@ import nose
 
 def test_global_option_defaults():
     """dictionary of programming languages and extensions"""
-    for ext in [".py", ".sl", ".c"]:
-        assert ext in defaults.code_extensions
     assert defaults.languages[".py"] == "python"
     assert defaults.languages[".sl"] == "slang"
-    assert defaults.languages[".c"] == "c++"
+    assert defaults.languages[".cc"] == "c++"
+    assert defaults.languages[".c"] == "c"
 
 
 ## Command line use
@@ -193,7 +192,7 @@ class test_PylitOptions:
     def test_complete_values_language_infile(self):
         """set the language from the infile extension"""
         values = OptionValues()
-        values.infile = "foo.c"
+        values.infile = "foo.cc"
         values = self.options.complete_values(values)
         pprint(values)
         assert values.language == "c++"

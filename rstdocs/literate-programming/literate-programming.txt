@@ -24,17 +24,17 @@ and the `Wikipedia`_ says:
    *Literate programming* is a philosophy of computer programming based on
    the premise that a computer program should be written with human
    readability as a primary goal, similarly to a work of literature.
-   According to this philosophy, programmers should aim for a
-   "literate" style in their programming just as writers aim for
-   an intelligible and articulate style in their writing. This philosophy
-   contrasts with the mainstream view that the programmer's primary or
-   sole objective is to create source code and that documentation should
-   only be a secondary objective.
+   
+   According to this philosophy, programmers should aim for a "literate"
+   style in their programming just as writers aim for an intelligible and
+   articulate style in their writing. This philosophy contrasts with the
+   mainstream view that the programmer's primary or sole objective is to
+   create source code and that documentation should only be a secondary
+   objective.
 
-The term *literate programming* and the first implementation of the concept
-were both the creation of Donald Knuth, the author of `The Art of Computer
-Programming`, the TeX typesetting system, and other works of the programming
-art. 
+The philosophy of *literate programming* and the term itself were the
+creation of Donald Knuth, the author of `The Art of Computer Programming`,
+the TeX typesetting system, and other works of the programming art. 
 
   I believe that the time is ripe for significantly better documentation of
   programs, and that we can best achieve this by considering programs to be
@@ -47,16 +47,26 @@ art.
 
   -- Donald E. Knuth, `Literate Programming`_,  1984
 
+John Max Skaller put the philosophy of literate programming in one sentence
+    
+    The idea is that you do not document programs (after the fact), but
+    write documents that *contain* the programs.
+
+    -- John Max Skaller in a `Charming Python interview`_.
+
 
 .. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
 .. _Literate Programming: WEB_
+.. _Charming Python interview:
+     http://www-128.ibm.com/developerworks/library/l-pyth7.html
 
 
 Literate Programming Systems
 ++++++++++++++++++++++++++++
 
-Donald Knuth not only founded the "philosophy" of literate programming, he
-also wrote the first literate programming system WEB:
+Donald Knuth not only conceived the *philosophy* of literate programming, he
+also developed a *technique* of literate programming and wrote the first
+*literate programming system* `WEB`:
 
   WEB itself is chiefly a combination of two other languages: 
   
@@ -77,9 +87,12 @@ also wrote the first literate programming system WEB:
 
 .. _`literate programming system`:
 
-There exists a definition of a *literate programming system*:
+There exists a famous *statement of requirements* for a literate programming
+system:
 
-  Literate programming systems have the following properties:
+.. _statement of requirements:
+
+  *Literate programming systems* have the following properties:
 
   1. Code and extended, detailed comments are intermingled. 
   
@@ -96,17 +109,35 @@ There exists a definition of a *literate programming system*:
   -- Mark-Jason Dominus `POD is not Literate Programming`_
 
 
-Literate Programming with PyLit
-+++++++++++++++++++++++++++++++
 
-PyLit fails the definition as `literate programming system`_, as it does not
-provide for code re-ordering, automatic indices and cross-references. 
+Literate Programming with reStructured Text
++++++++++++++++++++++++++++++++++++++++++++
 
-Nevertheless, it is argued that PyLit is a useful tool for literate
-programming according to the definition_ of the `Literate Programming FAQ`_.
+PyLit fails the `statement of requirements`_ for a literate programming
+system, as it does not provide for code re-ordering, automatic indices and
+cross-references. 
 
-* Program and documentation can be handsomely typeset not only in a single
-  article but also converted to a hyperlinked HTML document representing the
+According to the Wikipedia, PyLit qualifies as *semi-literate* (while POD is
+classified as `embedded documentation`_):
+
+  It is the fact that documentation can be written freely whereas code must
+  be marked in a special way that makes the difference between semi-literate
+  programming and excessive documenting, where the documentation is embedded
+  into the code as comments.
+  
+  -- `Wikipedia entry on literate programming`_
+
+However, it is argued that PyLit is an educated choice as tool for the
+*technique* of literate programming:
+
+* PyLit is inherently bilingual. The document containing the program is
+  a combination of: 
+  
+  (1) a document formatting language (`reStructured Text`_) and 
+  (2) a programming language. 
+  
+* Program and documentation can be handsomely typeset in a single article as
+  well as converted to a hyperlinked HTML document representing the
   program's "web-like" structure. For indexing and cross-references, PyLit
   relies on the rich features of the `reStructured Text`_ document
   formatting language.
@@ -140,17 +171,6 @@ programming according to the definition_ of the `Literate Programming FAQ`_.
   Ordering code for optimal presentation to humans is still a problem in
   many "traditional" programming languages. Pythons dynamic name resolution
   allows a great deal of flexibility in the order of code.
-
-
-According to the Wikipedia, PyLit qualifies as *semi-literate* (while POD is
-classified as `embedded documentation`_):
-
-  It is the fact that documentation can be written freely whereas code must
-  be marked in a special way that makes the difference between semi-literate
-  programming and excessive documenting, where the documentation is embedded
-  into the code as comments.
-  
-  -- `Wikipedia entry on literate programming`_
 
 .. _POD is not Literate Programming: 
      http://www.perl.com/pub/a/tchrist/litprog.html
@@ -208,6 +228,9 @@ Some of the problems with WEB-like systems are:
 
 How does PyLit differ from the web-like literate programming frameworks
 (For a full discussion of PyLit's concepts see the Features_ page.):
+
+* PyLit is not a complete `literate programming system`_ but a simple tool.
+  It does not support re-arranging of named code chunks. 
   
 * PyLit uses `reStructured Text`_ as document formatting language.
   The literate program source is legible in any text editor. 
@@ -219,15 +242,12 @@ How does PyLit differ from the web-like literate programming frameworks
     it, but you don't want to look at it.
     
     -- http://www.perl.com/pub/a/tchrist/litprog.html
-
-* PyLit is not a complete `literate programming system`_ but a simple tool.
-  It does not support re-arranging of named code chunks. 
   
 * PyLit is a *bidirectional* text <-> code converter. 
 
   + You can start a literate program from a "normal" code source by
     converting to a text source and adding the documentation parts.  
-  + You can edit code with full support of any decent text editor or IDE.
+  + You can edit code in its "native" mode in any decent text editor or IDE.
   + You can debug and fix code with the standard tools using the code source
     Line numbers are the same in text and code format. Once ready, forward
     your changes to the text version with a code->text conversion.
@@ -308,17 +328,16 @@ The design considerations look very much like the ones for PyLit:
       
   -- Ly_ introduction    
 
-Ly introduces its own language with 
+However, Ly introduces its own language with 
 
 * a syntax for code chunks,
 * some special ways for entering HTML tags ("currently undocumented").
 
-whereas PyLit use a simpler "semi literate" style and relies on the
-established `reStructured Text`_ for documentation markup and linking.
+whereas PyLit relies on the established `reStructured Text`_ for
+documentation markup and linking.
 
 .. _Ly: http://lyterate.sourceforge.net/intro.html
 .. _reStructured Text: http://docutils.sourceforge.net/rst.html
-
 
 
 XMLTangle

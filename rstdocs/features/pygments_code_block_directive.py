@@ -77,7 +77,7 @@ code_block_directive.arguments = (1, 0, 1)
 code_block_directive.content = 1
 directives.register_directive('code-block', code_block_directive)
 
-# .. _doctutile: http://docutils.sf.net/
+# .. _doctutils: http://docutils.sf.net/
 # .. _pygments: http://pygments.org/
 # .. _Using Pygments in ReST documents: http://pygments.org/docs/rstdirective/
 # .. _proof of concept:
