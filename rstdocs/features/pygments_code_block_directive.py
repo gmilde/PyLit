@@ -14,6 +14,8 @@
 # 2007-06-05 Separate docutils formatter script
 #            Use pygments' CSS class names (like the html formatter)
 #            allowing the use of pygments-produced style sheets.
+# 2007-06-07 Re-include the formatting of the parsed tokens 
+#            (class DocutilsInterface)
 # ========== ===========================================================
 # 
 # ::
@@ -29,7 +31,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 import pygments
 from pygments.lexers import get_lexer_by_name
-from pygments_docutils_formatter import DocutilsInterface
+from pygments.formatters.html import _get_ttype_class
 
 # Customisation
 # -------------
@@ -38,6 +40,42 @@ from pygments_docutils_formatter import DocutilsInterface
 # (You could add e.g. Token.Punctuation like ``['', 'p']``.) ::
 
 unstyled_tokens = ['']
+
+# DocutilsInterface
+# -----------------
+
+# This interface class combines code from
+# pygments.formatters.html and pygments.formatters.others::
+
+class DocutilsInterface(object):
+    """Yield tokens for addition to the docutils document tree.
+    
+    Merge subsequent tokens of the same token-type. 
+    
+    Yields the tokens as ``(ttype_class, value)`` tuples, 
+    where ttype_class is taken from pygments.token.STANDARD_TYPES and 
+    corresponds to the class argument used in pygments html output.
+
+    """
+    name = 'docutils'
+    # aliases = ['docutils tokens']
+
+    def __init__(self, tokensource):
+        self.tokensource = tokensource
+
+    def __iter__(self):
+        lasttype = None
+        lastval = u''
+        for ttype, value in self.tokensource:
+            if ttype is lasttype:
+                lastval += value
+            else:
+                if lasttype:
+                    yield(_get_ttype_class(lasttype), lastval)
+                lastval = value
+                lasttype = ttype
+        yield(_get_ttype_class(lasttype), lastval)
+
 
 
 # code_block_directive
