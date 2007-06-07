@@ -7,7 +7,7 @@ from pygments.formatters.html import _get_ttype_class
 # This formatter class combines code from
 # pygments.formatters.html and pygments.formatters.others::
 
-class DocutilsFormatter(Formatter):
+class DocutilsInterface(object):
     """Yield tokens for addition to the docutils document tree.
     
     Merge subsequent tokens of the same token-type. 
@@ -28,7 +28,6 @@ class DocutilsFormatter(Formatter):
     # aliases = ['docutils tokens']
 
     def __init__(self, tokensource, **options):
-        Formatter.__init__(self, **options)
         self.tokensource = tokensource
 
     def __iter__(self):
@@ -66,7 +65,7 @@ def my_function():
     
     # You could add e.g. 'p' (Token.Punctuation) to unstyled_tokens.
     unstyled_tokens = ['', ]
-    for cls, value in DocutilsFormatter(tokens):
+    for cls, value in DocutilsInterface(tokens):
         if cls in unstyled_tokens:
             # insert as Text to decrease the verbosity of the output.
             node = nodes.Text(value, value)

@@ -9,8 +9,8 @@ Literate Programming
 
 .. contents::
 
-Definition and Origin
-+++++++++++++++++++++
+The Philosophy of Literate Programming
+++++++++++++++++++++++++++++++++++++++
 
 .. _definition:
 
@@ -61,27 +61,27 @@ John Max Skaller put the philosophy of literate programming in one sentence
      http://www-128.ibm.com/developerworks/library/l-pyth7.html
 
 
-Literate Programming Systems
-++++++++++++++++++++++++++++
+Technique and Literate Programming Systems
+++++++++++++++++++++++++++++++++++++++++++
 
-Donald Knuth not only conceived the *philosophy* of literate programming, he
-also developed a *technique* of literate programming and wrote the first
-*literate programming system* `WEB`:
+Donald Knuth not only conceived the *philosophy* of literate programming,
+he also wrote the first *literate programming system* `WEB`_ that
+implements the *technique of literate programming*:
+
+.. _`technique of literate programming`:
 
   WEB itself is chiefly a combination of two other languages: 
   
   (1) a document formatting language and 
   (2) a programming language. 
   
-  My prototype WEB system uses TEX as the document formatting language and
-  PASCAL as the programming language, but the same principles would
-  apply equally well if other languages were substituted. Instead of TEX,
-  one could use a language like Scribe or Troff; instead of PASCAL, one
-  could use ADA, ALGOL, LISP, COBOL, FORTRAN, APL, C, etc., or even assembly
-  language. The main point is that WEB is inherently bilingual, and that
-  such a combination of languages proves to be much more powerful than
-  either single language by itself. WEB does not make the other languages
-  obsolete; on the contrary, it enhances them.
+  My prototype WEB system uses TEX as the document formatting language
+  and PASCAL as the programming language, but the same principles would
+  apply equally well if other languages were substituted. [...]. The main
+  point is that WEB is inherently bilingual, and that such a combination
+  of languages proves to be much more powerful than either single
+  language by itself. WEB does not make the other languages obsolete; on
+  the contrary, it enhances them.
 
   -- Donald E. Knuth, `Literate Programming`_,  1984
 
@@ -127,8 +127,8 @@ classified as `embedded documentation`_):
   
   -- `Wikipedia entry on literate programming`_
 
-However, it is argued that PyLit is an educated choice as tool for the
-*technique* of literate programming:
+However, it is argued that PyLit is an *educated choice* as tool for the
+`technique of literate programming`_:
 
 * PyLit is inherently bilingual. The document containing the program is
   a combination of: 
@@ -136,16 +136,17 @@ However, it is argued that PyLit is an educated choice as tool for the
   (1) a document formatting language (`reStructured Text`_) and 
   (2) a programming language. 
   
-* Program and documentation can be handsomely typeset in a single article as
-  well as converted to a hyperlinked HTML document representing the
-  program's "web-like" structure. For indexing and cross-references, PyLit
-  relies on the rich features of the `reStructured Text`_ document
-  formatting language.
+* Program and documentation can be typeset in a single article as well as
+  converted to a hyperlinked HTML document representing the program's
+  "web-like" structure. For indexing and cross-references, PyLit relies
+  on the rich features of the `reStructured Text`_ document formatting
+  language.
 
-* Dispensing with code re-ordering enables the `dual-source`_ concept. Code
-  re-ordering is considered less important when literate programming is not
-  seen as an alternative to structured programming but used in combination
-  with structured, object oriented or functional programming styles.
+Dispensing with code re-ordering enables the `dual-source`_ concept. Code
+re-ordering is considered less important when literate programming is not
+seen as an *alternative* to structured programming but a *variant* used
+in combination with structured, object oriented or functional programming
+styles.
 
     The computer science and programming pioneers, like Wirth and Knuth,
     used another programming style than we recommend today. One notable
@@ -168,9 +169,9 @@ However, it is argued that PyLit is an educated choice as tool for the
 
     -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
 
-  Ordering code for optimal presentation to humans is still a problem in
-  many "traditional" programming languages. Pythons dynamic name resolution
-  allows a great deal of flexibility in the order of code.
+Ordering code for optimal presentation to humans is still a problem in
+many "traditional" programming languages. Pythons dynamic name resolution
+allows a great deal of flexibility in the order of code.
 
 .. _POD is not Literate Programming: 
      http://www.perl.com/pub/a/tchrist/litprog.html
@@ -187,7 +188,7 @@ However, it is argued that PyLit is an educated choice as tool for the
 Existing Frameworks
 +++++++++++++++++++
 
-There are many literate programming frameworks available, both sophisticated
+There are many literate programming systems available, both sophisticated
 and lightweight. This non-comprehensive list compares them to PyLit.
 
 

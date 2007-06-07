@@ -11,7 +11,7 @@
       file: for-else-test.py.html
       file: pygments-default.css
       file: pygments-default.sty
-      file: pygments_docutils_formatter.py
+      file: pygments_docutils_interface.py
       file: pygments_code_block_directive.py
       file: pygments_code_block_directive.py.html
       file: rst2html-highlight
@@ -239,12 +239,12 @@ Felix Wiemann provided a `proof of concept`_ script that utilizes the
 pygments_ parser to parse a source code string and store the result in a
 "rich" <literal_block> element with "classified" <inline> nodes.
 
-A modified version (`pygments_docutils_formatter.py`_) defines a
-`DocutilsFormatter` class that classifies the tokens using short CSS class
+A modified version (`pygments_docutils_interface.py`_) defines a
+`DocutilsInterface` class that classifies the tokens using short CSS class
 names identical to pygments HTML output.
 
 It is used in `pygments_code_block_directive`_, (source:
-`pygments_code_block_directive.py`_), to defines and register a "code-block"
+`pygments_code_block_directive.py`_), to define and register a "code-block"
 directive.
 
 The XML rendering of the small example file `myfunction.py.txt`_ looks like
@@ -277,25 +277,26 @@ LaTeX
   Latex writers must be updated to handle the "rich" <literal_block> element
   correct.
   
-  * The "latex" writer currently fails to handle the "classified" <inline>
+  * The "latex" writer currently fails to handle "classified" <inline>
     doctree elements. The output `myfunction.py.tex`_ contains undefined
     control sequences ``\docutilsroleNone``.
   
   * The "newlatex2e" writer produces a valid LaTeX document
     (`myfunction.py.newlatex2e.tex`_). However the `pdflatex` output looks
-    mixed up a bit (`myfunction.py.newlatex2e.pdf`_). The pygments-produced
-    style file will not work with "newlatex2e" output.
+    mixed up a bit (`myfunction.py.newlatex2e.pdf`_). 
+    
+    The pygments-produced style file will not currently work with
+    "newlatex2e" output. 
   
 OpenOffice 
   The non-official "odtwriter" provides syntax highlight with
-  pygments but uses a different syntax. It should, however, not be too hard
-  to extend it to support the "classified" <inline> nodes.
+  pygments but uses a different syntax.
 
 .. _proof of concept:
      http://article.gmane.org/gmane.text.docutils.user/3689
 .. _pygments_code_block_directive.py: pygments_code_block_directive.py
 .. _pygments_code_block_directive: pygments_code_block_directive.py.html
-.. _pygments_docutils_formatter.py: pygments_docutils_formatter.py
+.. _pygments_docutils_interface.py: pygments_docutils_interface.py
 .. _myfunction.py.txt: myfunction.py.txt
 .. _myfunction.py.xml: myfunction.py.xml
 .. _myfunction.py.pseudoxml: myfunction.py.pseudoxml

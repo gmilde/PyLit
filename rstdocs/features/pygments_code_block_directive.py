@@ -29,7 +29,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 import pygments
 from pygments.lexers import get_lexer_by_name
-from pygments_docutils_formatter import DocutilsFormatter
+from pygments_docutils_formatter import DocutilsInterface
 
 # Customisation
 # -------------
@@ -59,7 +59,7 @@ def code_block_directive(name, arguments, options, content, lineno,
     # parse content with pygments
     tokens = list(pygments.lex(u'\n'.join(content), lexer))
     
-    for cls, value in DocutilsFormatter(tokens):
+    for cls, value in DocutilsInterface(tokens):
         if cls in unstyled_tokens:
             # insert as Text to decrease the verbosity of the output.
             code_block += nodes.Text(value, value)

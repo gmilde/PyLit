@@ -1541,7 +1541,26 @@ if __name__ == '__main__':
 # * Is it sensible to offer the `header_string` option also as command line
 #   option?
 # 
-# * Configurable 
+# * treatment of blank lines:
+# 
+#   * Alternatives: Keep blank lines blank
+#     
+#     + "always",
+#   
+#     + "if empty" (no whitespace). Comment if there is whitespace.
+#   
+#       This would allow non-obstructing markup but unfortunately this is (in
+#       most editors) also non-visible markup -> bad.
+#   
+#     + "if double" (if there is more than one consecutive blank line)
+#   
+#     + "never" (current setting)
+# 
+#   So the setting could be something like::
+
+#     defaults.keep_blank_lines = { "python": "if double",
+#                                   "elisp": "always"}
+# 
 #   
 # Parsing Problems
 # ----------------------
