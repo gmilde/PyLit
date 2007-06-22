@@ -16,6 +16,7 @@
 #            allowing the use of pygments-produced style sheets.
 # 2007-06-07 Re-include the formatting of the parsed tokens 
 #            (class DocutilsInterface)
+# 2007-06-08 Failsave implementation (fallback if pygments not found)           
 # ========== ===========================================================
 # 
 # ::
@@ -29,9 +30,14 @@
 
 from docutils import nodes
 from docutils.parsers.rst import directives
-import pygments
-from pygments.lexers import get_lexer_by_name
-from pygments.formatters.html import _get_ttype_class
+try:
+    import pygments
+    from pygments.lexers import get_lexer_by_name
+    from pygments.formatters.html import _get_ttype_class
+except ImportError:
+    pass
+
+
 
 # Customisation
 # -------------
@@ -43,12 +49,20 @@ unstyled_tokens = ['']
 
 # DocutilsInterface
 # -----------------
-
+# 
 # This interface class combines code from
-# pygments.formatters.html and pygments.formatters.others::
+# pygments.formatters.html and pygments.formatters.others.
+# 
+# It does not require anything of docutils and could alse become a part of
+# pygments::
 
 class DocutilsInterface(object):
-    """Yield tokens for addition to the docutils document tree.
+    """Parse `code` string and yield "classified" tokens.
+    
+    Arguments
+    
+      code     -- string of source code to parse
+      language -- formal language the code is written in.
     
     Merge subsequent tokens of the same token-type. 
     
@@ -57,24 +71,47 @@ class DocutilsInterface(object):
     corresponds to the class argument used in pygments html output.
 
     """
-    name = 'docutils'
-    # aliases = ['docutils tokens']
 
-    def __init__(self, tokensource):
-        self.tokensource = tokensource
-
-    def __iter__(self):
-        lasttype = None
-        lastval = u''
-        for ttype, value in self.tokensource:
+    def __init__(self, code, language):
+        self.code = code
+        self.language = language
+        
+    def lex(self):
+        # Get lexer for language (use text as fallback)
+        try:
+            lexer = get_lexer_by_name(self.language)
+        except ValueError:
+            # info: "no pygments lexer for %s, using 'text'"%self.language
+            lexer = get_lexer_by_name('text')
+        return pygments.lex(self.code, lexer)
+        
+            
+    def join(self, tokens):
+        """join subsequent tokens of same token-type
+        """
+        tokens = iter(tokens)
+        (lasttype, lastval) = tokens.next()
+        for ttype, value in tokens:
             if ttype is lasttype:
                 lastval += value
             else:
-                if lasttype:
-                    yield(_get_ttype_class(lasttype), lastval)
-                lastval = value
-                lasttype = ttype
-        yield(_get_ttype_class(lasttype), lastval)
+                yield(lasttype, lastval)
+                (lasttype, lastval) = (ttype, value)
+        yield(lasttype, lastval)
+
+    def __iter__(self):
+        """parse code string and yield "clasified" tokens
+        """
+        try:
+            tokens = self.lex()
+        except IOError:
+            print "INFO: Pygments lexer not found, using fallback"
+            # TODO: write message to INFO 
+            yield ('', self.code)
+            return
+
+        for ttype, value in self.join(tokens):
+            yield (_get_ttype_class(ttype), value)
 
 
 
@@ -84,20 +121,14 @@ class DocutilsInterface(object):
 
 def code_block_directive(name, arguments, options, content, lineno,
                        content_offset, block_text, state, state_machine):
+    """parse and classify content of a code_block
+    """
     language = arguments[0]
     # create a literal block element and set class argument
-    code_block = nodes.literal_block(raw_content=content,
-                                     classes=["code-block", language])
-    # Get lexer for language (use text as fallback)
-    try:
-        lexer = get_lexer_by_name(language)
-    except ValueError:
-        lexer = get_lexer_by_name('text')
+    code_block = nodes.literal_block(classes=["code-block", language])
     
-    # parse content with pygments
-    tokens = list(pygments.lex(u'\n'.join(content), lexer))
-    
-    for cls, value in DocutilsInterface(tokens):
+    # parse content with pygments and add to code_block element
+    for cls, value in DocutilsInterface(u'\n'.join(content), language):
         if cls in unstyled_tokens:
             # insert as Text to decrease the verbosity of the output.
             code_block += nodes.Text(value, value)

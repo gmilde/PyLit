@@ -19,8 +19,9 @@
 
 from pprint import pprint
 from pylit import *
-from pylit_test import text, stripped_text, textdata, \
-                       code, stripped_code, codedata
+from pylit_test import (text, stripped_text, textdata, 
+                        code, stripped_code, codedata)
+
 import nose
 
 ## Global defaults
@@ -105,7 +106,7 @@ class test_PylitOptions:
         assert values.language == "slang"
 
     def test_parse_args_comment_string(self):
-       # default should appear in options
+       # command line arg should appear in values
         values = self.options.parse_args(["--comment-string=% "])
         pprint(values.as_dict())
         assert values.comment_string == "% "
@@ -113,6 +114,13 @@ class test_PylitOptions:
         values = self.options.parse_args(["--comment-string=% "],
                                          comment_string="##")
         assert values.comment_string == '% '
+
+    def test_parse_args_code_block_marker(self):
+        """command line option --code-block-marker should set option value"""
+        values = self.options.parse_args(
+                                ["--code-block-marker=.. test-dir::"])
+        pprint(values.as_dict())
+        assert values.code_block_marker == '.. test-dir::'
 
     def test_get_outfile_name(self):
         """should return a sensible outfile name given an infile name"""
@@ -230,7 +238,7 @@ class test_PylitOptions:
         values = self.options(["foo, foo.sl"])
         pprint(values)
         assert values.language == "slang"
-
+        
 ## Input and Output streams
 ## ------------------------
 ## 

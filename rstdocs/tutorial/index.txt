@@ -78,7 +78,7 @@ Points to mention:
   the re-conversion. 
   
   (Generally, a round-trip should not introduce changes after the first
-  cycle. This way it is ensured that the line-numbers are the same for text
+  cycle. This way it is ensured that the line-numbers are the same in text
   and code source.)
   
 * The code block ends at the first non indented line (Precisely, at the
@@ -150,6 +150,50 @@ is mapped to text as::
 The comment in the 2nd line is removed, as it is inside a documentation block.
 
 .. [#] a line is considered blank, if it contains only whitespace
+
+
+Non-code literal block
+----------------------
+
+How can I include a literal block that should not be in the executable code
+(e.g. an example, an earlier version or variant)?
+
+Workarounds:
+  
+- Use a `parsed-literal block`_ directive and mark lines containing
+  "accidential" markup as `inline literals`_. E.g. ::
+  
+    This will be printed as literal block but not become part of the source
+    code:
+    
+    .. parsed-literal::
+    
+      print "code example that should not run"
+      ``result = 5 *not_bold* 2``
+    
+  will be typeset as
+
+  
+    This will be printed as literal block but not become part of the source
+    code:
+    
+    .. parsed-literal::
+    
+      print "code example that should not run"
+      ``result = 5 *not_bold* 2``
+
+
+- Python session examples and doctests can use `doctest block`_ syntax:
+
+  No double colon! Start first line of block with ``>>>``.
+
+- Use a "code-block" directive and set the `code_block_marker` option
+  or use a distinct directive for ordinary literal blocks.
+  
+  Drawback: such directives are not part of the core rst syntax (yet) but
+  must be defined in an add-on (see `syntax highlight`_ for examples).
+    
+
 
 
 File Headers
@@ -291,3 +335,14 @@ looks like
 
 .. _Python doctests: http://docs.python.org/lib/module-doctest.html
 
+.. _parsed-literal block: 
+    http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
+.. _doctest block: 
+    http://docutils.sf.net/docs/ref/rst/directives.html#doctest-block
+.. _line block:
+.. _line blocks:
+    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks
+.. _inline literal:
+.. _inline literals:
+    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals
+.. _syntax highlight: ../features/syntax-highlight.html

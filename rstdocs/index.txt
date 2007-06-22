@@ -23,17 +23,16 @@ material for the following topics:
 
 `Pylit Features`__ 
   `PyLit` (Python-Literate) is a `pure Python module`__ providing a
-  *bidirectional* text <--> code converter. 
+  bidirectional text <--> code converter. 
   
-  A literate program can be edited in either "text" or "code" format using
-  an adapted editor (or IDE) and editing mode.
+  A literate program source can be either in "text" or "code" format.
+    
+  * The "code" source can be debugged, compiled or executed with standard
+    tools.
   
-  The "code" source can be debugged, compiled or executed with standard
-  tools.
+  * The "text" source can be converted to HTML or LaTeX documents with the
+    Python Docutils_.
   
-  The "text" source can be converted to HTML or LaTeX documents with the
-  Python docutils_.
-
 __ features/index.html
 __ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
 
@@ -68,7 +67,7 @@ __ literate-programming/index.html
 
 .. _pylit.py: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
 .. _Python: http:www.python.org
-.. _docutils: http://docutils.sourceforge.net/
+.. _Docutils: http://docutils.sourceforge.net/
 .. _installation: download/index.html#installation
 .. _usage: download/index.html#usage
 
@@ -115,7 +114,7 @@ Copyright
 About this site
   The PyLit home page is located at http://pylit.berlios.de/
   
-  This site is created from `reStructured Text`_ sources with docutils_ and
+  This site is created from `reStructured Text`_ sources with Docutils_ and
   the rest2web_ site builder.
   
   `BerliOS Developer`_ is a free (and ad-free!) service to Open Source

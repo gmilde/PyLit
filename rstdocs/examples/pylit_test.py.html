@@ -17,9 +17,11 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Version:</th><td class="field-body">0.2</td>
+<tr class="field"><th class="field-name">Date:</th><td class="field-body">$Date: 2007-05-17 $</td>
 </tr>
-<tr class="field"><th class="field-name">Date:</th><td class="field-body">2005-09-02</td>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">SVN-Revision $Revision: 45 $</td>
+</tr>
+<tr class="field"><th class="field-name">URL:</th><td class="field-body">$URL: svn+ssh://svn.berlios.de/svnroot/repos/pylit/trunk/test/pylit_test.py $</td>
 </tr>
 <tr class="field"><th class="field-name">Copyright:</th><td class="field-body">2006 Guenter Milde.
 Released under the terms of the GNU General Public License
@@ -30,49 +32,66 @@ Released under the terms of the GNU General Public License
 <div class="contents topic">
 <p class="topic-title first"><a id="contents" name="contents">Contents</a></p>
 <ul class="simple">
-<li><a class="reference" href="#test-the-pylit-py-literal-python-module" id="id3" name="id3">Test the pylit.py literal python module</a></li>
-<li><a class="reference" href="#text-code-conversion" id="id4" name="id4">Text &lt;-&gt; Code conversion</a><ul>
-<li><a class="reference" href="#test-strings" id="id5" name="id5">Test strings</a></li>
-<li><a class="reference" href="#text2code" id="id6" name="id6">Text2Code</a><ul>
-<li><a class="reference" href="#special-cases" id="id7" name="id7">Special Cases</a><ul>
-<li><a class="reference" href="#code-follows-text-block-without-blank-line" id="id8" name="id8">Code follows text block without blank line</a></li>
-<li><a class="reference" href="#text-follows-code-block-without-blank-line" id="id9" name="id9">Text follows code block without blank line</a></li>
-<li><a class="reference" href="#a-double-colon-on-a-line-on-its-own" id="id10" name="id10">A double colon on a line on its own</a></li>
-<li><a class="reference" href="#header-samples" id="id11" name="id11">header samples</a></li>
+<li><a class="reference" href="#test-the-pylit-py-literal-python-module" id="id3" name="id3">Test the pylit.py literal python module</a><ul>
+<li><a class="reference" href="#a-catalog-of-errors" id="id4" name="id4">A catalog of errors</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#text-code-conversion" id="id5" name="id5">Text &lt;-&gt; Code conversion</a><ul>
+<li><a class="reference" href="#test-strings" id="id6" name="id6">Test strings</a></li>
+<li><a class="reference" href="#textcodeconverter" id="id7" name="id7">TextCodeConverter</a></li>
+<li><a class="reference" href="#text2code" id="id8" name="id8">Text2Code</a><ul>
+<li><a class="reference" href="#special-cases" id="id9" name="id9">Special Cases</a><ul>
+<li><a class="reference" href="#code-follows-text-block-without-blank-line" id="id10" name="id10">Code follows text block without blank line</a></li>
+<li><a class="reference" href="#text-follows-code-block-without-blank-line" id="id11" name="id11">Text follows code block without blank line</a></li>
+<li><a class="reference" href="#a-double-colon-on-a-line-on-its-own" id="id12" name="id12">A double colon on a line on its own</a></li>
+<li><a class="reference" href="#header-samples" id="id13" name="id13">header samples</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference" href="#code2text" id="id12" name="id12">Code2Text</a><ul>
-<li><a class="reference" href="#id1" id="id13" name="id13">Special cases</a><ul>
-<li><a class="reference" href="#blank-comment-line" id="id14" name="id14">blank comment line</a></li>
-<li><a class="reference" href="#no-blank-line-after-text" id="id15" name="id15">No blank line after text</a></li>
-<li><a class="reference" href="#missing-literal-block-marker" id="id16" name="id16">missing literal block marker</a></li>
-<li><a class="reference" href="#id2" id="id17" name="id17">header samples</a></li>
+<li><a class="reference" href="#code2text" id="id14" name="id14">Code2Text</a><ul>
+<li><a class="reference" href="#id1" id="id15" name="id15">Special cases</a><ul>
+<li><a class="reference" href="#blank-comment-line" id="id16" name="id16">blank comment line</a></li>
+<li><a class="reference" href="#no-blank-line-after-text" id="id17" name="id17">No blank line after text</a></li>
+<li><a class="reference" href="#missing-literal-block-marker" id="id18" name="id18">missing literal block marker</a></li>
+<li><a class="reference" href="#id2" id="id19" name="id19">header samples</a></li>
 </ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference" href="#global-defaults" id="id18" name="id18">Global defaults</a></li>
-<li><a class="reference" href="#command-line-use" id="id19" name="id19">Command line use</a><ul>
-<li><a class="reference" href="#input-and-output-streams" id="id20" name="id20">Input and Output streams</a></li>
+<li><a class="reference" href="#filter-tests" id="id20" name="id20">Filter tests</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section">
+<h2><a class="toc-backref" href="#id4" id="a-catalog-of-errors" name="a-catalog-of-errors">A catalog of errors</a></h2>
+<p>from <a class="reference" href="file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html">file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html</a></p>
+<ul class="simple">
+<li>Numbers: zero, largest, smallest magnitude, most negative</li>
+<li>Structures: empty, exactly one element, maximum number of elements
+- Duplicate elements (e.g., letter &quot;J&quot; appears three times in a string)
+- Aliased elements (e.g., a list contains two references to another list)
+- Circular structures (e.g., a list that contains a reference to itself)</li>
+<li>Searching: no match found, one match found, multiple matches found,
+everything matches
+- Code like x = find_all(structure)[0] is almost always wrong
+- Should also check aliased matches (same thing found multiple times)</li>
+</ul>
 <pre class="literal-block">
 &quot;&quot;&quot;pylit_test.py: test the &quot;literal python&quot; module&quot;&quot;&quot;
 
 from pprint import pprint
+import operator
 from pylit import *
+import nose
 </pre>
 </div>
+</div>
 <div class="section">
-<h1><a class="toc-backref" href="#id4" id="text-code-conversion" name="text-code-conversion">Text &lt;-&gt; Code conversion</a></h1>
+<h1><a class="toc-backref" href="#id5" id="text-code-conversion" name="text-code-conversion">Text &lt;-&gt; Code conversion</a></h1>
 <div class="section">
-<h2><a class="toc-backref" href="#id5" id="test-strings" name="test-strings">Test strings</a></h2>
+<h2><a class="toc-backref" href="#id6" id="test-strings" name="test-strings">Test strings</a></h2>
 <p>Example of text, code and stripped code with typical features&quot;:</p>
 <pre class="literal-block">
 text = &quot;&quot;&quot;..  #!/usr/bin/env python
@@ -100,7 +119,7 @@ with trailing newlines. We use the <cite>splitlines</cite> string method with
 textdata = text.splitlines(True)
 # print textdata
 </pre>
-<p>If a &quot;code source&quot; is converted with the <cite>strip</cite> option, only text blocks
+<p>If a &quot;code&quot; source is converted with the <cite>strip</cite> option, only text blocks
 are extracted, which leads to:</p>
 <pre class="literal-block">
 stripped_text = &quot;&quot;&quot;Leading text
@@ -115,9 +134,9 @@ Trailing text.
 <p>The code corresponding to the text test string.</p>
 <p>Using a triple-quoted string for the code (and stripped_code) can create
 problems with the conversion of this test by pylit (as the text parts
-would be converted to text). This is catered for by using a different
-comment string for the text blocks in this file: convert to text with
-<tt class="docutils literal"><span class="pre">pylit</span> <span class="pre">--comment-string='##</span> <span class="pre">'</span> <span class="pre">pylit_test.py</span></tt>:</p>
+would be converted to text).
+A workaround is using a different comment string for the text blocks and
+converting with e.g. <tt class="docutils literal"><span class="pre">pylit</span> <span class="pre">--comment-string='##</span> <span class="pre">'</span> <span class="pre">pylit_test.py</span></tt>.</p>
 <pre class="literal-block">
 code = &quot;&quot;&quot;#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
@@ -169,8 +188,8 @@ codesamples = {}
 def check_converter(key, converter, output):
     print &quot;E:&quot;, key
     extract = converter()
-    pprint(extract)
-    outstr = &quot;&quot;.join([&quot;&quot;.join(block) for block in extract])
+    print(extract)
+    outstr = &quot;&quot;.join(extract)
     print &quot;soll:&quot;, repr(output)
     print &quot;ist: &quot;, repr(outstr)
     assert output == outstr
@@ -197,27 +216,243 @@ def test_Code2Text_samples():
                    Code2Text(sample[0].splitlines(True), strip=True),
                    sample[2])
 </pre>
+<p>Pre and postprocessing filters (for testing the filter hooks)</p>
+<pre class="literal-block">
+def r2l_filter(data):
+    print &quot;applying r2l filter&quot;
+    for line in data:
+        yield line.replace(&quot;r&quot;, &quot;l&quot;)
+</pre>
+<pre class="literal-block">
+defaults.preprocessors[&quot;rl2text&quot;] = r2l_filter
+</pre>
+<pre class="literal-block">
+def l2r_filter(data):
+    print &quot;applying l2r filter&quot;
+    for line in data:
+        yield line.replace(&quot;l&quot;, &quot;r&quot;)
+</pre>
+<pre class="literal-block">
+defaults.preprocessors[&quot;text2rl&quot;] = l2r_filter
+</pre>
+<pre class="literal-block">
+def x2u_filter(data):
+    print &quot;applying x2u filter&quot;
+    for line in data:
+        yield line.replace(&quot;x&quot;, &quot;u&quot;)
+</pre>
+<pre class="literal-block">
+defaults.postprocessors[&quot;x2text&quot;] = x2u_filter
+</pre>
+<pre class="literal-block">
+def u2x_filter(data):
+    print &quot;applying u2x filter&quot;
+    for line in data:
+        yield line.replace(&quot;u&quot;, &quot;x&quot;)
+</pre>
+<pre class="literal-block">
+defaults.postprocessors[&quot;text2x&quot;] = u2x_filter
+</pre>
+<pre class="literal-block">
+def test_x2u_filter():
+    soll = text.replace(&quot;x&quot;, &quot;u&quot;)
+    result = &quot;&quot;.join([line for line in x2u_filter(textdata)])
+    print &quot;soll&quot;, repr(text)
+    print &quot;ist&quot;, repr(result)
+    assert soll == result
+</pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id6" id="text2code" name="text2code">Text2Code</a></h2>
+<h2><a class="toc-backref" href="#id7" id="textcodeconverter" name="textcodeconverter">TextCodeConverter</a></h2>
+<pre class="literal-block">
+class test_TextCodeConverter(object):
+    &quot;&quot;&quot;Test the TextCodeConverter parent class&quot;&quot;&quot;
+</pre>
+<pre class="literal-block">
+def check_marker_regexp_true(self, sample):
+    match = self.converter.marker_regexp.search(sample)
+    print 'marker: %r; sample %r' %(self.converter.code_block_marker, sample)
+    print 'match %r'%match
+    assert match is not None
+</pre>
+<pre class="literal-block">
+def check_marker_regexp_false(self, sample):
+    assert self.converter.marker_regexp.search(sample) is None
+</pre>
+<pre class="literal-block">
+def test_marker_regexp(self):
+    # Samples
+    literal = ['::',
+               '  ::',
+               't ::',
+               'text::',
+               ' indented::',
+               ' indented ::',
+               'more text :: ',
+               ' indented text :: ',
+               '. no-directive::',
+               'a .. directive:: somewhere::']
+    directive = ['.. code-block:: python',
+                 '  .. code-block:: python',
+                 '.. code-block:: python listings',
+                 '  .. code-block:: python listings']
+    misses = ['.. comment string ::',
+              '.. ::',
+              'text:']
+    # default code_block_marker ('::')
+    self.converter = TextCodeConverter(textdata)
+    for sample in literal:
+        yield (self.check_marker_regexp_true, sample)
+    for sample in directive+misses:
+        yield (self.check_marker_regexp_false, sample)
+    # code-block directive as marker
+    self.converter = TextCodeConverter(textdata,
+                                       code_block_marker='.. code-block::')
+    for sample in directive:
+        yield (self.check_marker_regexp_true, sample)
+    for sample in literal+misses:
+        yield (self.check_marker_regexp_false, sample)
+</pre>
+<pre class="literal-block">
+def test_get_indent(self):
+    converter = TextCodeConverter(textdata)
+    assert converter.get_indent(&quot;foo&quot;) == 0
+    assert converter.get_indent(&quot; foo&quot;) == 1
+    assert converter.get_indent(&quot;  foo&quot;) == 2
+</pre>
+<pre class="literal-block">
+def test_collect_blocks(self):
+    converter = TextCodeConverter(textdata)
+    textblocks = [block for block in collect_blocks(textdata)]
+    print textblocks
+    assert len(textblocks) == 7, &quot;text sample has 7 blocks&quot;
+    assert reduce(operator.__add__, textblocks) == textdata
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="text2code" name="text2code">Text2Code</a></h2>
+<pre class="literal-block">
+class test_Text2Code(object):
+    &quot;&quot;&quot;Test the Text2Code class converting rst-&gt;code&quot;&quot;&quot;
+</pre>
+<pre class="literal-block">
+def setUp(self):
+    self.converter = Text2Code(textdata)
+</pre>
+<p>test helper funs</p>
+<pre class="literal-block">
+def test_set_state_empty(self):
+    try:
+        self.converter.set_state([])
+        raise AssertionError, &quot;should raise StopIteration&quot;
+    except StopIteration:
+        pass
+
+def test_set_state_header(self):
+    &quot;&quot;&quot;test for &quot;header&quot; or &quot;documentation&quot; for first block&quot;&quot;&quot;
+    self.converter.state = &quot;&quot; # normally set by the `convert` method
+    self.converter.set_state([&quot;.. header&quot;, &quot; block&quot;])
+    assert self.converter.state == &quot;header&quot;
+    self.converter.state = &quot;&quot; # normally set by the `convert` method
+    self.converter.set_state([&quot;documentation&quot;, &quot;block&quot;])
+    assert self.converter.state == &quot;documentation&quot;
+
+def test_set_state_code_block(self):
+    &quot;&quot;&quot;test for &quot;header&quot; or &quot;documentation&quot; for &quot;code_block&quot; &quot;&quot;&quot;
+    # normally set by the `convert` method
+    self.converter._textindent = 0
+    self.converter.state = &quot;code_block&quot;
+    self.converter.set_state([&quot;documentation&quot;, &quot;  block&quot;])
+    assert self.converter.state == &quot;documentation&quot;
+
+    self.converter.state = &quot;code_block&quot;
+    self.converter.set_state([&quot;  documentation&quot;, &quot;block&quot;])
+    assert self.converter.state == &quot;documentation&quot;
+
+    self.converter.state = &quot;code_block&quot;
+    self.converter.set_state([&quot;  code&quot;, &quot;  block&quot;])
+    print self.converter.state
+    assert self.converter.state == &quot;code_block&quot;
+
+def test_header_handler(self):
+    &quot;&quot;&quot;should strip header-string from header&quot;&quot;&quot;
+    self.converter._codeindent = 0
+    sample = [&quot;.. header&quot;, &quot; block&quot;]
+    lines = [line for line in self.converter.header_handler(sample)]
+    print lines
+    assert lines == [&quot;header&quot;, &quot;block&quot;]
+
+def test_documentation_handler(self):
+    &quot;&quot;&quot;should add comment string to documentation&quot;&quot;&quot;
+    sample = [&quot;doc&quot;, &quot;block&quot;, &quot;&quot;]
+    lines = [line for line
+              in self.converter.documentation_handler(sample)]
+    print lines
+    assert lines == [&quot;# doc&quot;, &quot;# block&quot;, &quot;# &quot;]
+
+def test_documentation_handler_set_state(self):
+    &quot;&quot;&quot;should add comment string to documentation&quot;&quot;&quot;
+    sample = [&quot;doc&quot;, &quot;block::&quot;, &quot;&quot;]
+    lines = [line for line
+              in self.converter.documentation_handler(sample)]
+    print lines
+    assert lines == [&quot;# doc&quot;, &quot;# block::&quot;, &quot;&quot;]
+    assert self.converter.state == &quot;code_block&quot;
+
+def test_code_block_handler(self):
+    &quot;&quot;&quot;should un-indent code-blocks&quot;&quot;&quot;
+    self.converter._codeindent = 0 # normally set in `convert`
+    sample = [&quot;  code&quot;, &quot;  block&quot;, &quot;&quot;]
+    lines = [line for line
+              in self.converter.code_block_handler(sample)]
+    print lines
+    assert lines == [&quot;code&quot;, &quot;block&quot;, &quot;&quot;]
+</pre>
 <p>base tests on the &quot;long&quot; test data</p>
 <pre class="literal-block">
-def test_Text2Code():
-    &quot;&quot;&quot;Test the Text2Code class converting rst-&gt;code&quot;&quot;&quot;
-    outstr = str(Text2Code(textdata))
-    print code,
-    print outstr
+def test_call(self):
+    &quot;&quot;&quot;Calling a Text2Code instance should return the converted data as list of lines&quot;&quot;&quot;
+    output = self.converter()
+    print repr(codedata)
+    print repr(output)
+    assert codedata == output
+
+def test_call_strip(self):
+    &quot;&quot;&quot;strip=True should strip text parts&quot;&quot;&quot;
+    self.converter.strip = True
+    output = self.converter()
+    print repr(stripped_code.splitlines(True))
+    print repr(output)
+    assert stripped_code.splitlines(True) == output
+
+def test_str(self):
+    outstr = str(self.converter)
+    print repr(code)
+    print repr(outstr)
     assert code == outstr
 
-def test_Text2Code_strip():
-    &quot;&quot;&quot;strip=True should strip text parts&quot;&quot;&quot;
+def test_str_strip1(self):
+    &quot;&quot;&quot;strip=True should strip text parts.
+
+    Version 1 with `strip` given as optional argument&quot;&quot;&quot;
     outstr = str(Text2Code(textdata, strip=True))
     print &quot;ist &quot;, repr(outstr)
     print &quot;soll&quot;, repr(stripped_code)
     # pprint(outstr)
     assert stripped_code == outstr
 
-def test_Text2Code_malindented_code_line():
+def test_str_strip2(self):
+    &quot;&quot;&quot;strip=True should strip text parts
+
+    Version 2 with `strip` set after instantiation&quot;&quot;&quot;
+    self.converter.strip = True
+    outstr = str(self.converter)
+    print &quot;ist &quot;, repr(outstr)
+    print &quot;soll&quot;, repr(stripped_code)
+    # pprint(outstr)
+    assert stripped_code == outstr
+
+def test_malindented_code_line(self):
     &quot;&quot;&quot;raise error if code line is less indented than code-indent&quot;&quot;&quot;
     data1 = [&quot;..    #!/usr/bin/env python\n&quot;, # indent == 4 * &quot; &quot;
             &quot;\n&quot;,
@@ -231,17 +466,88 @@ def test_Text2Code_malindented_code_line():
             assert False, &quot;wrong indent did not raise ValueError&quot;
         except ValueError:
             pass
+
+def test_str_different_comment_string(self):
+    &quot;&quot;&quot;Convert only comments with the specified comment string to text
+    &quot;&quot;&quot;
+    data = [&quot;..  #!/usr/bin/env python\n&quot;,
+            '\n',
+            '::\n',  # leading code block as header
+            '\n',
+            &quot;  block1 = 'first block'\n&quot;,
+            '  \n',
+            'more text']
+    soll = &quot;\n&quot;.join([&quot;#!/usr/bin/env python&quot;,
+                      &quot;&quot;,
+                      &quot;##::&quot;,
+                      &quot;&quot;,
+                      &quot;block1 = 'first block'&quot;,
+                      &quot;&quot;,
+                      &quot;##more text&quot;]
+                    )
+    outstr = str(Text2Code(data, comment_string=&quot;##&quot;))
+    print &quot;soll:&quot;, repr(soll)
+    print &quot;ist: &quot;, repr(outstr)
+    assert outstr == soll
+
+# Filters: test pre- and postprocessing of data
+
+def test_get_filter_preprocessor(self):
+    &quot;&quot;&quot;should return filter from filter_set for language&quot;&quot;&quot;
+    preprocessor = self.converter.get_filter(&quot;preprocessors&quot;, &quot;rl&quot;)
+    print preprocessor
+    assert preprocessor == l2r_filter
+
+def test_get_filter_postprocessor(self):
+    &quot;&quot;&quot;should return filter from filter_set for language&quot;&quot;&quot;
+    postprocessor = self.converter.get_filter(&quot;postprocessors&quot;, &quot;x&quot;)
+    print postprocessor
+    assert postprocessor == u2x_filter
+
+def test_get_css_postprocessor(self):
+    &quot;&quot;&quot;should return filter from filter_set for language&quot;&quot;&quot;
+    postprocessor = self.converter.get_filter(&quot;postprocessors&quot;, &quot;css&quot;)
+    print postprocessor
+    assert postprocessor == dumb_c_postprocessor
+
+def test_get_filter_nonexisting_language_filter(self):
+    &quot;&quot;&quot;should return identity_filter if language has no filter in set&quot;&quot;&quot;
+    preprocessor = self.converter.get_filter(&quot;preprocessors&quot;, &quot;foo&quot;)
+    print preprocessor
+    assert preprocessor == identity_filter
+
+def test_get_filter_nonexisting_filter_set(self):
+    &quot;&quot;&quot;should return identity_filter if filter_set does not exist&quot;&quot;&quot;
+    processor = self.converter.get_filter(&quot;foo_filters&quot;, &quot;foo&quot;)
+    print processor
+    assert processor == identity_filter
+
+def test_preprocessor(self):
+    &quot;&quot;&quot;Preprocess data with registered preprocessor for language&quot;&quot;&quot;
+    output = Text2Code(textdata, language=&quot;x&quot;, comment_string=&quot;# &quot;)()
+    soll = [line for line in u2x_filter(codedata)]
+    print &quot;soll: &quot;, repr(soll)
+    print &quot;ist:  &quot;, repr(output)
+    assert output == soll
+
+def test_postprocessor(self):
+    &quot;&quot;&quot;Preprocess data with registered postprocessor for language&quot;&quot;&quot;
+    output = Text2Code(textdata, language=&quot;x&quot;, comment_string=&quot;# &quot;)()
+    soll = [line for line in u2x_filter(codedata)]
+    print &quot;soll:&quot;, repr(soll)
+    print &quot;ist: &quot;, repr(output)
+    assert output == soll
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id7" id="special-cases" name="special-cases">Special Cases</a></h3>
+<h3><a class="toc-backref" href="#id9" id="special-cases" name="special-cases">Special Cases</a></h3>
 <div class="section">
-<h4><a class="toc-backref" href="#id8" id="code-follows-text-block-without-blank-line" name="code-follows-text-block-without-blank-line">Code follows text block without blank line</a></h4>
+<h4><a class="toc-backref" href="#id10" id="code-follows-text-block-without-blank-line" name="code-follows-text-block-without-blank-line">Code follows text block without blank line</a></h4>
 <p>End of text block detected ('::') but no paragraph separator (blank line)
 follows</p>
 <p>It is an reStructuredText syntax error, if a &quot;literal block
 marker&quot; is not followed by a blank line.</p>
 <p>Assuming that no double colon at end of line occures accidentially,
-pylit will fix this and issue a warning:</p>
+pylit could fix this and issue a warning:</p>
 <pre class="literal-block">
 # Do we need this feature? (Complicates code a lot)
 # textsamples[&quot;ensure blank line after text&quot;] = (
@@ -255,15 +561,15 @@ pylit will fix this and issue a warning:</p>
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id9" id="text-follows-code-block-without-blank-line" name="text-follows-code-block-without-blank-line">Text follows code block without blank line</a></h4>
+<h4><a class="toc-backref" href="#id11" id="text-follows-code-block-without-blank-line" name="text-follows-code-block-without-blank-line">Text follows code block without blank line</a></h4>
 <p>End of code block detected (a line not more indented than the preceding text
 block)</p>
 <p>reStructuredText syntax demands a paragraph separator (blank line) before
 it.</p>
-<p>Assuming that the unindent is not accidential, pylit fixes this and issues a
-warning:</p>
+<p>Assuming that the unindent is not accidential, pylit could fix this and
+issues a warning:</p>
 <pre class="literal-block">
-# Do we need this feature? (Complicates code a lot)
+# Do we need this feature? (Complicates code)
 # textsamples[&quot;ensure blank line after code&quot;] = (
 # &quot;&quot;&quot;::
 #
@@ -273,19 +579,21 @@ warning:</p>
 # &quot;&quot;&quot;# ::
 #
 # block1 = 'first block'
-
+#
 # more text
 # &quot;&quot;&quot;)
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id10" id="a-double-colon-on-a-line-on-its-own" name="a-double-colon-on-a-line-on-its-own">A double colon on a line on its own</a></h4>
+<h4><a class="toc-backref" href="#id12" id="a-double-colon-on-a-line-on-its-own" name="a-double-colon-on-a-line-on-its-own">A double colon on a line on its own</a></h4>
 <p>As a double colon is added by the Code2Text conversion after a text block
 (if not already present), it could be removed by the Text2Code conversion
 to keep the source small and pretty.</p>
 <p>However, this would put the text and code source line numbers out of sync,
-which is bad for error reporting, failing doctests, and the <cite>pylit_buffer()</cite>
-function in <a class="reference" href="http://jedmodes.sf.net/mode/pylit.sl">http://jedmodes.sf.net/mode/pylit.sl</a></p>
+which is bad for error reporting, failing doctests, and the JED editor
+support with the <cite>pylit_buffer()</cite> function in
+<a class="reference" href="http://jedmodes.sf.net/mode/pylit.sl">http://jedmodes.sf.net/mode/pylit.sl</a> .</p>
+<p>Maybe this could be left to a post-processing filter:</p>
 <pre class="literal-block">
 # textsamples[&quot;remove single double colon&quot;] = (
 #    [&quot;text followed by a literal block\n&quot;,
@@ -299,7 +607,7 @@ function in <a class="reference" href="http://jedmodes.sf.net/mode/pylit.sl">htt
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id11" id="header-samples" name="header-samples">header samples</a></h4>
+<h4><a class="toc-backref" href="#id13" id="header-samples" name="header-samples">header samples</a></h4>
 <p>Convert a leading reStructured text comment  (variant: only if there is
 content on the first line) to a leading code block.  Return an empty list,
 if there is no header.</p>
@@ -316,6 +624,20 @@ textsamples[&quot;no header (start with text)&quot;] = (
 
 print 'hello world'
 &quot;&quot;&quot;)
+
+
+textsamples[&quot;no header (start with blank line)&quot;] = (
+&quot;&quot;&quot;
+a classical example without header::
+
+  print 'hello world'
+&quot;&quot;&quot;,
+&quot;&quot;&quot;#
+# a classical example without header::
+
+print 'hello world'
+&quot;&quot;&quot;)
+
 
 textsamples[&quot;standard header, followed by text&quot;] = (
 &quot;&quot;&quot;..  #!/usr/bin/env python
@@ -342,67 +664,93 @@ textsamples[&quot;standard header, followed by code&quot;] = (
 
 print 'hello world'
 &quot;&quot;&quot;)
+
+textsamples[&quot;null string&quot;] = (&quot;&quot;, &quot;&quot;, &quot;&quot;)
 </pre>
 </div>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id12" id="code2text" name="code2text">Code2Text</a></h2>
+<h2><a class="toc-backref" href="#id14" id="code2text" name="code2text">Code2Text</a></h2>
 <pre class="literal-block">
 class test_Code2Text(object):
 
     def setUp(self):
         self.converter = Code2Text(codedata)
-</pre>
-<p>Code2Text.strip_literal_marker</p>
-<ul class="simple">
-<li>strip <cite>::</cite>-line as well as preceding blank line if on a line on its own</li>
-<li>strip <cite>::</cite> if it is preceded by whitespace.</li>
-<li>convert <cite>::</cite> to a single colon if preceded by text</li>
-</ul>
-<pre class="literal-block">
-def test_strip_literal_marker(self):
-    samples = ((&quot;text\n\n::\n\n&quot;, &quot;text\n\n&quot;),
-               (&quot;text\n::\n\n&quot;, &quot;text\n\n&quot;),
-               (&quot;text ::\n\n&quot;, &quot;text\n\n&quot;),
-               (&quot;text::\n\n&quot;, &quot;text:\n\n&quot;),
-               (&quot;text:\n\n&quot;, &quot;text:\n\n&quot;),
-               (&quot;text\n\n&quot;, &quot;text\n\n&quot;),
-               (&quot;text\n&quot;, &quot;text\n&quot;)
-               )
-    for (ist, soll) in samples:
-        ist = ist.splitlines(True)
-        soll = soll.splitlines(True)
+
+## Code2Text.strip_literal_marker
+##
+## * strip `::`-line as well as preceding blank line if on a line on its own
+## * strip `::` if it is preceded by whitespace.
+## * convert `::` to a single colon if preceded by text
+##
+## ::
+    def check_strip_code_block_marker(self, sample):
+        &quot;&quot;&quot;test Code2Text.strip_code_block_marker&quot;&quot;&quot;
+        ist = sample[0].splitlines(True)
+        soll = sample[1].splitlines(True)
         print &quot;before&quot;, ist
-        self.converter.strip_literal_marker(ist)
+        converter = Code2Text(codedata)
+        converter.strip_code_block_marker(ist)
         print &quot;soll:&quot;, repr(soll)
         print &quot;ist: &quot;, repr(ist)
         assert ist == soll
-</pre>
-<p>Code2Text.normalize_line</p>
-<pre class="literal-block">
-# Missing whitespace in the `comment_string` is not significant for otherwise
-# blank lines. Add it::
 
-    def test_block_is_text(self):
-        samples = (([&quot;code\n&quot;], False),
-                   ([&quot;#code\n&quot;], False),
-                   ([&quot;## code\n&quot;], False),
-                   ([&quot;# text\n&quot;], True),
-                   ([&quot;#  text\n&quot;], True),
-                   ([&quot;# \n&quot;], True),
-                   ([&quot;#\n&quot;], True),
-                   ([&quot;\n&quot;], True))
-        for (line, soll) in samples:
-            result = self.converter.block_is_text(line)
-            print repr(line), &quot;soll&quot;, soll, &quot;result&quot;, result
-            assert result == soll
+
+    def test_strip_code_block_marker(self):
+        samples = ((&quot;text\n\n::\n\n&quot;, &quot;text\n\n&quot;),
+                   (&quot;text\n::\n\n&quot;, &quot;text\n\n&quot;),
+                   (&quot;text ::\n\n&quot;, &quot;text\n\n&quot;),
+                   (&quot;text::\n\n&quot;, &quot;text:\n\n&quot;),
+                   (&quot;text:\n\n&quot;, &quot;text:\n\n&quot;),
+                   (&quot;text\n\n&quot;, &quot;text\n\n&quot;),
+                   (&quot;text\n&quot;, &quot;text\n&quot;)
+                   )
+        for sample in samples:
+            yield (self.check_strip_code_block_marker, sample)
+</pre>
+<p>Code2Text.set_state</p>
+<pre class="literal-block">
+def test_set_state(self):
+    samples = ((&quot;code_block&quot;, [&quot;code_block\n&quot;], &quot;code_block&quot;),
+               (&quot;code_block&quot;, [&quot;#code_block\n&quot;], &quot;code_block&quot;),
+               (&quot;code_block&quot;, [&quot;## code_block\n&quot;], &quot;code_block&quot;),
+               (&quot;code_block&quot;, [&quot;# documentation\n&quot;], &quot;documentation&quot;),
+               (&quot;code_block&quot;, [&quot;#  documentation\n&quot;], &quot;documentation&quot;),
+               (&quot;code_block&quot;, [&quot;# \n&quot;], &quot;documentation&quot;),
+               (&quot;code_block&quot;, [&quot;#\n&quot;], &quot;documentation&quot;),
+               (&quot;code_block&quot;, [&quot;\n&quot;], &quot;documentation&quot;),
+               (&quot;&quot;, [&quot;code_block\n&quot;], &quot;header&quot;),
+               (&quot;&quot;, [&quot;# documentation\n&quot;], &quot;documentation&quot;),
+               (&quot;documentation&quot;, [&quot;code_block\n&quot;], &quot;code_block&quot;),
+               (&quot;documentation&quot;, [&quot;# documentation\n&quot;], &quot;documentation&quot;),
+              )
+    print &quot;comment string&quot;, repr(self.converter.comment_string)
+    for (old_state, lines, soll) in samples:
+        self.converter.state = old_state
+        self.converter.set_state(lines)
+        print repr(lines), &quot;old state&quot;, old_state
+        print &quot;soll&quot;, repr(soll),
+        print &quot;result&quot;, repr(self.converter.state)
+        assert soll == self.converter.state
 </pre>
 <p>base tests on the &quot;long&quot; test strings</p>
 <pre class="literal-block">
+def test_call(self):
+    output = self.converter()
+    print repr(textdata)
+    print repr(output)
+    assert textdata == output
+
+def test_call_strip(self):
+    output = Code2Text(codedata, strip=True)()
+    print repr(stripped_text.splitlines(True))
+    print repr(output)
+    assert stripped_text.splitlines(True) == output
+
 def test_str(self):
     &quot;&quot;&quot;Test Code2Text class converting code-&gt;text&quot;&quot;&quot;
-    outstr = str(Code2Text(codedata))
+    outstr = str(self.converter)
     # print text
     print &quot;soll:&quot;, repr(text)
     print &quot;ist: &quot;, repr(outstr)
@@ -413,7 +761,6 @@ def test_str_strip(self):
 
     Should strip code blocks
     &quot;&quot;&quot;
-    pprint(Code2Text(codedata, strip=True)())
     outstr = str(Code2Text(codedata, strip=True))
     print repr(stripped_text)
     print repr(outstr)
@@ -440,15 +787,86 @@ def test_str_different_comment_string(self):
     print &quot;soll:&quot;, repr(soll)
     print &quot;ist: &quot;, repr(outstr)
     assert outstr == soll
+
+def test_call_different_code_block_marker(self):
+    &quot;&quot;&quot;recognize specified code-block marker
+    &quot;&quot;&quot;
+    data = [&quot;# .. code-block:: python\n&quot;,
+            &quot;\n&quot;,
+            &quot;block1 = 'first block'\n&quot;,
+            &quot;\n&quot;,
+            &quot;#  more text\n&quot;]
+    soll = ['.. code-block:: python\n',
+            '\n',
+            &quot;  block1 = 'first block'\n&quot;,
+            '  \n',
+            ' more text\n']   # keep space (not part of comment string)
+
+    converter = Code2Text(data, code_block_marker='.. code-block::')
+    output = converter()
+    print &quot;soll:&quot;, repr(soll)
+    print &quot;ist: &quot;, repr(output)
+    assert output == soll
+
+# Filters: test pre- and postprocessing of Code2Text data conversion
+
+def test_get_filter_preprocessor(self):
+    &quot;&quot;&quot;should return Code2Text preprocessor for language&quot;&quot;&quot;
+    preprocessor = self.converter.get_filter(&quot;preprocessors&quot;, &quot;rl&quot;)
+    print preprocessor
+    assert preprocessor == r2l_filter
+
+def test_get_css_preprocessor(self):
+    &quot;&quot;&quot;should return filter from filter_set for language&quot;&quot;&quot;
+    preprocessor = self.converter.get_filter(&quot;preprocessors&quot;, &quot;css&quot;)
+    print preprocessor
+    assert preprocessor == dumb_c_preprocessor
+
+def test_get_filter_postprocessor(self):
+    &quot;&quot;&quot;should return Code2Text postprocessor for language&quot;&quot;&quot;
+    postprocessor = self.converter.get_filter(&quot;postprocessors&quot;, &quot;x&quot;)
+    print postprocessor
+    assert postprocessor == x2u_filter
+
+def test_get_filter_nonexisting_language_filter(self):
+    &quot;&quot;&quot;should return identity_filter if language has no filter in set&quot;&quot;&quot;
+    preprocessor = self.converter.get_filter(&quot;preprocessors&quot;, &quot;foo&quot;)
+    print preprocessor
+    assert preprocessor == identity_filter
+
+def test_get_filter_nonexisting_filter_set(self):
+    &quot;&quot;&quot;should return identity_filter if filter_set does not exist&quot;&quot;&quot;
+    processor = self.converter.get_filter(&quot;foo_filters&quot;, &quot;foo&quot;)
+    print processor
+    assert processor == identity_filter
+
+def test_preprocessor(self):
+    &quot;&quot;&quot;Preprocess data with registered preprocessor for language&quot;&quot;&quot;
+    converter = Code2Text(codedata, language=&quot;rl&quot;, comment_string=&quot;# &quot;)
+    print &quot;preprocessor&quot;, converter.preprocessor
+    print &quot;postprocessor&quot;, converter.postprocessor
+    output = converter()
+    soll = [line.replace(&quot;r&quot;, &quot;l&quot;) for line in textdata]
+    print &quot;ist: &quot;, repr(output)
+    print &quot;soll:&quot;, repr(soll)
+    assert output == soll
+
+def test_postprocessor(self):
+    &quot;&quot;&quot;Postprocess data with registered postprocessor for language&quot;&quot;&quot;
+    output = Code2Text(codedata, language=&quot;x&quot;, comment_string=&quot;# &quot;)()
+    soll = [line.replace(&quot;x&quot;, &quot;u&quot;) for line in textdata]
+    print &quot;soll:&quot;, repr(soll)
+    print &quot;ist: &quot;, repr(output)
+    assert output == soll
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id13" id="id1" name="id1">Special cases</a></h3>
+<h3><a class="toc-backref" href="#id15" id="id1" name="id1">Special cases</a></h3>
 <div class="section">
-<h4><a class="toc-backref" href="#id14" id="blank-comment-line" name="blank-comment-line">blank comment line</a></h4>
+<h4><a class="toc-backref" href="#id16" id="blank-comment-line" name="blank-comment-line">blank comment line</a></h4>
 <p>Normally, whitespace in the comment string is significant, i.e. with
-<cite>comment_string = &quot;# &quot;</cite>, a line &quot;#somethingn&quot; will count as code.</p>
+<tt class="docutils literal"><span class="pre">comment_string</span> <span class="pre">=</span> <span class="pre">&quot;#</span> <span class="pre">&quot;</span></tt>, a line <tt class="docutils literal"><span class="pre">&quot;#something\n&quot;</span></tt> will count as code.</p>
 <p>However, if a comment line is blank, trailing whitespace in the comment
-string should be ignored, i.e. &quot;#n&quot; is recognized as a blank text line:</p>
+string should be ignored, i.e. <tt class="docutils literal"><span class="pre">#\n</span></tt> is recognized as a blank text line:</p>
 <pre class="literal-block">
 codesamples[&quot;ignore trailing whitespace in comment string for blank line&quot;] = (
 &quot;&quot;&quot;# ::
@@ -468,12 +886,12 @@ more text
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id15" id="no-blank-line-after-text" name="no-blank-line-after-text">No blank line after text</a></h4>
+<h4><a class="toc-backref" href="#id17" id="no-blank-line-after-text" name="no-blank-line-after-text">No blank line after text</a></h4>
 <p>If a matching comment precedes oder follows a code line (i.e. any line
 without matching comment) without a blank line inbetween, it counts as code
 line.</p>
 <p>This will keep small inline comments close to the code they comment on. It
-will also keep blocks together where one commented line doesnot match the
+will also keep blocks together where one commented line does not match the
 comment string (the whole block will be kept as commented code)</p>
 <pre class="literal-block">
 codesamples[&quot;comment before code (without blank line)&quot;] = (
@@ -543,15 +961,15 @@ block1 = 'first block'
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id16" id="missing-literal-block-marker" name="missing-literal-block-marker">missing literal block marker</a></h4>
+<h4><a class="toc-backref" href="#id18" id="missing-literal-block-marker" name="missing-literal-block-marker">missing literal block marker</a></h4>
 <p>If text (with matching comment string) is followed by code (line(s) without
 matching comment string), but there is no double colon at the end, back
 conversion would not recognize the end of text!</p>
-<p>Therefore, pylit adds a paragraph containing only &quot;::&quot; -- the literal block
-marker in expanded form. (While it would in many cases be nicer to add the
-double colon to the last text line, this is not always valid rst syntax,
-e.g. after a section header or a list. Therefore the automatic insertion
-will use the save form, feel free to correct this by hand.):</p>
+<p>Therefore, pylit adds a paragraph containing only <tt class="docutils literal"><span class="pre">::</span></tt> -- the literal
+block marker in expanded form. (While it would in many cases be nicer to
+add the double colon to the last text line, this is not always valid rst
+syntax, e.g. after a section header or a list. Therefore the automatic
+insertion will use the save form, feel free to correct this by hand.):</p>
 <pre class="literal-block">
 codesamples[&quot;insert missing double colon after text block&quot;] = (
 &quot;&quot;&quot;# text followed by code without double colon
@@ -570,7 +988,7 @@ foo = 'first'
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id17" id="id2" name="id2">header samples</a></h4>
+<h4><a class="toc-backref" href="#id19" id="id2" name="id2">header samples</a></h4>
 <p>Convert a header (leading code block) to a reStructured text comment.</p>
 <pre class="literal-block">
 codesamples[&quot;no matching comment, just code&quot;] = (
@@ -629,362 +1047,46 @@ print 'hello world'
 </div>
 </div>
 </div>
-</div>
 <div class="section">
-<h1><a class="toc-backref" href="#id18" id="global-defaults" name="global-defaults">Global defaults</a></h1>
+<h2><a class="toc-backref" href="#id20" id="filter-tests" name="filter-tests">Filter tests</a></h2>
 <pre class="literal-block">
-def test_global_option_defaults():
-    &quot;&quot;&quot;dictionary of programming languages and extensions&quot;&quot;&quot;
-    for ext in [&quot;.py&quot;, &quot;.sl&quot;, &quot;.c&quot;]:
-        assert ext in defaults.code_extensions
-    assert defaults.languages[&quot;.py&quot;] == &quot;python&quot;
-    assert defaults.languages[&quot;.sl&quot;] == &quot;slang&quot;
-    assert defaults.languages[&quot;.c&quot;] == &quot;c++&quot;
+css_code = ['/* import the default docutils style sheet */\n',
+            '/* --------------------------------------- */\n',
+            '\n',
+            '/* :: */\n',
+            '\n',
+            '/*comment*/\n',
+            '&#64;import url(&quot;html4css1.css&quot;); /* style */\n']
 </pre>
-</div>
-<div class="section">
-<h1><a class="toc-backref" href="#id19" id="command-line-use" name="command-line-use">Command line use</a></h1>
-<p>Test the option parsing:</p>
 <pre class="literal-block">
-class test_OptionValues(object):
-    defaults = {&quot;a1&quot;: 1, &quot;a2&quot;: False}
-    def setUp(self):
-        self.values = OptionValues(self.defaults)
-        print self.values
-
-    def test_setup(self):
-        assert self.values.a1 == 1
-        assert self.values.a2 == False
-
-    def test_as_dict(self):
-        print &quot;as_dict() -&gt;&quot;, self.values.as_dict()
-        assert self.values.as_dict() == self.defaults
-
-    def test_complete(self):
-        &quot;&quot;&quot;complete should update non-existing values only&quot;&quot;&quot;
-        self.values.complete(**{&quot;a1&quot;: 2, &quot;a2&quot;: 4, &quot;a3&quot;: 3})
-        print &quot;completed -&gt;&quot;, self.values
-        assert self.values.a1 == 1, &quot;must not overwrite existing value&quot;
-        assert self.values.a2 == False, &quot;must not overwrite existing value&quot;
-        assert self.values.a3 == 3, &quot;should set new attributes&quot;
-        self.values.complete(a1=2, a4=20)
-        assert self.values.a1 == 1, &quot;must not overwrite existing value&quot;
-        assert self.values.a4 == 20, &quot;should set new attributes&quot;
-
-    def test_getattr(self):
-        &quot;&quot;&quot;Attempt to get a non-existing argument should return None
-
-        This make the code more concise as a try: except: AttributeError
-        statement or the parent class method `ensure_value(name, default)`.
-        &quot;&quot;&quot;
-        assert self.values.a3 == None
-
-    def test_getattr_ensure_value(self):
-        &quot;&quot;&quot;Ensure value can be used to set a default different from None&quot;&quot;&quot;
-        assert self.values.a4 == None
-        self.values.ensure_value(&quot;a4&quot;, 32)
-        assert self.values.a4 == 32
-
-
-class test_PylitOptions:
-    &quot;&quot;&quot;Test the PylitOption class&quot;&quot;&quot;
-    def setUp(self):
-        self.options = PylitOptions()
-
-    def test_parse_args(self):
-        &quot;&quot;&quot;parse cmd line args&quot;&quot;&quot;
-        # default should appear in options
-        values = self.options.parse_args(txt2code=False)
-        print values, type(values), dir(values)
-        assert values.txt2code == False
-        # &quot;cmd line arg should appear as option overwriting default&quot;
-        values = self.options.parse_args([&quot;--txt2code&quot;], txt2code=False)
-        assert values.txt2code == True
-        # &quot;1st non option arg is infile, 2nd is outfile&quot;
-        values = self.options.parse_args([&quot;--txt2code&quot;, &quot;text.txt&quot;, &quot;code.py&quot;])
-        print values.infile
-        assert values.infile == &quot;text.txt&quot;
-        assert values.outfile == &quot;code.py&quot;
-        # option with argument
-        values = self.options.parse_args([&quot;--language&quot;, &quot;slang&quot;])
-        assert values.language == &quot;slang&quot;
-
-    def test_parse_args_comment_string(self):
-       # default should appear in options
-        values = self.options.parse_args([&quot;--comment-string=% &quot;])
-        pprint(values.as_dict())
-        assert values.comment_string == &quot;% &quot;
-        # &quot;cmd line arg should appear as option overwriting default&quot;
-        values = self.options.parse_args([&quot;--comment-string=% &quot;],
-                                         comment_string=&quot;##&quot;)
-        assert values.comment_string == '% '
-
-    def test_get_outfile_name(self):
-        &quot;&quot;&quot;should return a sensible outfile name given an infile name&quot;&quot;&quot;
-        # return stdout for stdin
-        values = OptionValues({&quot;infile&quot;: &quot;-&quot;})
-        values.complete(**defaults.__dict__)
-        assert &quot;-&quot; == self.options._get_outfile_name(values)
-        # return with &quot;.txt&quot; stripped
-        values = OptionValues({&quot;infile&quot;: &quot;foo.py.txt&quot;})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.py&quot; == self.options._get_outfile_name(values)
-        # return with &quot;.txt&quot; added if extension marks code file
-        values = OptionValues({&quot;infile&quot;: &quot;foo.py&quot;})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.py.txt&quot; == self.options._get_outfile_name(values)
-        values = OptionValues({&quot;infile&quot;: &quot;foo.sl&quot;})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.sl.txt&quot; == self.options._get_outfile_name(values)
-        values = OptionValues({&quot;infile&quot;: &quot;foo.c&quot;})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.c.txt&quot; == self.options._get_outfile_name(values)
-        # return with &quot;.txt&quot; added if txt2code == False (not None!)
-        values = OptionValues({&quot;infile&quot;: &quot;foo.py&quot;, &quot;txt2code&quot;: False})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.py.txt&quot; == self.options._get_outfile_name(values)
-        # catchall: add &quot;.out&quot; if no other guess possible
-        values = OptionValues({&quot;infile&quot;: &quot;foo&quot;, &quot;txt2code&quot;: None})
-        values.complete(**defaults.__dict__)
-        assert &quot;foo.out&quot; == self.options._get_outfile_name(values)
-
-    def test_complete_values(self):
-        &quot;&quot;&quot;Basic test of the option completion&quot;&quot;&quot;
-        values = OptionValues()
-        values.infile = &quot;foo&quot;
-        values = self.options.complete_values(values)
-        # the following options should be set:
-        print values.infile # logo, as we give it...
-        print values.outfile
-        assert values.outfile == &quot;foo.out&quot; # fallback extension .out added
-        print values.txt2code
-        assert values.txt2code == True # the default
-        print values.language
-        assert values.language == &quot;python&quot; # the default
-
-    def test_complete_values_txt(self):
-        &quot;&quot;&quot;Test the option completion with a text input file&quot;&quot;&quot;
-        values = OptionValues()
-        values.infile = &quot;foo.txt&quot;
-        values = self.options.complete_values(values)
-        # should set outfile (see also `test_get_outfile_name`)
-        assert values.outfile == &quot;foo&quot;
-        # should set conversion direction according to extension
-        assert values.txt2code == True
-
-    def test_complete_values_code(self):
-        &quot;&quot;&quot;Test the option completion with a code input file&quot;&quot;&quot;
-        values = OptionValues()
-        values.infile = &quot;foo.py&quot;
-        values = self.options.complete_values(values)
-        # should set outfile name
-        assert values.outfile == &quot;foo.py.txt&quot;
-        # should set conversion directions according to extension
-        print values.txt2code
-        assert values.txt2code == False, &quot;set conversion according to extension&quot;
-
-    def test_complete_values_dont_overwrite(self):
-        &quot;&quot;&quot;The option completion must not overwrite existing option values&quot;&quot;&quot;
-        values = OptionValues()
-        values.infile = &quot;foo.py&quot;
-        values.outfile = &quot;bar.txt&quot;
-        values.txt2code = True
-        values = self.options.complete_values(values)
-        pprint(values)
-        assert values.outfile == &quot;bar.txt&quot;
-        assert values.txt2code == True
-
-    def test_complete_values_language_infile(self):
-        &quot;&quot;&quot;set the language from the infile extension&quot;&quot;&quot;
-        values = OptionValues()
-        values.infile = &quot;foo.c&quot;
-        values = self.options.complete_values(values)
-        pprint(values)
-        assert values.language == &quot;c++&quot;
-
-    def test_complete_values_language_outfile(self):
-        &quot;&quot;&quot;set the language from the outfile extension&quot;&quot;&quot;
-        values = OptionValues()
-        values.outfile = &quot;foo.sl&quot;
-        values = self.options.complete_values(values)
-        pprint(values)
-        assert values.language == &quot;slang&quot;
-
-    def test_complete_values_language_fallback(self):
-        &quot;&quot;&quot;set the language from the fallback language&quot;&quot;&quot;
-        values = OptionValues()
-        values = self.options.complete_values(values)
-        pprint(values)
-        print &quot;fallback language:&quot;, defaults.fallback_language
-        assert values.language == defaults.fallback_language
-
-    def test_call(self):
-        values = self.options([&quot;--txt2code&quot;, &quot;foo.sl&quot;], txt2code=False)
-        pprint(values)
-        assert values.txt2code == True
-        assert values.infile == &quot;foo.sl&quot;
-
-    def test_call_language(self):
-        &quot;&quot;&quot;test the language setting from filename&quot;&quot;&quot;
-        values = self.options([&quot;foo.sl&quot;])
-        pprint(values)
-        assert values.language == &quot;slang&quot;
-
-    def test_call_language_outfile(self):
-        &quot;&quot;&quot;test the language setting from filename&quot;&quot;&quot;
-        values = self.options([&quot;foo, foo.sl&quot;])
-        pprint(values)
-        assert values.language == &quot;slang&quot;
+css_filtered_code = ['// import the default docutils style sheet\n',
+                     '// ---------------------------------------\n',
+                     '\n',
+                     '// ::\n',
+                     '\n',
+                     '/*comment*/\n',
+                     '&#64;import url(&quot;html4css1.css&quot;); /* style */\n']
 </pre>
-<div class="section">
-<h2><a class="toc-backref" href="#id20" id="input-and-output-streams" name="input-and-output-streams">Input and Output streams</a></h2>
 <pre class="literal-block">
-class IOTests:
-    &quot;&quot;&quot;base class for IO tests, sets up and tears down example files in /tmp
-    &quot;&quot;&quot;
-    txtpath = &quot;/tmp/pylit_test.py.txt&quot;
-    codepath = &quot;/tmp/pylit_test.py&quot;
-    outpath = &quot;/tmp/pylit_test.out&quot;
-    #
-    def setUp(self):
-        &quot;&quot;&quot;Set up the test files&quot;&quot;&quot;
-        txtfile = file(self.txtpath, 'w')
-        txtfile.write(text)
-        # txtfile.flush()  # is this needed if we close?
-        txtfile.close()
-        #
-        codefile = file(self.codepath, 'w')
-        codefile.write(code)
-        # codefile.flush()  # is this needed if we close?
-        codefile.close()
-    #
-    def tearDown(self):
-        &quot;&quot;&quot;clean up after all member tests are done&quot;&quot;&quot;
-        try:
-            os.unlink(self.txtpath)
-            os.unlink(self.codepath)
-            os.unlink(self.outpath)
-        except OSError:
-            pass
-
-class test_Streams(IOTests):
-    def test_is_newer(self):
-        # this __file__ is older, than code file
-        print __file__, os.path.getmtime(__file__)
-        print self.codepath, os.path.getmtime(self.codepath)
-        #
-        assert is_newer(self.codepath, __file__) is True, &quot;file1 is newer&quot;
-        assert is_newer(__file__, self.codepath) is False, &quot;file2 is newer&quot;
-        assert is_newer(__file__, &quot;fffo&quot;) is True, &quot;file2 doesnot exist&quot;
-        assert is_newer(&quot;fflo&quot;, __file__) is False, &quot;file1 doesnot exist&quot;
-        #
-        assert is_newer(__file__, __file__) is None, &quot;equal is not newer&quot;
-        assert is_newer(&quot;fflo&quot;, &quot;fffo&quot;) is None, &quot;no file exists -&gt; equal&quot;
-
-    def test_open_streams(self):
-        # default should return stdin and -out:
-        (instream, outstream) = open_streams()
-        assert instream is sys.stdin
-        assert outstream is sys.stdout
-
-        # open input and output file
-        (instream, outstream) = open_streams(self.txtpath, self.outpath)
-        assert type(instream) == file
-        assert type(outstream) == file
-        # read something from the input
-        assert instream.read() == text
-        # write something to the output
-        outstream.write(text)
-        # check the output, we have to flush first
-        outstream.flush()
-        outfile = file(self.outpath, 'r')
-        assert outfile.read() == text
-
-    def test_open_streams_no_infile(self):
-        &quot;&quot;&quot;should exit with usage info if no infile given&quot;&quot;&quot;
-        try:
-            (instream, outstream) = open_streams(&quot;&quot;)
-            assert False, &quot;should rise SystemExit&quot;
-        except IOError:
-            pass
+def test_dumb_c_preprocessor():
+    &quot;&quot;&quot;convert `C` to `C++` comments&quot;&quot;&quot;
+    output = [line for line in dumb_c_preprocessor(css_code)]
+    print &quot;ist:  %r&quot;%output
+    print &quot;soll: %r&quot;%css_filtered_code
+    assert output == css_filtered_code
 </pre>
-<p>Another convenience function that returns a converter instance:</p>
 <pre class="literal-block">
-def test_get_converter():
-    # with default or txt2code
-    converter = get_converter(textdata)
-    print converter.__class__
-    assert converter.__class__ == Text2Code
-    converter = get_converter(textdata, txt2code=False)
-    assert converter.__class__ == Code2Text
-
-# the run_doctest runs a doctest on the text version (as doc-string)
-class test_Run_Doctest(IOTests):
-    &quot;&quot;&quot;Doctest should run on the text source&quot;&quot;&quot;
-    def test_doctest_txt2code(self):
-        (failures, tests) = run_doctest(self.txtpath, txt2code=True)
-        assert (failures, tests) == (0, 0)
-    def test_doctest_code2txt(self):
-        (failures, tests) = run_doctest(self.codepath, txt2code=False)
-        assert (failures, tests) == (0, 0)
+def test_dumb_c_postprocessor():
+    &quot;&quot;&quot;convert `C++` to `C` comments&quot;&quot;&quot;
+    output = [line for line in dumb_c_postprocessor(css_filtered_code)]
+    print &quot;ist:  %r&quot;%output
+    print &quot;soll: %r&quot;%css_code
+    assert output == css_code
 </pre>
-<p>The main() function is called if the script is run from the command line</p>
 <pre class="literal-block">
-class test_Main(IOTests):
-    &quot;&quot;&quot;test default operation from command line
-    &quot;&quot;&quot;
-    def get_output(self):
-        &quot;&quot;&quot;read and return the content of the output file&quot;&quot;&quot;
-        outstream = file(self.outpath, 'r')
-        return outstream.read()
-
-    def test_text_to_code(self):
-        &quot;&quot;&quot;test conversion of text file to code file&quot;&quot;&quot;
-        main(infile=self.txtpath, outfile=self.outpath)
-        output = self.get_output()
-        print repr(output)
-        assert output == code
-
-    def test_text_to_code_strip(self):
-        &quot;&quot;&quot;test conversion of text file to stripped code file&quot;&quot;&quot;
-        main(infile=self.txtpath, outfile=self.outpath, strip=True)
-        output = self.get_output()
-        print repr(output)
-        assert output == stripped_code
-
-    def test_main_code_to_text(self):
-        &quot;&quot;&quot;test conversion of code file to text file&quot;&quot;&quot;
-        main(infile=self.codepath, outfile=self.outpath)
-        output = self.get_output()
-        assert output == text
-
-    def test_main_code_to_text_strip(self):
-        &quot;&quot;&quot;test conversion of code file to stripped text file&quot;&quot;&quot;
-        main(infile=self.codepath, outfile=self.outpath, strip=True)
-        output = self.get_output()
-        assert output == stripped_text
-
-    def test_main_diff(self):
-        result = main(infile=self.codepath, diff=True)
-        print &quot;diff return value&quot;, result
-        assert result is False # no differences found
-
-    def test_main_diff_with_differences(self):
-        &quot;&quot;&quot;diffing a file to itself should fail, as the input is converted&quot;&quot;&quot;
-        result = main(infile=self.codepath, outfile=self.codepath, diff=True)
-        print &quot;diff return value&quot;, result
-        assert result is True # differences found
-
-    def test_main_execute(self):
-        result = main(infile=self.txtpath, execute=True)
-        print result
-
-    def test_main_execute_code(self):
-        result = main(infile=self.codepath, execute=True)
-
-import nose
-nose.runmodule() # requires nose 0.9.1
-sys.exit()
+if __name__ == &quot;__main__&quot;:
+    nose.runmodule() # requires nose 0.9.1
+    sys.exit()
 </pre>
 </div>
 </div>
@@ -992,7 +1094,7 @@ sys.exit()
 <div class="footer">
 <hr class="footer" />
 <a class="reference" href="pylit_test.py.txt">View document source</a>.
-Generated on: 2007-03-19.
+Generated on: 2007-06-21.
 
 </div>
 </body>

@@ -38,16 +38,18 @@ Advantages
   environments providing formatting tools, syntax highlight, outlining, and
   other conveniences.
 
-* Debugging is straightforward (using the code source). Fixes are easily
-  passed to the text source (just calling ``pylit.py`` on the code source).
+* Debugging is straightforward (using the code format source). Fixes are
+  easily passed to the text source (just calling ``pylit.py`` on the code
+  source).
 
 Limitations
 ~~~~~~~~~~~
 
-* The parallel existence of code and text source might lead to confusion on
+* The parallel existence of code and text formats might lead to confusion on
   which is the up to date, authoritative source.
 
-  The literate source of pylit.py has a section on `dual source handling`_.
+  The literate source of ``pylit.py`` has a section on `dual source
+  handling`_.
   
 * While by default, an output file is not overwritten if it is newer than
   the input file, loss of changes can occur when both formats are edited in

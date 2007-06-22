@@ -56,7 +56,7 @@
 #                    separate `execute` function.
 # :2007-03-21:       Code cleanup in `Text2Code.__iter__`.
 # :2007-03-23: 0.3.5 Removed "css" from known languages after learning that 
-#                    there is no C++ style "// " comment string in css2.
+#                    there is no C++ style "// " comment string in CSS2.
 # :2007-04-24: 0.3.6 Documentation update.
 # :2007-05-18: 0.4   Implement Converter.__iter__ as stack of iterator 
 #                    generators. Iterating over a converter instance now 
@@ -65,7 +65,7 @@
 #                    Rename states to avoid confusion with formats:
 #                    "text" -> "documentation", "code" -> "code_block".
 # :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganization, 
-#                    rename Converter -> TextCodeConverter.
+#                    rename parent class Converter -> TextCodeConverter.
 # :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
 #                    TextCodeConverter.converter.
 # :2007-05-30: 0.4.3 Replaced use of defaults.code_extensions with
@@ -76,7 +76,8 @@
 # :2007-06-06: 0.5   Moved `collect_blocks`_ out of `TextCodeConverter`_,
 #                    bugfix: collect all trailing blank lines into a block.
 #                    Expand tabs with `expandtabs_filter`_.
-#              
+# :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
+# 
 # ::
 
 """pylit: bidirectional converter between a *text source* with embedded
@@ -190,19 +191,60 @@ defaults.comment_strings = {"python": '# ',
 # ~~~~~~~~~~~~~~~~~~~~~~
 # 
 # Marker string for a header code block in the text source. No trailing
-# whitespace needed as indented code follows. Default is a comment marker::
-  
-defaults.header_string = '..'
-
+# whitespace needed as indented code follows. 
 # Must be a valid rst directive that accepts code on the same line, e.g.
 # ``'..admonition::'``.
-#  
+# 
+# Default is a comment marker::
+
+defaults.header_string = '..'
+
+# defaults.code_block_marker
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# Marker string for a code block in the text source.
+# 
+# Default is a literal-block marker::
+
+defaults.code_block_marker = '::'
+
+# In a document where code examples are only one of several uses of literal
+# blocks, it is more appropriate to single out the sourcecode with a dedicated
+# "code-block" directive.
+# 
+# Some highlight plug-ins require a special "sourcecode" or "code-block"
+# directive instead of the ``::`` literal block marker. Actually,
+# syntax-highlight is possible without changes to docutils with the Pygments_
+# package using a "code-block" directive. See the `syntax highlight`_ section
+# in the features documentation.
+# 
+# The `code_block_marker` string is used in a regular expression. Examples for
+# alternative forms are ``.. code-block::`` or ``.. code-block:: .* python``.
+# The second example can differentiate between Python code blocks and 
+# code-blocks in other languages.
+# 
+# Another use would be to mark some code-blocks inactive allowing a literate
+# source to contain code-blocks that should become active only in some cases.
+# 
+#   
+#   
 # defaults.strip
 # ~~~~~~~~~~~~~~
 # 
 # Export to the output format stripping documentation or code blocks::
 
 defaults.strip = False
+
+# defaults.strip_marker
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 
+# Strip literal marker from the end of documentation blocks when
+# converting  to code format. Makes the code more concise but looses the
+# synchronization of line numbers in text and code formats. Can also be used
+# (together with the auto-completion of the code-text conversion) to change
+# the `code_block_marker`::
+
+defaults.strip_marker = False
 
 # defaults.preprocessors
 # ~~~~~~~~~~~~~~~~~~~~~~
@@ -293,7 +335,9 @@ class TextCodeConverter(object):
     comment_string = "" # set in __init__ (if empty)
     codeindent =  defaults.codeindent
     header_string = defaults.header_string
+    code_block_marker = defaults.code_block_marker
     strip = defaults.strip
+    strip_marker = defaults.strip_marker 
     state = "" # type of current block, see `TextCodeConverter.convert`_
 
 # Interface methods
@@ -302,10 +346,14 @@ class TextCodeConverter(object):
 # TextCodeConverter.__init__
 # """"""""""""""""""""""""""
 # 
-# Initializing sets the `data` attribute, an iterable object yielding lines
-# of the source to convert. [1]_ Additional keyword arguments are stored
-# as instance variables, overwriting the class defaults. If still empty,
-# `comment_string` is set accordign to the `language`::
+# Initializing sets the `data` attribute, an iterable object yielding lines of
+# the source to convert. [1]_ 
+# 
+# Additional keyword arguments are stored as instance variables, overwriting
+# the class defaults. If still empty, `comment_string` is set accordign to the
+# `language`
+# 
+# ::
 
     def __init__(self, data, **keyw):
         """data   --  iterable data object 
@@ -317,8 +365,26 @@ class TextCodeConverter(object):
         self.__dict__.update(keyw)
         if not self.comment_string:
             self.comment_string = self.comment_strings[self.language]
+            
+# Pre- and postprocessing filters are set (with
+# `TextCodeConverter.get_filter`_)::
+            
         self.preprocessor = self.get_filter("preprocessors", self.language)
         self.postprocessor = self.get_filter("postprocessors", self.language)
+
+# Finally,  the regular_expression for the `code_block_marker` is compiled to
+# find valid cases of code_block_marker in a given line and return the groups:
+# 
+# \1 prefix, \2 code_block_marker, \3 remainder
+# ::
+
+        marker = self.code_block_marker
+        if marker == '::':
+            self.marker_regexp = re.compile('^( *(?!\.\.).*)(%s)([ \n]*)$' 
+                                            % marker)
+        else:
+            # assume code_block_marker is a directive like '.. code-block::'
+            self.marker_regexp = re.compile('^( *)(%s)(.*\n?)$' % marker)
             
 # .. [1] The most common choice of data is a `file` object with the text
 #        or code source.
@@ -414,8 +480,11 @@ class TextCodeConverter(object):
 #   If the last paragraph of a documentation block does not end with a
 #   "code_block_marker" (the literal-block marker ``::``), it must
 #   be added (otherwise, the back-conversion fails.).
+# 
 #   `code_block_marker_missing` is set by `Code2Text.documentation_handler`_
-#   and evaluated by `Code2Text.code_block_handler`_.
+#   and evaluated by `Code2Text.code_block_handler`_, because the
+#   documentation_handler does not know whether the next bloc will be
+#   documentation (with no need for a code_block_marker) or a code block.
 #       
 # ::
          
@@ -618,7 +687,6 @@ class Text2Code(TextCodeConverter):
 # * do not comment the last line (the blank line separating documentation
 #   and code blocks).
 # 
-# TODO: allow different code marking directives (for syntax color etc)
 # ::
                 
         endnum = len(lines) - 2
@@ -628,9 +696,7 @@ class Text2Code(TextCodeConverter):
                     yield line
                 else:
                     yield self.comment_string + line
-            if (num == endnum
-                and line.rstrip().endswith("::") 
-                and not line.lstrip().startswith("..")):
+            if (num == endnum and self.marker_regexp.search(line)):
                 self.state = "code_block"
                 self._textindent = self.get_indent(line)
     
@@ -735,37 +801,50 @@ class Code2Text(TextCodeConverter):
 # Code2Text.documentation_handler
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The *documentation state* handler converts a comment to a documentation block by
-# stripping the leading `comment string` from every line::
+# The *documentation state* handler converts a comment to a documentation
+# block by stripping the leading `comment string` from every line::
 
-    def documentation_handler(self, lines):
+    def documentation_handler(self, block):
         """Uncomment documentation blocks in source code
         """
+        
+# Strip comment strings::
 
-# If the code block is stripped, the literal marker would lead to
-# an error when the text is converted with docutils. Strip it as well.
-# Otherwise, check for the code block marker (``::``) at the end of
-# the documentation block::
+        lines = [self.uncomment_line(line) for line in block]
+
+# If the code block is stripped, the literal marker would lead to an error
+# when the text is converted with docutils. Strip it as well. Otherwise, check
+# for the `code_block_marker` (default ``::``) at the end of the documentation
+# block::
           
-        if self.strip:
-            self.strip_literal_marker(lines)
+        if self.strip or self.strip_marker:
+            self.strip_code_block_marker(lines)
         else:
             try:
-                self.code_block_marker_missing = not(lines[-2].rstrip().endswith("::"))
+                self.code_block_marker_missing = \
+                    not self.marker_regexp.search(lines[-2])
             except IndexError:  # len(lines < 2), e.g. last line of document
                 self.code_block_marker_missing = True
 
-# Strip comment strings and yield lines. Consider the case that a blank line
-# has a comment string without trailing whitespace::
-        
-        stripped_comment_string = self.comment_string.rstrip()
-        
+# Yield lines::
+
         for line in lines:
-            line = line.replace(self.comment_string, "", 1)
-            if line.rstrip() == stripped_comment_string:
-                line = line.replace(stripped_comment_string, "", 1)
             yield line
 
+# Code2Text.uncomment_line
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Strip comment string from a documentation line and return it. Consider the
+# case that a blank line has a comment string without trailing whitespace::
+
+    def uncomment_line(self, line):
+        """Return uncommented documentation line"""
+        stripped_comment_string = self.comment_string.rstrip()
+        line = line.replace(self.comment_string, "", 1)
+        if line.rstrip() == stripped_comment_string:
+            line = line.replace(stripped_comment_string, "", 1)
+        return line
+        
 
 # Code2Text.code_block_handler
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -790,8 +869,8 @@ class Code2Text(TextCodeConverter):
 
 
 
-# Code2Text.strip_literal_marker
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Code2Text.strip_code_block_marker
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # Replace the literal marker with the equivalent of docutils replace rules
 # 
@@ -802,31 +881,28 @@ class Code2Text(TextCodeConverter):
 # `lines` should be a list of documentation lines (with a trailing blank line). 
 # It is modified in-place::
 
-    def strip_literal_marker(self, lines):
+    def strip_code_block_marker(self, lines):
         try:
             line = lines[-2]
-        except IndexError:  # len(lines < 2)
-            return
+        except IndexError:  
+            return # just one line (no trailing blank line)
+
+        # match with regexp: `match` is None or has groups
+        # \1 leading text, \2 code_block_marker, \3 remainder 
+        match = self.marker_regexp.search(line)
         
-        # split at rightmost '::'
-        try:
-            (head, tail) = line.rsplit('::', 1)
-        except ValueError:  # only one part (no '::')
+        if not match:                 # no code_block_marker present
             return
-        
-        # '::' on an extra line
-        if not head.strip():            
+        if not match.group(1):        # `code_block_marker` on an extra line
             del(lines[-2])
             # delete preceding line if it is blank
             if len(lines) >= 2 and not lines[-2].lstrip():
                 del(lines[-2])
-        # '::' follows whitespace                
-        elif head.rstrip() < head:      
-            head = head.rstrip()
-            lines[-2] = "".join((head, tail))
-        # '::' follows text        
-        else:
-            lines[-2] = ":".join((head, tail))
+        elif match.group(1).rstrip() < match.group(1): 
+            # '::' follows whitespace
+            lines[-2] = match.group(1).rstrip() + match.group(3)
+        else:                         # '::' follows text
+            lines[-2] = match.group(1).rstrip() + ':' + match.group(3)
 
 # Filters
 # =======
@@ -1087,8 +1163,11 @@ class PylitOptions(object):
         # add the options
         p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
                      help="convert code source to text source")
+        p.add_option("-m", "--code-block-marker", dest="code_block_marker",
+                     help="syntax token starting a code block. (default '::')")
         p.add_option("--comment-string", dest="comment_string",
-                     help="documentation block marker (default '# ' (for python))" )
+                     help="documentation block marker in code source "
+                     "(default '# ')")
         p.add_option("-d", "--diff", action="store_true", 
                      help="test for differences to existing file")
         p.add_option("--doctest", action="store_true",
@@ -1565,26 +1644,6 @@ if __name__ == '__main__':
 # Parsing Problems
 # ----------------------
 #     
-# * How can I include a literal block that should not be in the
-#   executable code (e.g. an example, an earlier version or variant)?
-# 
-#   Workarounds:
-#   
-#   - Use a `parsed-literal block`_ directive if there is no "accidential"
-#     markup in the literal code
-#     
-#   - Use a `line block`_ and mark all lines as `inline literals`_.
-# 
-#   - Python session examples and doctests can use `doctest block`_ syntax 
-#   
-#     No double colon! Start first line of block with ``>>>``.
-#               
-# 
-#   Not implemented yet:
-#   
-#   - use a dedicated `code-block directive`_ or a distinct directive for
-#     ordinary literal blocks.
-#     
 # * Ignore "matching comments" in literal strings?
 # 
 #   Too complicated: Would need a specific detection algorithm for every
@@ -1592,25 +1651,6 @@ if __name__ == '__main__':
 # 
 # * Warn if a comment in code will become documentation after round-trip?
 # 
-# code-block directive
-# --------------------
-# 
-# In a document where code examples are only one of several uses of literal
-# blocks, it would be more appropriate to single out the sourcecode with a
-# dedicated "code-block" directive.
-# 
-# Some highlight plug-ins require a special "sourcecode" or "code-block"
-# directive instead of the ``::`` literal block marker. Actually,
-# syntax-highlight is possible without changes to docutils with the Pygments_
-# package using a "code-block" directive. See the `syntax highlight`_ section
-# in the features documentation.
-# 
-# TODO:
-# 
-# * provide a "code-block-marker" string option.
-# 
-# * correctly handle the case of ``code_block_marker == '::'`` and conversion
-#   of ``::`` to a different "code_block_marker" -- consider minimized forms.
 # 
 # doctstrings in code blocks
 # --------------------------
@@ -1633,14 +1673,7 @@ if __name__ == '__main__':
 # .. _doctest block:
 # .. _doctest blocks: 
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
-# .. _parsed-literal blocks:
-# .. _parsed-literal block: 
-#     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
-# .. _line block:
-# .. _line blocks:
-#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks
-# .. _inline literal:
-# .. _inline literals:
-#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals
 # .. _pygments: http://pygments.org/
 # .. _syntax highlight: ../features/syntax-highlight.html
+# .. _parsed-literal blocks:
+#     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block

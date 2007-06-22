@@ -12,8 +12,8 @@
 ##             (v. 2 or later)
 ## 
 ## .. contents::
-
-
+## 
+## 
 ## A catalog of errors
 ## ----------------------
 ## 
@@ -28,7 +28,7 @@
 ##   everything matches
 ##   - Code like x = find_all(structure)[0] is almost always wrong
 ##   - Should also check aliased matches (same thing found multiple times)
-##
+## 
 ## ::
 
 """pylit_test.py: test the "literal python" module"""
@@ -87,9 +87,11 @@ Trailing text.
 ## 
 ## Using a triple-quoted string for the code (and stripped_code) can create
 ## problems with the conversion of this test by pylit (as the text parts
-## would be converted to text). This is catered for by using a different
-## comment string for the text blocks in this file: convert to text with
-## ``pylit --comment-string='## ' pylit_test.py``::
+## would be converted to text).  
+## A workaround is using a different comment string for the text blocks and
+## converting with e.g. ``pylit --comment-string='## ' pylit_test.py``.
+## 
+## ::
 
 code = """#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
@@ -142,23 +144,23 @@ codesamples = {}
 
 ## Auxiliary function to test the textsamples and codesamples::
 
-def check_converter(msg, converter, sample):
-    print msg
-    output = converter()
-    print(output)
-    outstr = "".join(output)
-    print "soll: %r" % sample
-    print "ist:  %r" % outstr
-    assert sample == outstr
+def check_converter(key, converter, output):
+    print "E:", key
+    extract = converter()
+    print(extract)
+    outstr = "".join(extract)
+    print "soll:", repr(output)
+    print "ist: ", repr(outstr)
+    assert output == outstr
 
 ## Test generator for textsample tests::
 
 def test_Text2Code_samples():
     for key, sample in textsamples.iteritems():
-        yield (check_converter, "E: textsample[%r]"%key,
+        yield (check_converter, key,
                Text2Code(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
-            yield (check_converter, "E: textsample[%r] (stripped)"%key,
+            yield (check_converter, key,
                    Text2Code(sample[0].splitlines(True), strip=True),
                    sample[2])
 
@@ -166,43 +168,61 @@ def test_Text2Code_samples():
 
 def test_Code2Text_samples():
     for key, sample in codesamples.iteritems():
-        yield (check_converter, "E: codesample[%r]"%key,
+        yield (check_converter, key,
                Code2Text(sample[0].splitlines(True)), sample[1])
         if len(sample) == 3:
-            yield (check_converter, "E: codesample[%r] (stripped)"%key,
+            yield (check_converter, key,
                    Code2Text(sample[0].splitlines(True), strip=True),
                    sample[2])
 
 
 ## Pre and postprocessing filters (for testing the filter hooks)
+## 
+## ::
 
 def r2l_filter(data):
     print "applying r2l filter"
     for line in data:
         yield line.replace("r", "l")
 
+## ::
+
 defaults.preprocessors["rl2text"] = r2l_filter
+
+## ::
 
 def l2r_filter(data):
     print "applying l2r filter"
     for line in data:
         yield line.replace("l", "r")
 
+## ::
+
 defaults.preprocessors["text2rl"] = l2r_filter
+
+## ::
 
 def x2u_filter(data):
     print "applying x2u filter"
     for line in data:
         yield line.replace("x", "u")
 
+## ::
+
 defaults.postprocessors["x2text"] = x2u_filter
+
+## ::
 
 def u2x_filter(data):
     print "applying u2x filter"
     for line in data:
         yield line.replace("u", "x")
 
+## ::
+
 defaults.postprocessors["text2x"] = u2x_filter
+
+## ::
 
 def test_x2u_filter():
     soll = text.replace("x", "u")
@@ -215,21 +235,86 @@ def test_x2u_filter():
 
 ## TextCodeConverter
 ## -----------------
+## 
+## ::
 
 class test_TextCodeConverter(object):
     """Test the TextCodeConverter parent class"""
+    
+## ::
+
+    def check_marker_regexp_true(self, sample):
+        match = self.converter.marker_regexp.search(sample)
+        print 'marker: %r; sample %r' %(self.converter.code_block_marker, sample)
+        print 'match %r'%match
+        assert match is not None
+
+## ::
+
+    def check_marker_regexp_false(self, sample):
+        assert self.converter.marker_regexp.search(sample) is None
         
+## ::
+
+    def test_marker_regexp(self):
+        # Samples
+        literal = ['::',
+                   '  ::',
+                   't ::',
+                   'text::',
+                   ' indented::',
+                   ' indented ::',
+                   'more text :: ',
+                   ' indented text :: ',
+                   '. no-directive::',
+                   'a .. directive:: somewhere::']
+        directive = ['.. code-block:: python',
+                     '  .. code-block:: python',
+                     '.. code-block:: python listings',
+                     '  .. code-block:: python listings']
+        misses = ['.. comment string ::',
+                  '.. ::',
+                  'text:']
+        # default code_block_marker ('::')
+        self.converter = TextCodeConverter(textdata)        
+        for sample in literal:
+            yield (self.check_marker_regexp_true, sample)
+        for sample in directive+misses:
+            yield (self.check_marker_regexp_false, sample)
+        # code-block directive as marker
+        self.converter = TextCodeConverter(textdata, 
+                                           code_block_marker='.. code-block::')
+        for sample in directive:
+            yield (self.check_marker_regexp_true, sample)
+        for sample in literal+misses:
+            yield (self.check_marker_regexp_false, sample)
+        
+## ::
+
     def test_get_indent(self):
         converter = TextCodeConverter(textdata)        
         assert converter.get_indent("foo") == 0
         assert converter.get_indent(" foo") == 1
         assert converter.get_indent("  foo") == 2
     
+## ::
+
+    def test_collect_blocks(self):
+        converter = TextCodeConverter(textdata)
+        textblocks = [block for block in collect_blocks(textdata)]
+        print textblocks
+        assert len(textblocks) == 7, "text sample has 7 blocks"
+        assert reduce(operator.__add__, textblocks) == textdata
+
 ## Text2Code
 ## ---------
+## 
+## ::
 
 class test_Text2Code(object):
     """Test the Text2Code class converting rst->code"""
+
+## ::
 
     def setUp(self):
         self.converter = Text2Code(textdata)
@@ -481,7 +566,7 @@ class test_Text2Code(object):
 # """# ::
 # 
 # block1 = 'first block'
-
+# 
 # more text
 # """)
 
@@ -493,8 +578,9 @@ class test_Text2Code(object):
 ## to keep the source small and pretty.
 ## 
 ## However, this would put the text and code source line numbers out of sync,
-## which is bad for error reporting, failing doctests, and the `pylit_buffer()`
-## function in http://jedmodes.sf.net/mode/pylit.sl 
+## which is bad for error reporting, failing doctests, and the JED editor
+## support with the `pylit_buffer()` function in
+## http://jedmodes.sf.net/mode/pylit.sl .
 ## 
 ## Maybe this could be left to a post-processing filter::
 
@@ -569,30 +655,6 @@ print 'hello world'
 
 textsamples["null string"] = ("", "", "")
 
-
-textsamples["no header, code with subsequent blank lines"] = (
-"""documentation::
-
-  first code line
-  
-  
-  after 2 blank lines
-""",
-"""# documentation::
-
-first code line
-
-
-after 2 blank lines
-""",
-"""\
-first code line
-
-
-after 2 blank lines
-""")
-
-
 ## Code2Text
 ## ---------
 ## 
@@ -610,8 +672,19 @@ class test_Code2Text(object):
 ## * convert `::` to a single colon if preceded by text
 ## 
 ## ::
+    def check_strip_code_block_marker(self, sample):
+        """test Code2Text.strip_code_block_marker"""
+        ist = sample[0].splitlines(True)
+        soll = sample[1].splitlines(True)
+        print "before", ist
+        converter = Code2Text(codedata)
+        converter.strip_code_block_marker(ist)
+        print "soll:", repr(soll)
+        print "ist: ", repr(ist)
+        assert ist == soll
 
-    def test_strip_literal_marker(self):
+
+    def test_strip_code_block_marker(self):
         samples = (("text\n\n::\n\n", "text\n\n"),
                    ("text\n::\n\n", "text\n\n"),
                    ("text ::\n\n", "text\n\n"),
@@ -620,37 +693,25 @@ class test_Code2Text(object):
                    ("text\n\n", "text\n\n"),
                    ("text\n", "text\n")
                    )
-        for (ist, soll) in samples:
-            ist = ist.splitlines(True)
-            soll = soll.splitlines(True)
-            print "before", ist
-            self.converter.strip_literal_marker(ist)
-            print "soll:", repr(soll)
-            print "ist: ", repr(ist)
-            assert ist == soll
+        for sample in samples:
+            yield (self.check_strip_code_block_marker, sample)
 
 ## Code2Text.set_state
 ## ::
 
     def test_set_state(self):
-        samples = (# old state     sample            new state 
-                   ("",              ["code_block\n"],  "header"),
-                   ("",              ["# docu\n"],      "documentation"),
-                   ("documentation", ["code_block\n"],  "code_block"),
-                   ("documentation", ["# docu\n"],      "documentation"),
-                   ("documentation", ["# \n"],          "documentation"),
-                   ("documentation", ["#\n"],           "documentation"),
-                   ("documentation", ["\n"],            "documentation"),
-                   ("code_block",    ["code_block\n"],  "code_block"),
-                   ("code_block",    ["#code_block\n"], "code_block"),
-                   ("code_block",    ["## code\n"],     "code_block"),
-                   ("code_block",    ["# docu\n"],      "documentation"),
-                   ("code_block",    ["#  docu\n"],     "documentation"),
-                   # These are obsolete since collect_block collects all
-                   # trailing blank lines.
-                   # ("code_block",    ["# \n"],          "code_block"),
-                   # ("code_block",    ["#\n"],           "code_block"),
-                   # ("code_block",    ["\n"],            "code_block"),
+        samples = (("code_block", ["code_block\n"], "code_block"),
+                   ("code_block", ["#code_block\n"], "code_block"),
+                   ("code_block", ["## code_block\n"], "code_block"),
+                   ("code_block", ["# documentation\n"], "documentation"),
+                   ("code_block", ["#  documentation\n"], "documentation"),
+                   ("code_block", ["# \n"], "documentation"),
+                   ("code_block", ["#\n"], "documentation"),
+                   ("code_block", ["\n"], "documentation"),
+                   ("", ["code_block\n"], "header"),
+                   ("", ["# documentation\n"], "documentation"),
+                   ("documentation", ["code_block\n"], "code_block"),
+                   ("documentation", ["# documentation\n"], "documentation"),
                   )
         print "comment string", repr(self.converter.comment_string)
         for (old_state, lines, soll) in samples:
@@ -715,6 +776,26 @@ class test_Code2Text(object):
         print "ist: ", repr(outstr)
         assert outstr == soll
 
+    def test_call_different_code_block_marker(self):
+        """recognize specified code-block marker
+        """
+        data = ["# .. code-block:: python\n",
+                "\n",
+                "block1 = 'first block'\n",
+                "\n",
+                "#  more text\n"]
+        soll = ['.. code-block:: python\n',
+                '\n',
+                "  block1 = 'first block'\n",
+                '  \n',
+                ' more text\n']   # keep space (not part of comment string)
+                
+        converter = Code2Text(data, code_block_marker='.. code-block::')
+        output = converter()
+        print "soll:", repr(soll)
+        print "ist: ", repr(output)
+        assert output == soll
+
     # Filters: test pre- and postprocessing of Code2Text data conversion
     
     def test_get_filter_preprocessor(self):
@@ -774,10 +855,10 @@ class test_Code2Text(object):
 ## ''''''''''''''''''''
 ## 
 ## Normally, whitespace in the comment string is significant, i.e. with
-## `comment_string = "# "`, a line "#something\n" will count as code.
+## ``comment_string = "# "``, a line ``"#something\n"`` will count as code.
 ## 
 ## However, if a comment line is blank, trailing whitespace in the comment
-## string should be ignored, i.e. "#\n" is recognized as a blank text line::
+## string should be ignored, i.e. ``#\n`` is recognized as a blank text line::
 
 codesamples["ignore trailing whitespace in comment string for blank line"] = (
 """# ::
@@ -797,7 +878,7 @@ more text
 
 ## No blank line after text
 ## ''''''''''''''''''''''''
-##
+## 
 ## If a matching comment precedes oder follows a code line (i.e. any line
 ## without matching comment) without a blank line inbetween, it counts as code
 ## line.
@@ -851,7 +932,6 @@ block1 = 'first block'
 text again
 """,
 """
-
 text again
 """)
 
@@ -871,29 +951,7 @@ block1 = 'first block'
   # still comment
 """,
 """
-
 """)
-
-codesamples["no header, code with subsequent blank lines"] = (
-"""# documentation::
-
-first code line
-
-
-after 2 blank lines
-""",
-"""documentation::
-
-  first code line
-  
-  
-  after 2 blank lines
-""",
-"""documentation:
-
-""")
-
-
 
 ## missing literal block marker
 ## ''''''''''''''''''''''''''''
@@ -982,44 +1040,10 @@ print 'hello world'
 "")
 
 
-## Filters
+## Filter tests
 ## ------------
-
-def test_identity_filter():
-    """Should return iterator of `data`"""
-    # TODO: how to test this?
-    filtered = identity_filter(textdata)
-    assert [line for line in textdata] == [line for line in filtered]
-    
-def test_expandtabs_filter():
-    """Should yield lines with tabs expanded"""
-    sample = ["\tfoo", "bar", "baff\t\tme"]
-    filtered = [line for line in expandtabs_filter(sample)]
-    print filtered
-    assert "x".join(sample).expandtabs() == "x".join(filtered)
-    
-def test_collect_blocks():
-    """Should yield lists of lines separated by blank lines"""
-    sample1 = ["1. block",
-               "second line",
-               "",
-               "2. block",
-               "",
-               "\n"
-               "3. block, after 2 blank lines",
-               "blank line follows",
-               ""]
-    sample2 = [" ",
-               "2. block (after blank)",
-               " ",
-               "3. block"]
-    for sample in [sample1, sample2]:
-        blocks = [block for block in collect_blocks(sample)]
-        print blocks
-        assert len(blocks) == 3, "sample has 3 blocks"
-        # joining the text-blocks should reconstruct sample
-        assert reduce(operator.__add__, blocks) == sample
-
+## 
+## ::
 
 css_code = ['/* import the default docutils style sheet */\n',
             '/* --------------------------------------- */\n',
@@ -1029,6 +1053,8 @@ css_code = ['/* import the default docutils style sheet */\n',
             '/*comment*/\n',
             '@import url("html4css1.css"); /* style */\n']
             
+## ::
+
 css_filtered_code = ['// import the default docutils style sheet\n',
                      '// ---------------------------------------\n',
                      '\n',
@@ -1037,12 +1063,16 @@ css_filtered_code = ['// import the default docutils style sheet\n',
                      '/*comment*/\n', 
                      '@import url("html4css1.css"); /* style */\n']
 
+## ::
+
 def test_dumb_c_preprocessor():
     """convert `C` to `C++` comments"""
     output = [line for line in dumb_c_preprocessor(css_code)]
     print "ist:  %r"%output
     print "soll: %r"%css_filtered_code
     assert output == css_filtered_code
+
+## ::
 
 def test_dumb_c_postprocessor():
     """convert `C++` to `C` comments"""
@@ -1052,6 +1082,8 @@ def test_dumb_c_postprocessor():
     assert output == css_code
 
 
+
+## ::
 
 if __name__ == "__main__":
     nose.runmodule() # requires nose 0.9.1

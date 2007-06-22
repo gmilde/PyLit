@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>pylit.py: Literate programming with reStructuredText</title>
-<meta name="date" content="2007-05-30" />
+<meta name="date" content="2007-06-07" />
 <meta name="copyright" content="2005, 2007 Guenter Milde. Released under the terms of the GNU General Public License (v. 2 or later)" />
 <link rel="stylesheet" href="/usr/lib/python2.4/site-packages/docutils/writers/html4css1/html4css1.css" type="text/css" />
 </head>
@@ -17,9 +17,9 @@
 <col class="docinfo-content" />
 <tbody valign="top">
 <tr><th class="docinfo-name">Date:</th>
-<td>2007-05-30</td></tr>
+<td>2007-06-07</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>SVN-Revision 50</td></tr>
+<td>SVN-Revision 55</td></tr>
 <tr class="field"><th class="docinfo-name">URL:</th><td class="field-body">svn+ssh://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py</td>
 </tr>
 <tr><th class="docinfo-name">Copyright:</th>
@@ -46,101 +46,102 @@ Released under the terms of the GNU General Public License
 <li><a class="reference" href="#defaults-text-extensions" id="id17" name="id17">2.1.3&nbsp;&nbsp;&nbsp;defaults.text_extensions</a></li>
 <li><a class="reference" href="#defaults-comment-strings" id="id18" name="id18">2.1.4&nbsp;&nbsp;&nbsp;defaults.comment_strings</a></li>
 <li><a class="reference" href="#defaults-header-string" id="id19" name="id19">2.1.5&nbsp;&nbsp;&nbsp;defaults.header_string</a></li>
-<li><a class="reference" href="#defaults-strip" id="id20" name="id20">2.1.6&nbsp;&nbsp;&nbsp;defaults.strip</a></li>
-<li><a class="reference" href="#defaults-preprocessors" id="id21" name="id21">2.1.7&nbsp;&nbsp;&nbsp;defaults.preprocessors</a></li>
-<li><a class="reference" href="#defaults-postprocessors" id="id22" name="id22">2.1.8&nbsp;&nbsp;&nbsp;defaults.postprocessors</a></li>
-<li><a class="reference" href="#defaults-codeindent" id="id23" name="id23">2.1.9&nbsp;&nbsp;&nbsp;defaults.codeindent</a></li>
-<li><a class="reference" href="#defaults-overwrite" id="id24" name="id24">2.1.10&nbsp;&nbsp;&nbsp;defaults.overwrite</a></li>
+<li><a class="reference" href="#defaults-code-block-marker" id="id20" name="id20">2.1.6&nbsp;&nbsp;&nbsp;defaults.code_block_marker</a></li>
+<li><a class="reference" href="#defaults-strip" id="id21" name="id21">2.1.7&nbsp;&nbsp;&nbsp;defaults.strip</a></li>
+<li><a class="reference" href="#defaults-strip-marker" id="id22" name="id22">2.1.8&nbsp;&nbsp;&nbsp;defaults.strip_marker</a></li>
+<li><a class="reference" href="#defaults-preprocessors" id="id23" name="id23">2.1.9&nbsp;&nbsp;&nbsp;defaults.preprocessors</a></li>
+<li><a class="reference" href="#defaults-postprocessors" id="id24" name="id24">2.1.10&nbsp;&nbsp;&nbsp;defaults.postprocessors</a></li>
+<li><a class="reference" href="#defaults-codeindent" id="id25" name="id25">2.1.11&nbsp;&nbsp;&nbsp;defaults.codeindent</a></li>
+<li><a class="reference" href="#defaults-overwrite" id="id26" name="id26">2.1.12&nbsp;&nbsp;&nbsp;defaults.overwrite</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#extensions" id="id25" name="id25">2.2&nbsp;&nbsp;&nbsp;Extensions</a></li>
+<li><a class="reference" href="#extensions" id="id27" name="id27">2.2&nbsp;&nbsp;&nbsp;Extensions</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#converter-classes" id="id26" name="id26">3&nbsp;&nbsp;&nbsp;Converter Classes</a><ul class="auto-toc">
-<li><a class="reference" href="#textcodeconverter" id="id27" name="id27">3.1&nbsp;&nbsp;&nbsp;TextCodeConverter</a><ul class="auto-toc">
-<li><a class="reference" href="#data-attributes" id="id28" name="id28">3.1.1&nbsp;&nbsp;&nbsp;Data attributes</a></li>
-<li><a class="reference" href="#interface-methods" id="id29" name="id29">3.1.2&nbsp;&nbsp;&nbsp;Interface methods</a><ul class="auto-toc">
-<li><a class="reference" href="#textcodeconverter-init" id="id30" name="id30">3.1.2.1&nbsp;&nbsp;&nbsp;TextCodeConverter.__init__</a></li>
-<li><a class="reference" href="#textcodeconverter-iter" id="id31" name="id31">3.1.2.2&nbsp;&nbsp;&nbsp;TextCodeConverter.__iter__</a></li>
-<li><a class="reference" href="#textcodeconverter-call" id="id32" name="id32">3.1.2.3&nbsp;&nbsp;&nbsp;TextCodeConverter.__call__</a></li>
-<li><a class="reference" href="#textcodeconverter-str" id="id33" name="id33">3.1.2.4&nbsp;&nbsp;&nbsp;TextCodeConverter.__str__</a></li>
+<li><a class="reference" href="#converter-classes" id="id28" name="id28">3&nbsp;&nbsp;&nbsp;Converter Classes</a><ul class="auto-toc">
+<li><a class="reference" href="#textcodeconverter" id="id29" name="id29">3.1&nbsp;&nbsp;&nbsp;TextCodeConverter</a><ul class="auto-toc">
+<li><a class="reference" href="#data-attributes" id="id30" name="id30">3.1.1&nbsp;&nbsp;&nbsp;Data attributes</a></li>
+<li><a class="reference" href="#interface-methods" id="id31" name="id31">3.1.2&nbsp;&nbsp;&nbsp;Interface methods</a><ul class="auto-toc">
+<li><a class="reference" href="#textcodeconverter-init" id="id32" name="id32">3.1.2.1&nbsp;&nbsp;&nbsp;TextCodeConverter.__init__</a></li>
+<li><a class="reference" href="#textcodeconverter-iter" id="id33" name="id33">3.1.2.2&nbsp;&nbsp;&nbsp;TextCodeConverter.__iter__</a></li>
+<li><a class="reference" href="#textcodeconverter-call" id="id34" name="id34">3.1.2.3&nbsp;&nbsp;&nbsp;TextCodeConverter.__call__</a></li>
+<li><a class="reference" href="#textcodeconverter-str" id="id35" name="id35">3.1.2.4&nbsp;&nbsp;&nbsp;TextCodeConverter.__str__</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#helpers-and-convenience-methods" id="id34" name="id34">3.1.3&nbsp;&nbsp;&nbsp;Helpers and convenience methods</a><ul class="auto-toc">
-<li><a class="reference" href="#textcodeconverter-convert" id="id35" name="id35">3.1.3.1&nbsp;&nbsp;&nbsp;TextCodeConverter.convert</a></li>
-<li><a class="reference" href="#textcodeconverter-get-filter" id="id36" name="id36">3.1.3.2&nbsp;&nbsp;&nbsp;TextCodeConverter.get_filter</a></li>
-<li><a class="reference" href="#textcodeconverter-get-indent" id="id37" name="id37">3.1.3.3&nbsp;&nbsp;&nbsp;TextCodeConverter.get_indent</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference" href="#text2code" id="id38" name="id38">3.2&nbsp;&nbsp;&nbsp;Text2Code</a><ul class="auto-toc">
-<li><a class="reference" href="#text2code-set-state" id="id39" name="id39">3.2.1&nbsp;&nbsp;&nbsp;Text2Code.set_state</a></li>
-<li><a class="reference" href="#text2code-header-handler" id="id40" name="id40">3.2.2&nbsp;&nbsp;&nbsp;Text2Code.header_handler</a></li>
-<li><a class="reference" href="#text2code-documentation-handler" id="id41" name="id41">3.2.3&nbsp;&nbsp;&nbsp;Text2Code.documentation_handler</a></li>
-<li><a class="reference" href="#text2code-code-block-handler" id="id42" name="id42">3.2.4&nbsp;&nbsp;&nbsp;Text2Code.code_block_handler</a></li>
-</ul>
-</li>
-<li><a class="reference" href="#code2text" id="id43" name="id43">3.3&nbsp;&nbsp;&nbsp;Code2Text</a><ul class="auto-toc">
-<li><a class="reference" href="#code2text-set-state" id="id44" name="id44">3.3.1&nbsp;&nbsp;&nbsp;Code2Text.set_state</a></li>
-<li><a class="reference" href="#code2text-header-handler" id="id45" name="id45">3.3.2&nbsp;&nbsp;&nbsp;Code2Text.header_handler</a></li>
-<li><a class="reference" href="#code2text-documentation-handler" id="id46" name="id46">3.3.3&nbsp;&nbsp;&nbsp;Code2Text.documentation_handler</a></li>
-<li><a class="reference" href="#code2text-code-block-handler" id="id47" name="id47">3.3.4&nbsp;&nbsp;&nbsp;Code2Text.code_block_handler</a></li>
-<li><a class="reference" href="#code2text-strip-literal-marker" id="id48" name="id48">3.3.5&nbsp;&nbsp;&nbsp;Code2Text.strip_literal_marker</a></li>
+<li><a class="reference" href="#helpers-and-convenience-methods" id="id36" name="id36">3.1.3&nbsp;&nbsp;&nbsp;Helpers and convenience methods</a><ul class="auto-toc">
+<li><a class="reference" href="#textcodeconverter-convert" id="id37" name="id37">3.1.3.1&nbsp;&nbsp;&nbsp;TextCodeConverter.convert</a></li>
+<li><a class="reference" href="#textcodeconverter-get-filter" id="id38" name="id38">3.1.3.2&nbsp;&nbsp;&nbsp;TextCodeConverter.get_filter</a></li>
+<li><a class="reference" href="#textcodeconverter-get-indent" id="id39" name="id39">3.1.3.3&nbsp;&nbsp;&nbsp;TextCodeConverter.get_indent</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference" href="#filters" id="id49" name="id49">4&nbsp;&nbsp;&nbsp;Filters</a><ul class="auto-toc">
-<li><a class="reference" href="#identity-filter" id="id50" name="id50">4.1&nbsp;&nbsp;&nbsp;identity_filter</a></li>
-<li><a class="reference" href="#expandtabs-filter" id="id51" name="id51">4.2&nbsp;&nbsp;&nbsp;expandtabs_filter</a></li>
-<li><a class="reference" href="#collect-blocks" id="id52" name="id52">4.3&nbsp;&nbsp;&nbsp;collect_blocks</a></li>
-<li><a class="reference" href="#dumb-c-preprocessor" id="id53" name="id53">4.4&nbsp;&nbsp;&nbsp;dumb_c_preprocessor</a></li>
-<li><a class="reference" href="#dumb-c-postprocessor" id="id54" name="id54">4.5&nbsp;&nbsp;&nbsp;dumb_c_postprocessor</a></li>
-<li><a class="reference" href="#register-filters" id="id55" name="id55">4.6&nbsp;&nbsp;&nbsp;register filters</a></li>
+<li><a class="reference" href="#text2code" id="id40" name="id40">3.2&nbsp;&nbsp;&nbsp;Text2Code</a><ul class="auto-toc">
+<li><a class="reference" href="#text2code-set-state" id="id41" name="id41">3.2.1&nbsp;&nbsp;&nbsp;Text2Code.set_state</a></li>
+<li><a class="reference" href="#text2code-header-handler" id="id42" name="id42">3.2.2&nbsp;&nbsp;&nbsp;Text2Code.header_handler</a></li>
+<li><a class="reference" href="#text2code-documentation-handler" id="id43" name="id43">3.2.3&nbsp;&nbsp;&nbsp;Text2Code.documentation_handler</a></li>
+<li><a class="reference" href="#text2code-code-block-handler" id="id44" name="id44">3.2.4&nbsp;&nbsp;&nbsp;Text2Code.code_block_handler</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#command-line-use" id="id56" name="id56">5&nbsp;&nbsp;&nbsp;Command line use</a><ul class="auto-toc">
-<li><a class="reference" href="#dual-source-handling" id="id57" name="id57">5.1&nbsp;&nbsp;&nbsp;Dual source handling</a><ul class="auto-toc">
-<li><a class="reference" href="#how-to-determine-which-source-is-up-to-date" id="id58" name="id58">5.1.1&nbsp;&nbsp;&nbsp;How to determine which source is up-to-date?</a></li>
-<li><a class="reference" href="#recognised-filename-extensions" id="id59" name="id59">5.1.2&nbsp;&nbsp;&nbsp;Recognised Filename Extensions</a></li>
+<li><a class="reference" href="#code2text" id="id45" name="id45">3.3&nbsp;&nbsp;&nbsp;Code2Text</a><ul class="auto-toc">
+<li><a class="reference" href="#code2text-set-state" id="id46" name="id46">3.3.1&nbsp;&nbsp;&nbsp;Code2Text.set_state</a></li>
+<li><a class="reference" href="#code2text-header-handler" id="id47" name="id47">3.3.2&nbsp;&nbsp;&nbsp;Code2Text.header_handler</a></li>
+<li><a class="reference" href="#code2text-documentation-handler" id="id48" name="id48">3.3.3&nbsp;&nbsp;&nbsp;Code2Text.documentation_handler</a></li>
+<li><a class="reference" href="#code2text-code-block-handler" id="id49" name="id49">3.3.4&nbsp;&nbsp;&nbsp;Code2Text.code_block_handler</a></li>
+<li><a class="reference" href="#code2text-strip-code-block-marker" id="id50" name="id50">3.3.5&nbsp;&nbsp;&nbsp;Code2Text.strip_code_block_marker</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#optionvalues" id="id60" name="id60">5.2&nbsp;&nbsp;&nbsp;OptionValues</a><ul class="auto-toc">
-<li><a class="reference" href="#optionvalues-as-dict" id="id61" name="id61">5.2.1&nbsp;&nbsp;&nbsp;OptionValues.as_dict</a></li>
-<li><a class="reference" href="#optionvalues-complete" id="id62" name="id62">5.2.2&nbsp;&nbsp;&nbsp;OptionValues.complete</a></li>
-<li><a class="reference" href="#optionvalues-getattr" id="id63" name="id63">5.2.3&nbsp;&nbsp;&nbsp;OptionValues.__getattr__</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#pylitoptions" id="id64" name="id64">5.3&nbsp;&nbsp;&nbsp;PylitOptions</a><ul class="auto-toc">
-<li><a class="reference" href="#instantiation" id="id65" name="id65">5.3.1&nbsp;&nbsp;&nbsp;Instantiation</a></li>
-<li><a class="reference" href="#pylitoptions-parse-args" id="id66" name="id66">5.3.2&nbsp;&nbsp;&nbsp;PylitOptions.parse_args</a></li>
-<li><a class="reference" href="#pylitoptions-complete-values" id="id67" name="id67">5.3.3&nbsp;&nbsp;&nbsp;PylitOptions.complete_values</a></li>
-<li><a class="reference" href="#pylitoptions-get-outfile-name" id="id68" name="id68">5.3.4&nbsp;&nbsp;&nbsp;PylitOptions._get_outfile_name</a></li>
-<li><a class="reference" href="#pylitoptions-call" id="id69" name="id69">5.3.5&nbsp;&nbsp;&nbsp;PylitOptions.__call__</a></li>
+<li><a class="reference" href="#filters" id="id51" name="id51">4&nbsp;&nbsp;&nbsp;Filters</a><ul class="auto-toc">
+<li><a class="reference" href="#identity-filter" id="id52" name="id52">4.1&nbsp;&nbsp;&nbsp;identity_filter</a></li>
+<li><a class="reference" href="#expandtabs-filter" id="id53" name="id53">4.2&nbsp;&nbsp;&nbsp;expandtabs_filter</a></li>
+<li><a class="reference" href="#collect-blocks" id="id54" name="id54">4.3&nbsp;&nbsp;&nbsp;collect_blocks</a></li>
+<li><a class="reference" href="#dumb-c-preprocessor" id="id55" name="id55">4.4&nbsp;&nbsp;&nbsp;dumb_c_preprocessor</a></li>
+<li><a class="reference" href="#dumb-c-postprocessor" id="id56" name="id56">4.5&nbsp;&nbsp;&nbsp;dumb_c_postprocessor</a></li>
+<li><a class="reference" href="#register-filters" id="id57" name="id57">4.6&nbsp;&nbsp;&nbsp;register filters</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#helper-functions" id="id70" name="id70">5.4&nbsp;&nbsp;&nbsp;Helper functions</a><ul class="auto-toc">
-<li><a class="reference" href="#open-streams" id="id71" name="id71">5.4.1&nbsp;&nbsp;&nbsp;open_streams</a></li>
-<li><a class="reference" href="#is-newer" id="id72" name="id72">5.4.2&nbsp;&nbsp;&nbsp;is_newer</a></li>
-<li><a class="reference" href="#get-converter" id="id73" name="id73">5.4.3&nbsp;&nbsp;&nbsp;get_converter</a></li>
+<li><a class="reference" href="#command-line-use" id="id58" name="id58">5&nbsp;&nbsp;&nbsp;Command line use</a><ul class="auto-toc">
+<li><a class="reference" href="#dual-source-handling" id="id59" name="id59">5.1&nbsp;&nbsp;&nbsp;Dual source handling</a><ul class="auto-toc">
+<li><a class="reference" href="#how-to-determine-which-source-is-up-to-date" id="id60" name="id60">5.1.1&nbsp;&nbsp;&nbsp;How to determine which source is up-to-date?</a></li>
+<li><a class="reference" href="#recognised-filename-extensions" id="id61" name="id61">5.1.2&nbsp;&nbsp;&nbsp;Recognised Filename Extensions</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#use-cases" id="id74" name="id74">5.5&nbsp;&nbsp;&nbsp;Use cases</a><ul class="auto-toc">
-<li><a class="reference" href="#run-doctest" id="id75" name="id75">5.5.1&nbsp;&nbsp;&nbsp;run_doctest</a></li>
-<li><a class="reference" href="#diff" id="id76" name="id76">5.5.2&nbsp;&nbsp;&nbsp;diff</a></li>
-<li><a class="reference" href="#execute" id="id77" name="id77">5.5.3&nbsp;&nbsp;&nbsp;execute</a></li>
+<li><a class="reference" href="#optionvalues" id="id62" name="id62">5.2&nbsp;&nbsp;&nbsp;OptionValues</a><ul class="auto-toc">
+<li><a class="reference" href="#optionvalues-as-dict" id="id63" name="id63">5.2.1&nbsp;&nbsp;&nbsp;OptionValues.as_dict</a></li>
+<li><a class="reference" href="#optionvalues-complete" id="id64" name="id64">5.2.2&nbsp;&nbsp;&nbsp;OptionValues.complete</a></li>
+<li><a class="reference" href="#optionvalues-getattr" id="id65" name="id65">5.2.3&nbsp;&nbsp;&nbsp;OptionValues.__getattr__</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#main" id="id78" name="id78">5.6&nbsp;&nbsp;&nbsp;main</a></li>
+<li><a class="reference" href="#pylitoptions" id="id66" name="id66">5.3&nbsp;&nbsp;&nbsp;PylitOptions</a><ul class="auto-toc">
+<li><a class="reference" href="#instantiation" id="id67" name="id67">5.3.1&nbsp;&nbsp;&nbsp;Instantiation</a></li>
+<li><a class="reference" href="#pylitoptions-parse-args" id="id68" name="id68">5.3.2&nbsp;&nbsp;&nbsp;PylitOptions.parse_args</a></li>
+<li><a class="reference" href="#pylitoptions-complete-values" id="id69" name="id69">5.3.3&nbsp;&nbsp;&nbsp;PylitOptions.complete_values</a></li>
+<li><a class="reference" href="#pylitoptions-get-outfile-name" id="id70" name="id70">5.3.4&nbsp;&nbsp;&nbsp;PylitOptions._get_outfile_name</a></li>
+<li><a class="reference" href="#pylitoptions-call" id="id71" name="id71">5.3.5&nbsp;&nbsp;&nbsp;PylitOptions.__call__</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#open-questions" id="id79" name="id79">6&nbsp;&nbsp;&nbsp;Open questions</a><ul class="auto-toc">
-<li><a class="reference" href="#clean-code" id="id80" name="id80">6.1&nbsp;&nbsp;&nbsp;Clean code</a></li>
-<li><a class="reference" href="#options" id="id81" name="id81">6.2&nbsp;&nbsp;&nbsp;Options</a></li>
-<li><a class="reference" href="#parsing-problems" id="id82" name="id82">6.3&nbsp;&nbsp;&nbsp;Parsing Problems</a></li>
-<li><a class="reference" href="#code-block-directive" id="id83" name="id83">6.4&nbsp;&nbsp;&nbsp;code-block directive</a></li>
-<li><a class="reference" href="#doctstrings-in-code-blocks" id="id84" name="id84">6.5&nbsp;&nbsp;&nbsp;doctstrings in code blocks</a></li>
+<li><a class="reference" href="#helper-functions" id="id72" name="id72">5.4&nbsp;&nbsp;&nbsp;Helper functions</a><ul class="auto-toc">
+<li><a class="reference" href="#open-streams" id="id73" name="id73">5.4.1&nbsp;&nbsp;&nbsp;open_streams</a></li>
+<li><a class="reference" href="#is-newer" id="id74" name="id74">5.4.2&nbsp;&nbsp;&nbsp;is_newer</a></li>
+<li><a class="reference" href="#get-converter" id="id75" name="id75">5.4.3&nbsp;&nbsp;&nbsp;get_converter</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#use-cases" id="id76" name="id76">5.5&nbsp;&nbsp;&nbsp;Use cases</a><ul class="auto-toc">
+<li><a class="reference" href="#run-doctest" id="id77" name="id77">5.5.1&nbsp;&nbsp;&nbsp;run_doctest</a></li>
+<li><a class="reference" href="#diff" id="id78" name="id78">5.5.2&nbsp;&nbsp;&nbsp;diff</a></li>
+<li><a class="reference" href="#execute" id="id79" name="id79">5.5.3&nbsp;&nbsp;&nbsp;execute</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#main" id="id80" name="id80">5.6&nbsp;&nbsp;&nbsp;main</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#open-questions" id="id81" name="id81">6&nbsp;&nbsp;&nbsp;Open questions</a><ul class="auto-toc">
+<li><a class="reference" href="#clean-code" id="id82" name="id82">6.1&nbsp;&nbsp;&nbsp;Clean code</a></li>
+<li><a class="reference" href="#options" id="id83" name="id83">6.2&nbsp;&nbsp;&nbsp;Options</a></li>
+<li><a class="reference" href="#parsing-problems" id="id84" name="id84">6.3&nbsp;&nbsp;&nbsp;Parsing Problems</a></li>
+<li><a class="reference" href="#doctstrings-in-code-blocks" id="id85" name="id85">6.4&nbsp;&nbsp;&nbsp;doctstrings in code blocks</a></li>
 </ul>
 </li>
 </ul>
@@ -208,7 +209,7 @@ separate <cite>execute</cite> function.</td>
 <tr class="field"><th class="field-name">2007-03-21:</th><td class="field-body">Code cleanup in <cite>Text2Code.__iter__</cite>.</td>
 </tr>
 <tr class="field"><th class="field-name">2007-03-23:</th><td class="field-body">0.3.5 Removed &quot;css&quot; from known languages after learning that
-there is no C++ style &quot;// &quot; comment string in css2.</td>
+there is no C++ style &quot;// &quot; comment string in CSS2.</td>
 </tr>
 <tr class="field"><th class="field-name">2007-04-24:</th><td class="field-body">0.3.6 Documentation update.</td>
 </tr>
@@ -220,7 +221,7 @@ Rename states to avoid confusion with formats:
 &quot;text&quot; -&gt; &quot;documentation&quot;, &quot;code&quot; -&gt; &quot;code_block&quot;.</td>
 </tr>
 <tr class="field"><th class="field-name">2007-05-22:</th><td class="field-body">0.4.1 Converter.__iter__: cleanup and reorganization,
-rename Converter -&gt; TextCodeConverter.</td>
+rename parent class Converter -&gt; TextCodeConverter.</td>
 </tr>
 <tr class="field"><th class="field-name">2007-05-23:</th><td class="field-body">0.4.2 Merged Text2Code.converter and Code2Text.converter into
 TextCodeConverter.converter.</td>
@@ -234,6 +235,8 @@ with <a class="reference" href="#dumb-c-preprocessor">dumb_c_preprocessor</a> an
 <tr class="field"><th class="field-name">2007-06-06:</th><td class="field-body">0.5   Moved <a class="reference" href="#collect-blocks">collect_blocks</a> out of <a class="reference" href="#textcodeconverter">TextCodeConverter</a>,
 bugfix: collect all trailing blank lines into a block.
 Expand tabs with <a class="reference" href="#expandtabs-filter">expandtabs_filter</a>.</td>
+</tr>
+<tr class="field"><th class="field-name">2007-06-20:</th><td class="field-body">0.6   Configurable code-block marker (default <tt class="docutils literal"><span class="pre">::</span></tt>)</td>
 </tr>
 </tbody>
 </table>
@@ -341,22 +344,56 @@ text blocks as comments.</p>
 <div class="section">
 <h3><a class="toc-backref" href="#id19" id="defaults-header-string" name="defaults-header-string">2.1.5&nbsp;&nbsp;&nbsp;defaults.header_string</a></h3>
 <p>Marker string for a header code block in the text source. No trailing
-whitespace needed as indented code follows. Default is a comment marker:</p>
+whitespace needed as indented code follows.
+Must be a valid rst directive that accepts code on the same line, e.g.
+<tt class="docutils literal"><span class="pre">'..admonition::'</span></tt>.</p>
+<p>Default is a comment marker:</p>
 <pre class="literal-block">
 defaults.header_string = '..'
 </pre>
-<p>Must be a valid rst directive that accepts code on the same line, e.g.
-<tt class="docutils literal"><span class="pre">'..admonition::'</span></tt>.</p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id20" id="defaults-strip" name="defaults-strip">2.1.6&nbsp;&nbsp;&nbsp;defaults.strip</a></h3>
+<h3><a class="toc-backref" href="#id20" id="defaults-code-block-marker" name="defaults-code-block-marker">2.1.6&nbsp;&nbsp;&nbsp;defaults.code_block_marker</a></h3>
+<p>Marker string for a code block in the text source.</p>
+<p>Default is a literal-block marker:</p>
+<pre class="literal-block">
+defaults.code_block_marker = '::'
+</pre>
+<p>In a document where code examples are only one of several uses of literal
+blocks, it is more appropriate to single out the sourcecode with a dedicated
+&quot;code-block&quot; directive.</p>
+<p>Some highlight plug-ins require a special &quot;sourcecode&quot; or &quot;code-block&quot;
+directive instead of the <tt class="docutils literal"><span class="pre">::</span></tt> literal block marker. Actually,
+syntax-highlight is possible without changes to docutils with the <a class="reference" href="http://pygments.org/">Pygments</a>
+package using a &quot;code-block&quot; directive. See the <a class="reference" href="../features/syntax-highlight.html">syntax highlight</a> section
+in the features documentation.</p>
+<p>The <cite>code_block_marker</cite> string is used in a regular expression. Examples for
+alternative forms are <tt class="docutils literal"><span class="pre">..</span> <span class="pre">code-block::</span></tt> or <tt class="docutils literal"><span class="pre">..</span> <span class="pre">code-block::</span> <span class="pre">.*</span> <span class="pre">python</span></tt>.
+The second example can differentiate between Python code blocks and
+code-blocks in other languages.</p>
+<p>Another use would be to mark some code-blocks inactive allowing a literate
+source to contain code-blocks that should become active only in some cases.</p>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id21" id="defaults-strip" name="defaults-strip">2.1.7&nbsp;&nbsp;&nbsp;defaults.strip</a></h3>
 <p>Export to the output format stripping documentation or code blocks:</p>
 <pre class="literal-block">
 defaults.strip = False
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id21" id="defaults-preprocessors" name="defaults-preprocessors">2.1.7&nbsp;&nbsp;&nbsp;defaults.preprocessors</a></h3>
+<h3><a class="toc-backref" href="#id22" id="defaults-strip-marker" name="defaults-strip-marker">2.1.8&nbsp;&nbsp;&nbsp;defaults.strip_marker</a></h3>
+<p>Strip literal marker from the end of documentation blocks when
+converting  to code format. Makes the code more concise but looses the
+synchronization of line numbers in text and code formats. Can also be used
+(together with the auto-completion of the code-text conversion) to change
+the <cite>code_block_marker</cite>:</p>
+<pre class="literal-block">
+defaults.strip_marker = False
+</pre>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id23" id="defaults-preprocessors" name="defaults-preprocessors">2.1.9&nbsp;&nbsp;&nbsp;defaults.preprocessors</a></h3>
 <p>Preprocess the data with language-specific <a class="reference" href="#filters">filters</a>
 Set below in <a class="reference" href="#filters">Filters</a>:</p>
 <pre class="literal-block">
@@ -364,14 +401,14 @@ defaults.preprocessors = {}
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id22" id="defaults-postprocessors" name="defaults-postprocessors">2.1.8&nbsp;&nbsp;&nbsp;defaults.postprocessors</a></h3>
+<h3><a class="toc-backref" href="#id24" id="defaults-postprocessors" name="defaults-postprocessors">2.1.10&nbsp;&nbsp;&nbsp;defaults.postprocessors</a></h3>
 <p>Postprocess the data with language-specific <a class="reference" href="#filters">filters</a>:</p>
 <pre class="literal-block">
 defaults.postprocessors = {}
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id23" id="defaults-codeindent" name="defaults-codeindent">2.1.9&nbsp;&nbsp;&nbsp;defaults.codeindent</a></h3>
+<h3><a class="toc-backref" href="#id25" id="defaults-codeindent" name="defaults-codeindent">2.1.11&nbsp;&nbsp;&nbsp;defaults.codeindent</a></h3>
 <p>Number of spaces to indent code blocks in <a class="reference" href="#code2text-code-block-handler">Code2Text.code_block_handler</a>:</p>
 <pre class="literal-block">
 defaults.codeindent =  2
@@ -381,7 +418,7 @@ first recognized code line (header or first indented literal block
 of the text source).</p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id24" id="defaults-overwrite" name="defaults-overwrite">2.1.10&nbsp;&nbsp;&nbsp;defaults.overwrite</a></h3>
+<h3><a class="toc-backref" href="#id26" id="defaults-overwrite" name="defaults-overwrite">2.1.12&nbsp;&nbsp;&nbsp;defaults.overwrite</a></h3>
 <p>What to do if the outfile already exists? (ignored if <cite>outfile</cite> == '-'):</p>
 <pre class="literal-block">
 defaults.overwrite = 'update'
@@ -404,7 +441,7 @@ defaults.overwrite = 'update'
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id25" id="extensions" name="extensions">2.2&nbsp;&nbsp;&nbsp;Extensions</a></h2>
+<h2><a class="toc-backref" href="#id27" id="extensions" name="extensions">2.2&nbsp;&nbsp;&nbsp;Extensions</a></h2>
 <p>Try to import optional extensions:</p>
 <pre class="literal-block">
 try:
@@ -415,7 +452,7 @@ except ImportError:
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id26" id="converter-classes" name="converter-classes">3&nbsp;&nbsp;&nbsp;Converter Classes</a></h1>
+<h1><a class="toc-backref" href="#id28" id="converter-classes" name="converter-classes">3&nbsp;&nbsp;&nbsp;Converter Classes</a></h1>
 <p>The converter classes implement a simple state machine to separate and
 transform documentation and code blocks. For this task, only a very limited
 parsing is needed. PyLit's parser assumes:</p>
@@ -425,7 +462,7 @@ parsing is needed. PyLit's parser assumes:</p>
 comment string are documentation blocks.</li>
 </ul>
 <div class="section">
-<h2><a class="toc-backref" href="#id27" id="textcodeconverter" name="textcodeconverter">3.1&nbsp;&nbsp;&nbsp;TextCodeConverter</a></h2>
+<h2><a class="toc-backref" href="#id29" id="textcodeconverter" name="textcodeconverter">3.1&nbsp;&nbsp;&nbsp;TextCodeConverter</a></h2>
 <pre class="literal-block">
 class TextCodeConverter(object):
     &quot;&quot;&quot;Parent class for the converters `Text2Code` and `Code2Text`.
@@ -435,7 +472,7 @@ class TextCodeConverter(object):
 <a class="reference" href="#text2code">Text2Code</a> converting a text source to executable code source, and
 <a class="reference" href="#code2text">Code2Text</a> converting commented code to a text source.</p>
 <div class="section">
-<h3><a class="toc-backref" href="#id28" id="data-attributes" name="data-attributes">3.1.1&nbsp;&nbsp;&nbsp;Data attributes</a></h3>
+<h3><a class="toc-backref" href="#id30" id="data-attributes" name="data-attributes">3.1.1&nbsp;&nbsp;&nbsp;Data attributes</a></h3>
 <p>Class default values are fetched from the <a class="reference" href="#defaults">defaults</a> object and can be
 overridden by matching keyword arguments during class instantiation. This
 also works with keyword arguments to <a class="reference" href="#get-converter">get_converter</a> and <a class="reference" href="#main">main</a>, as these
@@ -447,18 +484,21 @@ comment_strings = defaults.comment_strings
 comment_string = &quot;&quot; # set in __init__ (if empty)
 codeindent =  defaults.codeindent
 header_string = defaults.header_string
+code_block_marker = defaults.code_block_marker
 strip = defaults.strip
+strip_marker = defaults.strip_marker
 state = &quot;&quot; # type of current block, see `TextCodeConverter.convert`_
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id29" id="interface-methods" name="interface-methods">3.1.2&nbsp;&nbsp;&nbsp;Interface methods</a></h3>
+<h3><a class="toc-backref" href="#id31" id="interface-methods" name="interface-methods">3.1.2&nbsp;&nbsp;&nbsp;Interface methods</a></h3>
 <div class="section">
-<h4><a class="toc-backref" href="#id30" id="textcodeconverter-init" name="textcodeconverter-init">3.1.2.1&nbsp;&nbsp;&nbsp;TextCodeConverter.__init__</a></h4>
-<p>Initializing sets the <cite>data</cite> attribute, an iterable object yielding lines
-of the source to convert. <a class="footnote-reference" href="#id2" id="id1" name="id1">[1]</a> Additional keyword arguments are stored
-as instance variables, overwriting the class defaults. If still empty,
-<cite>comment_string</cite> is set accordign to the <cite>language</cite>:</p>
+<h4><a class="toc-backref" href="#id32" id="textcodeconverter-init" name="textcodeconverter-init">3.1.2.1&nbsp;&nbsp;&nbsp;TextCodeConverter.__init__</a></h4>
+<p>Initializing sets the <cite>data</cite> attribute, an iterable object yielding lines of
+the source to convert. <a class="footnote-reference" href="#id2" id="id1" name="id1">[1]</a></p>
+<p>Additional keyword arguments are stored as instance variables, overwriting
+the class defaults. If still empty, <cite>comment_string</cite> is set accordign to the
+<cite>language</cite></p>
 <pre class="literal-block">
 def __init__(self, data, **keyw):
     &quot;&quot;&quot;data   --  iterable data object
@@ -470,8 +510,24 @@ def __init__(self, data, **keyw):
     self.__dict__.update(keyw)
     if not self.comment_string:
         self.comment_string = self.comment_strings[self.language]
-    self.preprocessor = self.get_filter(&quot;preprocessors&quot;, self.language)
-    self.postprocessor = self.get_filter(&quot;postprocessors&quot;, self.language)
+</pre>
+<p>Pre- and postprocessing filters are set (with
+<a class="reference" href="#textcodeconverter-get-filter">TextCodeConverter.get_filter</a>):</p>
+<pre class="literal-block">
+self.preprocessor = self.get_filter(&quot;preprocessors&quot;, self.language)
+self.postprocessor = self.get_filter(&quot;postprocessors&quot;, self.language)
+</pre>
+<p>Finally,  the regular_expression for the <cite>code_block_marker</cite> is compiled to
+find valid cases of code_block_marker in a given line and return the groups:</p>
+<p>1 prefix, 2 code_block_marker, 3 remainder</p>
+<pre class="literal-block">
+marker = self.code_block_marker
+if marker == '::':
+    self.marker_regexp = re.compile('^( *(?!\.\.).*)(%s)([ \n]*)$'
+                                    % marker)
+else:
+    # assume code_block_marker is a directive like '.. code-block::'
+    self.marker_regexp = re.compile('^( *)(%s)(.*)$' % marker)
 </pre>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -485,7 +541,7 @@ like <tt class="docutils literal"><span class="pre">&quot;2</span> <span class="
 </table>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id31" id="textcodeconverter-iter" name="textcodeconverter-iter">3.1.2.2&nbsp;&nbsp;&nbsp;TextCodeConverter.__iter__</a></h4>
+<h4><a class="toc-backref" href="#id33" id="textcodeconverter-iter" name="textcodeconverter-iter">3.1.2.2&nbsp;&nbsp;&nbsp;TextCodeConverter.__iter__</a></h4>
 <p>Return an iterator for the instance. Iteration yields lines of converted
 data.</p>
 <p>The iterator is a chain of iterators acting on <cite>self.data</cite> that does</p>
@@ -506,7 +562,7 @@ def __iter__(self):
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id32" id="textcodeconverter-call" name="textcodeconverter-call">3.1.2.3&nbsp;&nbsp;&nbsp;TextCodeConverter.__call__</a></h4>
+<h4><a class="toc-backref" href="#id34" id="textcodeconverter-call" name="textcodeconverter-call">3.1.2.3&nbsp;&nbsp;&nbsp;TextCodeConverter.__call__</a></h4>
 <p>The special <cite>__call__</cite> method allows the use of class instances as callable
 objects. It returns the converted data as list of lines:</p>
 <pre class="literal-block">
@@ -516,7 +572,7 @@ def __call__(self):
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id33" id="textcodeconverter-str" name="textcodeconverter-str">3.1.2.4&nbsp;&nbsp;&nbsp;TextCodeConverter.__str__</a></h4>
+<h4><a class="toc-backref" href="#id35" id="textcodeconverter-str" name="textcodeconverter-str">3.1.2.4&nbsp;&nbsp;&nbsp;TextCodeConverter.__str__</a></h4>
 <p>Return converted data as string:</p>
 <pre class="literal-block">
 def __str__(self):
@@ -525,9 +581,9 @@ def __str__(self):
 </div>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id34" id="helpers-and-convenience-methods" name="helpers-and-convenience-methods">3.1.3&nbsp;&nbsp;&nbsp;Helpers and convenience methods</a></h3>
+<h3><a class="toc-backref" href="#id36" id="helpers-and-convenience-methods" name="helpers-and-convenience-methods">3.1.3&nbsp;&nbsp;&nbsp;Helpers and convenience methods</a></h3>
 <div class="section">
-<h4><a class="toc-backref" href="#id35" id="textcodeconverter-convert" name="textcodeconverter-convert">3.1.3.1&nbsp;&nbsp;&nbsp;TextCodeConverter.convert</a></h4>
+<h4><a class="toc-backref" href="#id37" id="textcodeconverter-convert" name="textcodeconverter-convert">3.1.3.1&nbsp;&nbsp;&nbsp;TextCodeConverter.convert</a></h4>
 <p>The <cite>convert</cite> method generates an iterator that does the actual  code &lt;--&gt;
 text format conversion. The converted data is yielded line-wise and the
 instance's <cite>status</cite> argument indicates whether the current line is &quot;header&quot;,
@@ -578,11 +634,14 @@ documentation block,</li>
 </ul>
 </dd>
 <dt><cite>code_block_marker_missing</cite></dt>
-<dd>If the last paragraph of a documentation block does not end with a
+<dd><p class="first">If the last paragraph of a documentation block does not end with a
 &quot;code_block_marker&quot; (the literal-block marker <tt class="docutils literal"><span class="pre">::</span></tt>), it must
-be added (otherwise, the back-conversion fails.).
-<cite>code_block_marker_missing</cite> is set by <a class="reference" href="#code2text-documentation-handler">Code2Text.documentation_handler</a>
-and evaluated by <a class="reference" href="#code2text-code-block-handler">Code2Text.code_block_handler</a>.</dd>
+be added (otherwise, the back-conversion fails.).</p>
+<p class="last"><cite>code_block_marker_missing</cite> is set by <a class="reference" href="#code2text-documentation-handler">Code2Text.documentation_handler</a>
+and evaluated by <a class="reference" href="#code2text-code-block-handler">Code2Text.code_block_handler</a>, because the
+documentation_handler does not know whether the next bloc will be
+documentation (with no need for a code_block_marker) or a code block.</p>
+</dd>
 </dl>
 <pre class="literal-block">
 self.state = &quot;&quot;
@@ -599,7 +658,7 @@ for block in collect_blocks(expandtabs_filter(lines)):
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id36" id="textcodeconverter-get-filter" name="textcodeconverter-get-filter">3.1.3.2&nbsp;&nbsp;&nbsp;TextCodeConverter.get_filter</a></h4>
+<h4><a class="toc-backref" href="#id38" id="textcodeconverter-get-filter" name="textcodeconverter-get-filter">3.1.3.2&nbsp;&nbsp;&nbsp;TextCodeConverter.get_filter</a></h4>
 <pre class="literal-block">
 def get_filter(self, filter_set, language):
     &quot;&quot;&quot;Return language specific filter&quot;&quot;&quot;
@@ -618,7 +677,7 @@ def get_filter(self, filter_set, language):
 </pre>
 </div>
 <div class="section">
-<h4><a class="toc-backref" href="#id37" id="textcodeconverter-get-indent" name="textcodeconverter-get-indent">3.1.3.3&nbsp;&nbsp;&nbsp;TextCodeConverter.get_indent</a></h4>
+<h4><a class="toc-backref" href="#id39" id="textcodeconverter-get-indent" name="textcodeconverter-get-indent">3.1.3.3&nbsp;&nbsp;&nbsp;TextCodeConverter.get_indent</a></h4>
 <p>Return the number of leading spaces in <cite>line</cite>:</p>
 <pre class="literal-block">
 def get_indent(self, line):
@@ -630,7 +689,7 @@ def get_indent(self, line):
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id38" id="text2code" name="text2code">3.2&nbsp;&nbsp;&nbsp;Text2Code</a></h2>
+<h2><a class="toc-backref" href="#id40" id="text2code" name="text2code">3.2&nbsp;&nbsp;&nbsp;Text2Code</a></h2>
 <p>The <cite>Text2Code</cite> converter separates <em>code-blocks</em> <a class="footnote-reference" href="#id4" id="id3" name="id3">[2]</a> from <em>documentation</em>.
 Code blocks are unindented, documentation is commented (or filtered, if the
 <tt class="docutils literal"><span class="pre">strip</span></tt> option is True).</p>
@@ -661,7 +720,7 @@ class Text2Code(TextCodeConverter):
     &quot;&quot;&quot;
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id39" id="text2code-set-state" name="text2code-set-state">3.2.1&nbsp;&nbsp;&nbsp;Text2Code.set_state</a></h3>
+<h3><a class="toc-backref" href="#id41" id="text2code-set-state" name="text2code-set-state">3.2.1&nbsp;&nbsp;&nbsp;Text2Code.set_state</a></h3>
 <pre class="literal-block">
 def set_state(self, block):
     &quot;&quot;&quot;Determine state of `block`. Set `self.state`
@@ -710,7 +769,7 @@ codeindent using self.ensure_trailing_blank_line(lines, line) (would need
 split and push-back of the documentation part)?</p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id40" id="text2code-header-handler" name="text2code-header-handler">3.2.2&nbsp;&nbsp;&nbsp;Text2Code.header_handler</a></h3>
+<h3><a class="toc-backref" href="#id42" id="text2code-header-handler" name="text2code-header-handler">3.2.2&nbsp;&nbsp;&nbsp;Text2Code.header_handler</a></h3>
 <p>Sometimes code needs to remain on the first line(s) of the document to be
 valid. The most common example is the &quot;shebang&quot; line that tells a POSIX
 shell how to process an executable file:</p>
@@ -760,7 +819,7 @@ def header_handler(self, lines):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id41" id="text2code-documentation-handler" name="text2code-documentation-handler">3.2.3&nbsp;&nbsp;&nbsp;Text2Code.documentation_handler</a></h3>
+<h3><a class="toc-backref" href="#id43" id="text2code-documentation-handler" name="text2code-documentation-handler">3.2.3&nbsp;&nbsp;&nbsp;Text2Code.documentation_handler</a></h3>
 <p>The 'documentation' handler processes everything that is not recognized as
 &quot;code_block&quot;. Documentation is quoted with <cite>self.comment_string</cite>
 (or filtered with <cite>--strip=True</cite>).</p>
@@ -779,7 +838,6 @@ next &quot;documentation&quot; block)</li>
 <li>do not comment the last line (the blank line separating documentation
 and code blocks).</li>
 </ul>
-<p>TODO: allow different code marking directives (for syntax color etc)</p>
 <pre class="literal-block">
 endnum = len(lines) - 2
 for (num, line) in enumerate(lines):
@@ -788,9 +846,7 @@ for (num, line) in enumerate(lines):
             yield line
         else:
             yield self.comment_string + line
-    if (num == endnum
-        and line.rstrip().endswith(&quot;::&quot;)
-        and not line.lstrip().startswith(&quot;..&quot;)):
+    if (num == endnum and self.marker_regexp.search(line)):
         self.state = &quot;code_block&quot;
         self._textindent = self.get_indent(line)
 </pre>
@@ -799,7 +855,7 @@ lines for end-of-documentation marker and add a line by calling the
 <cite>ensure_trailing_blank_line</cite> method (which also issues a warning)</p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id42" id="text2code-code-block-handler" name="text2code-code-block-handler">3.2.4&nbsp;&nbsp;&nbsp;Text2Code.code_block_handler</a></h3>
+<h3><a class="toc-backref" href="#id44" id="text2code-code-block-handler" name="text2code-code-block-handler">3.2.4&nbsp;&nbsp;&nbsp;Text2Code.code_block_handler</a></h3>
 <p>The &quot;code_block&quot; handler is called with an indented literal block. It
 removes leading whitespace up to the indentation of the first code line in
 the file (this deviation from docutils behaviour allows indented blocks of
@@ -827,7 +883,7 @@ for line in block:
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id43" id="code2text" name="code2text">3.3&nbsp;&nbsp;&nbsp;Code2Text</a></h2>
+<h2><a class="toc-backref" href="#id45" id="code2text" name="code2text">3.3&nbsp;&nbsp;&nbsp;Code2Text</a></h2>
 <p>The <cite>Code2Text</cite> converter does the opposite of <a class="reference" href="#text2code">Text2Code</a> -- it processes
 a source in &quot;code format&quot; (i.e. in a programming language), extracts
 documentation from comment blocks, and puts program code in literal blocks.</p>
@@ -840,7 +896,7 @@ class Code2Text(TextCodeConverter):
     &quot;&quot;&quot;
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id44" id="code2text-set-state" name="code2text-set-state">3.3.1&nbsp;&nbsp;&nbsp;Code2Text.set_state</a></h3>
+<h3><a class="toc-backref" href="#id46" id="code2text-set-state" name="code2text-set-state">3.3.1&nbsp;&nbsp;&nbsp;Code2Text.set_state</a></h3>
 <p>Check if block is &quot;header&quot;, &quot;documentation&quot;, or &quot;code_block&quot;:</p>
 <p>A paragraph is &quot;documentation&quot;, if every non-blank line starts with a
 matching comment string (including whitespace except for commented blank
@@ -870,7 +926,7 @@ def set_state(self, block):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id45" id="code2text-header-handler" name="code2text-header-handler">3.3.2&nbsp;&nbsp;&nbsp;Code2Text.header_handler</a></h3>
+<h3><a class="toc-backref" href="#id47" id="code2text-header-handler" name="code2text-header-handler">3.3.2&nbsp;&nbsp;&nbsp;Code2Text.header_handler</a></h3>
 <p>Handle a leading code block. (See <a class="reference" href="#text2code-header-handler">Text2Code.header_handler</a> for a
 discussion of the &quot;header&quot; state.)</p>
 <pre class="literal-block">
@@ -888,24 +944,25 @@ def header_handler(self, lines):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id46" id="code2text-documentation-handler" name="code2text-documentation-handler">3.3.3&nbsp;&nbsp;&nbsp;Code2Text.documentation_handler</a></h3>
-<p>The <em>documentation state</em> handler converts a comment to a documentation block by
-stripping the leading <cite>comment string</cite> from every line:</p>
+<h3><a class="toc-backref" href="#id48" id="code2text-documentation-handler" name="code2text-documentation-handler">3.3.3&nbsp;&nbsp;&nbsp;Code2Text.documentation_handler</a></h3>
+<p>The <em>documentation state</em> handler converts a comment to a documentation
+block by stripping the leading <cite>comment string</cite> from every line:</p>
 <pre class="literal-block">
 def documentation_handler(self, lines):
     &quot;&quot;&quot;Uncomment documentation blocks in source code
     &quot;&quot;&quot;
 </pre>
-<p>If the code block is stripped, the literal marker would lead to
-an error when the text is converted with docutils. Strip it as well.
-Otherwise, check for the code block marker (<tt class="docutils literal"><span class="pre">::</span></tt>) at the end of
-the documentation block:</p>
+<p>If the code block is stripped, the literal marker would lead to an error
+when the text is converted with docutils. Strip it as well. Otherwise, check
+for the <cite>code_block_marker</cite> (default <tt class="docutils literal"><span class="pre">::</span></tt>) at the end of the documentation
+block:</p>
 <pre class="literal-block">
-if self.strip:
-    self.strip_literal_marker(lines)
+if self.strip or self.strip_marker:
+    self.strip_code_block_marker(lines)
 else:
     try:
-        self.code_block_marker_missing = not(lines[-2].rstrip().endswith(&quot;::&quot;))
+        self.code_block_marker_missing = \
+            not self.marker_regexp.search(lines[-2])
     except IndexError:  # len(lines &lt; 2), e.g. last line of document
         self.code_block_marker_missing = True
 </pre>
@@ -922,7 +979,7 @@ for line in lines:
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id47" id="code2text-code-block-handler" name="code2text-code-block-handler">3.3.4&nbsp;&nbsp;&nbsp;Code2Text.code_block_handler</a></h3>
+<h3><a class="toc-backref" href="#id49" id="code2text-code-block-handler" name="code2text-code-block-handler">3.3.4&nbsp;&nbsp;&nbsp;Code2Text.code_block_handler</a></h3>
 <p>The <cite>code_block</cite> handler returns the code block as indented literal
 block (or filters it, if <tt class="docutils literal"><span class="pre">self.strip</span> <span class="pre">==</span> <span class="pre">True</span></tt>). The amount of the code
 indentation is controled by <cite>self.codeindent</cite> (default 2).</p>
@@ -943,7 +1000,7 @@ def code_block_handler(self, lines):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id48" id="code2text-strip-literal-marker" name="code2text-strip-literal-marker">3.3.5&nbsp;&nbsp;&nbsp;Code2Text.strip_literal_marker</a></h3>
+<h3><a class="toc-backref" href="#id50" id="code2text-strip-code-block-marker" name="code2text-strip-code-block-marker">3.3.5&nbsp;&nbsp;&nbsp;Code2Text.strip_code_block_marker</a></h3>
 <p>Replace the literal marker with the equivalent of docutils replace rules</p>
 <ul class="simple">
 <li>strip <cite>::</cite>-line (and preceding blank line) if on a line on its own</li>
@@ -953,37 +1010,34 @@ def code_block_handler(self, lines):
 <p><cite>lines</cite> should be a list of documentation lines (with a trailing blank line).
 It is modified in-place:</p>
 <pre class="literal-block">
-def strip_literal_marker(self, lines):
+def strip_code_block_marker(self, lines):
     try:
         line = lines[-2]
-    except IndexError:  # len(lines &lt; 2)
-        return
+    except IndexError:
+        return # just one line (no trailing blank line)
 
-    # split at rightmost '::'
-    try:
-        (head, tail) = line.rsplit('::', 1)
-    except ValueError:  # only one part (no '::')
-        return
+    # match with regexp: `match` is None or has groups
+    # \1 leading text, \2 code_block_marker, \3 remainder
+    match = self.marker_regexp.search(line)
 
-    # '::' on an extra line
-    if not head.strip():
+    if not match:                 # no code_block_marker present
+        return
+    if not match.group(1):        # `code_block_marker` on an extra line
         del(lines[-2])
         # delete preceding line if it is blank
         if len(lines) &gt;= 2 and not lines[-2].lstrip():
             del(lines[-2])
-    # '::' follows whitespace
-    elif head.rstrip() &lt; head:
-        head = head.rstrip()
-        lines[-2] = &quot;&quot;.join((head, tail))
-    # '::' follows text
-    else:
-        lines[-2] = &quot;:&quot;.join((head, tail))
+    elif match.group(1).rstrip() &lt; match.group(1):
+        # '::' follows whitespace
+        lines[-2] = match.group(1).rstrip() + match.group(3)
+    else:                         # '::' follows text
+        lines[-2] = match.group(1).rstrip() + ':' + match.group(3)
 </pre>
 </div>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id49" id="filters" name="filters">4&nbsp;&nbsp;&nbsp;Filters</a></h1>
+<h1><a class="toc-backref" href="#id51" id="filters" name="filters">4&nbsp;&nbsp;&nbsp;Filters</a></h1>
 <p>Filters allow pre- and post-processing of the data to bring it in a format
 suitable for the &quot;normal&quot; text&lt;-&gt;code conversion. An example is conversion
 of <cite>C</cite> <tt class="docutils literal"><span class="pre">/*</span></tt> <tt class="docutils literal"><span class="pre">*/</span></tt> comments into C++ <tt class="docutils literal"><span class="pre">//</span></tt> comments (and back).
@@ -992,7 +1046,7 @@ Another example is the conversion of <cite>C</cite> <tt class="docutils literal"
 <p>Filters are generator functions that return an iterator acting on a
 <cite>data</cite> iterable and yielding processed <cite>data</cite> lines.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id50" id="identity-filter" name="identity-filter">4.1&nbsp;&nbsp;&nbsp;identity_filter</a></h2>
+<h2><a class="toc-backref" href="#id52" id="identity-filter" name="identity-filter">4.1&nbsp;&nbsp;&nbsp;identity_filter</a></h2>
 <p>The most basic filter is the identity filter, that returns its argument as
 iterator:</p>
 <pre class="literal-block">
@@ -1002,7 +1056,7 @@ def identity_filter(data):
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id51" id="expandtabs-filter" name="expandtabs-filter">4.2&nbsp;&nbsp;&nbsp;expandtabs_filter</a></h2>
+<h2><a class="toc-backref" href="#id53" id="expandtabs-filter" name="expandtabs-filter">4.2&nbsp;&nbsp;&nbsp;expandtabs_filter</a></h2>
 <p>Expand hard-tabs in every line of <cite>data</cite> (cf. <cite>str.expandtabs</cite>).</p>
 <p>This filter is applied to the input data by <a class="reference" href="#textcodeconverter-convert">TextCodeConverter.convert</a> as
 hard tabs can lead to errors when the indentation is changed.</p>
@@ -1014,7 +1068,7 @@ def expandtabs_filter(data):
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id52" id="collect-blocks" name="collect-blocks">4.3&nbsp;&nbsp;&nbsp;collect_blocks</a></h2>
+<h2><a class="toc-backref" href="#id54" id="collect-blocks" name="collect-blocks">4.3&nbsp;&nbsp;&nbsp;collect_blocks</a></h2>
 <p>A filter to aggregate &quot;paragraphs&quot; (blocks separated by blank
 lines). Yields lists of lines:</p>
 <pre class="literal-block">
@@ -1041,7 +1095,7 @@ def collect_blocks(lines):
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id53" id="dumb-c-preprocessor" name="dumb-c-preprocessor">4.4&nbsp;&nbsp;&nbsp;dumb_c_preprocessor</a></h2>
+<h2><a class="toc-backref" href="#id55" id="dumb-c-preprocessor" name="dumb-c-preprocessor">4.4&nbsp;&nbsp;&nbsp;dumb_c_preprocessor</a></h2>
 <p>This is a basic filter to convert <cite>C</cite> to <cite>C++</cite> comments. Works line-wise and
 only converts lines that</p>
 <ul class="simple">
@@ -1081,7 +1135,7 @@ numbers for the <cite>count</cite> argument:</p>
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id54" id="dumb-c-postprocessor" name="dumb-c-postprocessor">4.5&nbsp;&nbsp;&nbsp;dumb_c_postprocessor</a></h2>
+<h2><a class="toc-backref" href="#id56" id="dumb-c-postprocessor" name="dumb-c-postprocessor">4.5&nbsp;&nbsp;&nbsp;dumb_c_postprocessor</a></h2>
 <p>Undo the preparations by the dumb_c_preprocessor and re-insert valid comment
 delimiters</p>
 <pre class="literal-block">
@@ -1100,7 +1154,7 @@ def dumb_c_postprocessor(data):
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id55" id="register-filters" name="register-filters">4.6&nbsp;&nbsp;&nbsp;register filters</a></h2>
+<h2><a class="toc-backref" href="#id57" id="register-filters" name="register-filters">4.6&nbsp;&nbsp;&nbsp;register filters</a></h2>
 <pre class="literal-block">
 defaults.preprocessors['c2text'] = dumb_c_preprocessor
 defaults.preprocessors['css2text'] = dumb_c_preprocessor
@@ -1110,13 +1164,13 @@ defaults.postprocessors['text2css'] = dumb_c_postprocessor
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id56" id="command-line-use" name="command-line-use">5&nbsp;&nbsp;&nbsp;Command line use</a></h1>
+<h1><a class="toc-backref" href="#id58" id="command-line-use" name="command-line-use">5&nbsp;&nbsp;&nbsp;Command line use</a></h1>
 <p>Using this script from the command line will convert a file according to its
 extension. This default can be overridden by a couple of options.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id57" id="dual-source-handling" name="dual-source-handling">5.1&nbsp;&nbsp;&nbsp;Dual source handling</a></h2>
+<h2><a class="toc-backref" href="#id59" id="dual-source-handling" name="dual-source-handling">5.1&nbsp;&nbsp;&nbsp;Dual source handling</a></h2>
 <div class="section">
-<h3><a class="toc-backref" href="#id58" id="how-to-determine-which-source-is-up-to-date" name="how-to-determine-which-source-is-up-to-date">5.1.1&nbsp;&nbsp;&nbsp;How to determine which source is up-to-date?</a></h3>
+<h3><a class="toc-backref" href="#id60" id="how-to-determine-which-source-is-up-to-date" name="how-to-determine-which-source-is-up-to-date">5.1.1&nbsp;&nbsp;&nbsp;How to determine which source is up-to-date?</a></h3>
 <ul>
 <li><p class="first">set modification date of <cite>oufile</cite> to the one of <cite>infile</cite></p>
 <p>Points out that the source files are 'synchronized'.</p>
@@ -1141,7 +1195,7 @@ function <cite>pylit_check()</cite> in <a class="reference" href="http://jedmode
 </ul>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id59" id="recognised-filename-extensions" name="recognised-filename-extensions">5.1.2&nbsp;&nbsp;&nbsp;Recognised Filename Extensions</a></h3>
+<h3><a class="toc-backref" href="#id61" id="recognised-filename-extensions" name="recognised-filename-extensions">5.1.2&nbsp;&nbsp;&nbsp;Recognised Filename Extensions</a></h3>
 <p>Instead of defining a new extension for &quot;pylit&quot; literate programms,
 by default <tt class="docutils literal"><span class="pre">.txt</span></tt> will be appended for the text source and stripped by
 the conversion to the code source. I.e. for a Python program foo:</p>
@@ -1153,14 +1207,14 @@ the conversion to the code source. I.e. for a Python program foo:</p>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id60" id="optionvalues" name="optionvalues">5.2&nbsp;&nbsp;&nbsp;OptionValues</a></h2>
+<h2><a class="toc-backref" href="#id62" id="optionvalues" name="optionvalues">5.2&nbsp;&nbsp;&nbsp;OptionValues</a></h2>
 <p>The following class adds <cite>as_dict</cite> and <cite>__getattr__</cite> methods to
 <cite>optparse.Values</cite>:</p>
 <pre class="literal-block">
 class OptionValues(optparse.Values):
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id61" id="optionvalues-as-dict" name="optionvalues-as-dict">5.2.1&nbsp;&nbsp;&nbsp;OptionValues.as_dict</a></h3>
+<h3><a class="toc-backref" href="#id63" id="optionvalues-as-dict" name="optionvalues-as-dict">5.2.1&nbsp;&nbsp;&nbsp;OptionValues.as_dict</a></h3>
 <p>For use as keyword arguments, it is handy to have the options in a
 dictionary. <cite>as_dict</cite> returns a copy of the instances object dictionary:</p>
 <pre class="literal-block">
@@ -1170,7 +1224,7 @@ def as_dict(self):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id62" id="optionvalues-complete" name="optionvalues-complete">5.2.2&nbsp;&nbsp;&nbsp;OptionValues.complete</a></h3>
+<h3><a class="toc-backref" href="#id64" id="optionvalues-complete" name="optionvalues-complete">5.2.2&nbsp;&nbsp;&nbsp;OptionValues.complete</a></h3>
 <pre class="literal-block">
 def complete(self, **keyw):
     &quot;&quot;&quot;
@@ -1185,7 +1239,7 @@ def complete(self, **keyw):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id63" id="optionvalues-getattr" name="optionvalues-getattr">5.2.3&nbsp;&nbsp;&nbsp;OptionValues.__getattr__</a></h3>
+<h3><a class="toc-backref" href="#id65" id="optionvalues-getattr" name="optionvalues-getattr">5.2.3&nbsp;&nbsp;&nbsp;OptionValues.__getattr__</a></h3>
 <p>To replace calls using <tt class="docutils literal"><span class="pre">options.ensure_value(&quot;OPTION&quot;,</span> <span class="pre">None)</span></tt> with the
 more concise <tt class="docutils literal"><span class="pre">options.OPTION</span></tt>, we define <cite>__getattr__</cite> <a class="footnote-reference" href="#id6" id="id5" name="id5">[3]</a></p>
 <pre class="literal-block">
@@ -1205,7 +1259,7 @@ self).</td></tr>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id64" id="pylitoptions" name="pylitoptions">5.3&nbsp;&nbsp;&nbsp;PylitOptions</a></h2>
+<h2><a class="toc-backref" href="#id66" id="pylitoptions" name="pylitoptions">5.3&nbsp;&nbsp;&nbsp;PylitOptions</a></h2>
 <p>The <cite>PylitOptions</cite> class comprises an option parser and methods for parsing
 and completion of command line options:</p>
 <pre class="literal-block">
@@ -1213,7 +1267,7 @@ class PylitOptions(object):
     &quot;&quot;&quot;Storage and handling of command line options for pylit&quot;&quot;&quot;
 </pre>
 <div class="section">
-<h3><a class="toc-backref" href="#id65" id="instantiation" name="instantiation">5.3.1&nbsp;&nbsp;&nbsp;Instantiation</a></h3>
+<h3><a class="toc-backref" href="#id67" id="instantiation" name="instantiation">5.3.1&nbsp;&nbsp;&nbsp;Instantiation</a></h3>
 <pre class="literal-block">
 def __init__(self):
     &quot;&quot;&quot;Set up an `OptionParser` instance for pylit command line options
@@ -1247,7 +1301,7 @@ def __init__(self):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id66" id="pylitoptions-parse-args" name="pylitoptions-parse-args">5.3.2&nbsp;&nbsp;&nbsp;PylitOptions.parse_args</a></h3>
+<h3><a class="toc-backref" href="#id68" id="pylitoptions-parse-args" name="pylitoptions-parse-args">5.3.2&nbsp;&nbsp;&nbsp;PylitOptions.parse_args</a></h3>
 <p>The <cite>parse_args</cite> method calls the <cite>optparse.OptionParser</cite> on command
 line or provided args and returns the result as <cite>PylitOptions.Values</cite>
 instance. Defaults can be provided as keyword arguments:</p>
@@ -1274,7 +1328,7 @@ def parse_args(self, args=sys.argv[1:], **keyw):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id67" id="pylitoptions-complete-values" name="pylitoptions-complete-values">5.3.3&nbsp;&nbsp;&nbsp;PylitOptions.complete_values</a></h3>
+<h3><a class="toc-backref" href="#id69" id="pylitoptions-complete-values" name="pylitoptions-complete-values">5.3.3&nbsp;&nbsp;&nbsp;PylitOptions.complete_values</a></h3>
 <p>Complete an OptionValues instance <cite>values</cite>.  Use module-level defaults and
 context information to set missing option values to sensible defaults (if
 possible)</p>
@@ -1327,7 +1381,7 @@ return values
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id68" id="pylitoptions-get-outfile-name" name="pylitoptions-get-outfile-name">5.3.4&nbsp;&nbsp;&nbsp;PylitOptions._get_outfile_name</a></h3>
+<h3><a class="toc-backref" href="#id70" id="pylitoptions-get-outfile-name" name="pylitoptions-get-outfile-name">5.3.4&nbsp;&nbsp;&nbsp;PylitOptions._get_outfile_name</a></h3>
 <p>Construct a matching filename for the output file. The output filename is
 constructed from <cite>infile</cite> by the following rules:</p>
 <ul class="simple">
@@ -1356,7 +1410,7 @@ def _get_outfile_name(self, values):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id69" id="pylitoptions-call" name="pylitoptions-call">5.3.5&nbsp;&nbsp;&nbsp;PylitOptions.__call__</a></h3>
+<h3><a class="toc-backref" href="#id71" id="pylitoptions-call" name="pylitoptions-call">5.3.5&nbsp;&nbsp;&nbsp;PylitOptions.__call__</a></h3>
 <p>The special <cite>__call__</cite> method allows to use PylitOptions instances as
 <em>callables</em>: Calling an instance parses the argument list to extract option
 values and completes them based on &quot;context-sensitive defaults&quot;.  Keyword
@@ -1371,9 +1425,9 @@ def __call__(self, args=sys.argv[1:], **keyw):
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id70" id="helper-functions" name="helper-functions">5.4&nbsp;&nbsp;&nbsp;Helper functions</a></h2>
+<h2><a class="toc-backref" href="#id72" id="helper-functions" name="helper-functions">5.4&nbsp;&nbsp;&nbsp;Helper functions</a></h2>
 <div class="section">
-<h3><a class="toc-backref" href="#id71" id="open-streams" name="open-streams">5.4.1&nbsp;&nbsp;&nbsp;open_streams</a></h3>
+<h3><a class="toc-backref" href="#id73" id="open-streams" name="open-streams">5.4.1&nbsp;&nbsp;&nbsp;open_streams</a></h3>
 <p>Return file objects for in- and output. If the input path is missing,
 write usage and abort. (An alternative would be to use stdin as default.
 However,  this leaves the uninitiated user with a non-responding application
@@ -1411,7 +1465,7 @@ def open_streams(infile = '-', outfile = '-', overwrite='update', **keyw):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id72" id="is-newer" name="is-newer">5.4.2&nbsp;&nbsp;&nbsp;is_newer</a></h3>
+<h3><a class="toc-backref" href="#id74" id="is-newer" name="is-newer">5.4.2&nbsp;&nbsp;&nbsp;is_newer</a></h3>
 <pre class="literal-block">
 def is_newer(path1, path2):
     &quot;&quot;&quot;Check if `path1` is newer than `path2` (using mtime)
@@ -1441,7 +1495,7 @@ def is_newer(path1, path2):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id73" id="get-converter" name="get-converter">5.4.3&nbsp;&nbsp;&nbsp;get_converter</a></h3>
+<h3><a class="toc-backref" href="#id75" id="get-converter" name="get-converter">5.4.3&nbsp;&nbsp;&nbsp;get_converter</a></h3>
 <p>Get an instance of the converter state machine:</p>
 <pre class="literal-block">
 def get_converter(data, txt2code=True, **keyw):
@@ -1453,9 +1507,9 @@ def get_converter(data, txt2code=True, **keyw):
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id74" id="use-cases" name="use-cases">5.5&nbsp;&nbsp;&nbsp;Use cases</a></h2>
+<h2><a class="toc-backref" href="#id76" id="use-cases" name="use-cases">5.5&nbsp;&nbsp;&nbsp;Use cases</a></h2>
 <div class="section">
-<h3><a class="toc-backref" href="#id75" id="run-doctest" name="run-doctest">5.5.1&nbsp;&nbsp;&nbsp;run_doctest</a></h3>
+<h3><a class="toc-backref" href="#id77" id="run-doctest" name="run-doctest">5.5.1&nbsp;&nbsp;&nbsp;run_doctest</a></h3>
 <pre class="literal-block">
 def run_doctest(infile=&quot;-&quot;, txt2code=True,
                 globs={}, verbose=False, optionflags=0, **keyw):
@@ -1486,7 +1540,7 @@ return runner.failures, runner.tries
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id76" id="diff" name="diff">5.5.2&nbsp;&nbsp;&nbsp;diff</a></h3>
+<h3><a class="toc-backref" href="#id78" id="diff" name="diff">5.5.2&nbsp;&nbsp;&nbsp;diff</a></h3>
 <pre class="literal-block">
 def diff(infile='-', outfile='-', txt2code=True, **keyw):
     &quot;&quot;&quot;Report differences between converted infile and existing outfile
@@ -1534,7 +1588,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id77" id="execute" name="execute">5.5.3&nbsp;&nbsp;&nbsp;execute</a></h3>
+<h3><a class="toc-backref" href="#id79" id="execute" name="execute">5.5.3&nbsp;&nbsp;&nbsp;execute</a></h3>
 <p>Works only for python code.</p>
 <p>Doesnot work with <cite>eval</cite>, as code is not just one expression.</p>
 <pre class="literal-block">
@@ -1551,7 +1605,7 @@ def execute(infile=&quot;-&quot;, txt2code=True, **keyw):
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id78" id="main" name="main">5.6&nbsp;&nbsp;&nbsp;main</a></h2>
+<h2><a class="toc-backref" href="#id80" id="main" name="main">5.6&nbsp;&nbsp;&nbsp;main</a></h2>
 <p>If this script is called from the command line, the <cite>main</cite> function will
 convert the input (file or stdin) between text and code formats.</p>
 <p>Option default values for the conversion can be given as keyword arguments
@@ -1644,47 +1698,52 @@ if __name__ == '__main__':
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id79" id="open-questions" name="open-questions">6&nbsp;&nbsp;&nbsp;Open questions</a></h1>
+<h1><a class="toc-backref" href="#id81" id="open-questions" name="open-questions">6&nbsp;&nbsp;&nbsp;Open questions</a></h1>
 <p>Open questions and ideas for further development</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id80" id="clean-code" name="clean-code">6.1&nbsp;&nbsp;&nbsp;Clean code</a></h2>
+<h2><a class="toc-backref" href="#id82" id="clean-code" name="clean-code">6.1&nbsp;&nbsp;&nbsp;Clean code</a></h2>
 <ul class="simple">
 <li>can we gain from using &quot;shutils&quot; over &quot;os.path&quot; and &quot;os&quot;?</li>
 <li>use pylint or pyChecker to enfoce a consistent style?</li>
 </ul>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id81" id="options" name="options">6.2&nbsp;&nbsp;&nbsp;Options</a></h2>
-<ul class="simple">
-<li>Use templates for the &quot;intelligent guesses&quot; (with Python syntax for string
-replacement with dicts: <tt class="docutils literal"><span class="pre">&quot;hello</span> <span class="pre">%(what)s&quot;</span> <span class="pre">%</span> <span class="pre">{'what':</span> <span class="pre">'world'}</span></tt>)</li>
-<li>Is it sensible to offer the <cite>header_string</cite> option also as command line
-option?</li>
-<li>Configurable</li>
+<h2><a class="toc-backref" href="#id83" id="options" name="options">6.2&nbsp;&nbsp;&nbsp;Options</a></h2>
+<ul>
+<li><p class="first">Use templates for the &quot;intelligent guesses&quot; (with Python syntax for string
+replacement with dicts: <tt class="docutils literal"><span class="pre">&quot;hello</span> <span class="pre">%(what)s&quot;</span> <span class="pre">%</span> <span class="pre">{'what':</span> <span class="pre">'world'}</span></tt>)</p>
+</li>
+<li><p class="first">Is it sensible to offer the <cite>header_string</cite> option also as command line
+option?</p>
+</li>
+<li><p class="first">treatment of blank lines:</p>
+<ul>
+<li><p class="first">Alternatives: Keep blank lines blank</p>
+<ul>
+<li><p class="first">&quot;always&quot;,</p>
+</li>
+<li><p class="first">&quot;if empty&quot; (no whitespace). Comment if there is whitespace.</p>
+<p>This would allow non-obstructing markup but unfortunately this is (in
+most editors) also non-visible markup -&gt; bad.</p>
+</li>
+<li><p class="first">&quot;if double&quot; (if there is more than one consecutive blank line)</p>
+</li>
+<li><p class="first">&quot;never&quot; (current setting)</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>So the setting could be something like:</p>
+<pre class="literal-block">
+defaults.keep_blank_lines = { &quot;python&quot;: &quot;if double&quot;,
+                              &quot;elisp&quot;: &quot;always&quot;}
+</pre>
+</li>
 </ul>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id82" id="parsing-problems" name="parsing-problems">6.3&nbsp;&nbsp;&nbsp;Parsing Problems</a></h2>
+<h2><a class="toc-backref" href="#id84" id="parsing-problems" name="parsing-problems">6.3&nbsp;&nbsp;&nbsp;Parsing Problems</a></h2>
 <ul>
-<li><p class="first">How can I include a literal block that should not be in the
-executable code (e.g. an example, an earlier version or variant)?</p>
-<p>Workarounds:</p>
-<ul>
-<li><p class="first">Use a <a class="reference" href="http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block">parsed-literal block</a> directive if there is no &quot;accidential&quot;
-markup in the literal code</p>
-</li>
-<li><p class="first">Use a <a class="reference" href="http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks">line block</a> and mark all lines as <a class="reference" href="http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals">inline literals</a>.</p>
-</li>
-<li><p class="first">Python session examples and doctests can use <a class="reference" href="http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks">doctest block</a> syntax</p>
-<p>No double colon! Start first line of block with <tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></tt>.</p>
-</li>
-</ul>
-<p>Not implemented yet:</p>
-<ul class="simple">
-<li>use a dedicated <a class="reference" href="#code-block-directive">code-block directive</a> or a distinct directive for
-ordinary literal blocks.</li>
-</ul>
-</li>
 <li><p class="first">Ignore &quot;matching comments&quot; in literal strings?</p>
 <p>Too complicated: Would need a specific detection algorithm for every
 language that supports multi-line literal strings (C++, PHP, Python)</p>
@@ -1694,24 +1753,7 @@ language that supports multi-line literal strings (C++, PHP, Python)</p>
 </ul>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id83" id="code-block-directive" name="code-block-directive">6.4&nbsp;&nbsp;&nbsp;code-block directive</a></h2>
-<p>In a document where code examples are only one of several uses of literal
-blocks, it would be more appropriate to single out the sourcecode with a
-dedicated &quot;code-block&quot; directive.</p>
-<p>Some highlight plug-ins require a special &quot;sourcecode&quot; or &quot;code-block&quot;
-directive instead of the <tt class="docutils literal"><span class="pre">::</span></tt> literal block marker. Actually,
-syntax-highlight is possible without changes to docutils with the <a class="reference" href="http://pygments.org/">Pygments</a>
-package using a &quot;code-block&quot; directive. See the <a class="reference" href="../features/syntax-highlight.html">syntax highlight</a> section
-in the features documentation.</p>
-<p>TODO:</p>
-<ul class="simple">
-<li>provide a &quot;code-block-marker&quot; string option.</li>
-<li>correctly handle the case of <tt class="docutils literal"><span class="pre">code_block_marker</span> <span class="pre">==</span> <span class="pre">'::'</span></tt> and conversion
-of <tt class="docutils literal"><span class="pre">::</span></tt> to a different &quot;code_block_marker&quot; -- consider minimized forms.</li>
-</ul>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id84" id="doctstrings-in-code-blocks" name="doctstrings-in-code-blocks">6.5&nbsp;&nbsp;&nbsp;doctstrings in code blocks</a></h2>
+<h2><a class="toc-backref" href="#id85" id="doctstrings-in-code-blocks" name="doctstrings-in-code-blocks">6.4&nbsp;&nbsp;&nbsp;doctstrings in code blocks</a></h2>
 <ul class="simple">
 <li>How to handle docstrings in code blocks? (it would be nice to convert them
 to rst-text if <tt class="docutils literal"><span class="pre">__docformat__</span> <span class="pre">==</span> <span class="pre">restructuredtext</span></tt>)</li>
@@ -1724,7 +1766,7 @@ to rst-text if <tt class="docutils literal"><span class="pre">__docformat__</spa
 <div class="footer">
 <hr class="footer" />
 <a class="reference" href="pylit.py.txt">View document source</a>.
-Generated on: 2007-06-06.
+Generated on: 2007-06-20.
 
 </div>
 </body>

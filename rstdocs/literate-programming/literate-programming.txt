@@ -61,12 +61,12 @@ John Max Skaller put the philosophy of literate programming in one sentence
      http://www-128.ibm.com/developerworks/library/l-pyth7.html
 
 
-Technique and Literate Programming Systems
-++++++++++++++++++++++++++++++++++++++++++
+Literate Programming Technique and Literate Programming Systems
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Donald Knuth not only conceived the *philosophy* of literate programming,
-he also wrote the first *literate programming system* `WEB`_ that
-implements the *technique of literate programming*:
+he also wrote the first literate programming *system* `WEB`_ that
+implements the *technique* of literate programming:
 
 .. _`technique of literate programming`:
 
