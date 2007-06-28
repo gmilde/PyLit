@@ -30,5 +30,6 @@ Syntax highlight
 
 Another open topic is docutils support for `syntax-highlight`_.
 
-.. _syntax-highlight: syntax-highlight.html
+.. _syntax-highlight: 
+   http://docutils.sourceforge.net/sandbox/code-block-directive/docs/syntax-highlight.html
 
