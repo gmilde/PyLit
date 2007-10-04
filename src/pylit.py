@@ -77,6 +77,7 @@
 #                    bugfix: collect all trailing blank lines into a block.
 #                    Expand tabs with `expandtabs_filter`_.
 # :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
+# :2007-06-28: 0.6.1 Bugfix: reset self.code_block_marker_missing
 # 
 # ::
 
@@ -86,7 +87,7 @@ computer code and a *code source* with embedded documentation.
 
 __docformat__ = 'restructuredtext'
 
-_version = "0.5"
+_version = "0.6"
 
 
 # Introduction
@@ -461,7 +462,11 @@ class TextCodeConverter(object):
 #   :"header":        leading code block: strip `header_string`,
 #   :"documentation": documentation part: comment out,
 #   :"code_block":    literal blocks containing source code: unindent.
-#   
+#
+# ::
+
+        self.state = ""
+   
 # `_codeindent`
 #   * Do not confuse the internal attribute `_codeindent` with the configurable
 #     `codeindent` (without the leading underscore).
@@ -470,12 +475,20 @@ class TextCodeConverter(object):
 #     in the text-to-code conversion,
 #   * `codeindent` is set in `__init__` to `defaults.codeindent`_ and added to
 #     "code_block" lines in the code-to-text conversion.
-#        
+#
+# ::
+        
+        self._codeindent = 0
+
 # `_textindent`
 #   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
 #     documentation block,
 #   * used in `Text2Code.set_state`_ to find the end of a code block.
-# 
+#
+# ::
+
+        self._textindent = 0
+ 
 # `code_block_marker_missing`
 #   If the last paragraph of a documentation block does not end with a
 #   "code_block_marker" (the literal-block marker ``::``), it must
@@ -485,12 +498,9 @@ class TextCodeConverter(object):
 #   and evaluated by `Code2Text.code_block_handler`_, because the
 #   documentation_handler does not know whether the next bloc will be
 #   documentation (with no need for a code_block_marker) or a code block.
-#       
+#
 # ::
-         
-        self.state = ""
-        self._codeindent = 0
-        self._textindent = 0
+
         self.code_block_marker_missing = False
 
 # Determine the state of the block and convert with the matching "handler"::
@@ -863,6 +873,7 @@ class Code2Text(TextCodeConverter):
             self.state = "documentation"
             yield "::\n"
             yield "\n"
+            self.code_block_marker_missing = False
             self.state = "code_block"
         for line in lines:
             yield " "*self.codeindent + line
@@ -1171,7 +1182,7 @@ class PylitOptions(object):
         p.add_option("-d", "--diff", action="store_true", 
                      help="test for differences to existing file")
         p.add_option("--doctest", action="store_true",
-                     help="run doctest.testfile() on the text version")
+                     help="run doctests (requires Python >= 2.4)")
         p.add_option("-e", "--execute", action="store_true",
                      help="execute code (Python only)")
         p.add_option("--language", action="store", 
@@ -1442,8 +1453,8 @@ def run_doctest(infile="-", txt2code=True,
 # 
 # ::
 
-def diff(infile='-', outfile='-', txt2code=True, **keyw):
-    """Report differences between converted infile and existing outfile
+def diff(infile='-', outfile='-', txt2code=True, **keyw): """Report
+differences between converted infile and existing outfile
     
     If outfile is '-', do a round-trip conversion and report differences
     """
