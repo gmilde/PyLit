@@ -78,7 +78,8 @@
 #                    Expand tabs with `expandtabs_filter`_.
 # :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
 # :2007-06-28: 0.6.1 Bugfix: reset self.code_block_marker_missing
-# 
+# :2007-10-04: 0.6.2 Documentation fixes
+#
 # ::
 
 """pylit: bidirectional converter between a *text source* with embedded
@@ -104,7 +105,9 @@ _version = "0.6"
 # 
 # Requirements
 # ------------
-# 
+#
+# PyLit requires Python version 2.3 or higher, the --doctest option requires
+# version 2.4 or higher.
 # ::
 
 import re
@@ -1453,8 +1456,9 @@ def run_doctest(infile="-", txt2code=True,
 # 
 # ::
 
-def diff(infile='-', outfile='-', txt2code=True, **keyw): """Report
-differences between converted infile and existing outfile
+def diff(infile='-', outfile='-', txt2code=True, **keyw): 
+
+    """Report differences between converted infile and existing outfile
     
     If outfile is '-', do a round-trip conversion and report differences
     """
