@@ -5,9 +5,7 @@
       file: pylit.py
       file: pylit.py.txt
       file: pylit.py.html
-  /restindex
-
-  restindex
+      
       file: 99bottles.py
       file: 99bottles.py.txt
       file: 99bottles.py.html
