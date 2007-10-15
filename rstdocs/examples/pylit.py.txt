@@ -77,6 +77,7 @@ Changelog
                    bugfix: collect all trailing blank lines into a block.
                    Expand tabs with `expandtabs_filter`_.
 :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
+:2007-06-28: 0.6.1 Bugfix: reset self.code_block_marker_missing
 
 ::
 
@@ -207,7 +208,7 @@ Marker string for a code block in the text source.
 Default is a literal-block marker::
 
   defaults.code_block_marker = '::'
-
+  
 In a document where code examples are only one of several uses of literal
 blocks, it is more appropriate to single out the sourcecode with a dedicated
 "code-block" directive.
@@ -384,7 +385,7 @@ find valid cases of code_block_marker in a given line and return the groups:
                                               % marker)
           else:
               # assume code_block_marker is a directive like '.. code-block::'
-              self.marker_regexp = re.compile('^( *)(%s)(.*)$' % marker)
+              self.marker_regexp = re.compile('^( *)(%s)(.*\n?)$' % marker)
               
 .. [1] The most common choice of data is a `file` object with the text
        or code source.
@@ -461,7 +462,11 @@ re-initialises them.)
   :"header":        leading code block: strip `header_string`,
   :"documentation": documentation part: comment out,
   :"code_block":    literal blocks containing source code: unindent.
-  
+
+::
+
+          self.state = ""
+     
 `_codeindent`
   * Do not confuse the internal attribute `_codeindent` with the configurable
     `codeindent` (without the leading underscore).
@@ -470,12 +475,20 @@ re-initialises them.)
     in the text-to-code conversion,
   * `codeindent` is set in `__init__` to `defaults.codeindent`_ and added to
     "code_block" lines in the code-to-text conversion.
-       
+
+::
+        
+          self._codeindent = 0
+  
 `_textindent`
   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
     documentation block,
   * used in `Text2Code.set_state`_ to find the end of a code block.
 
+::
+
+          self._textindent = 0
+   
 `code_block_marker_missing`
   If the last paragraph of a documentation block does not end with a
   "code_block_marker" (the literal-block marker ``::``), it must
@@ -485,12 +498,9 @@ re-initialises them.)
   and evaluated by `Code2Text.code_block_handler`_, because the
   documentation_handler does not know whether the next bloc will be
   documentation (with no need for a code_block_marker) or a code block.
-      
+
 ::
-         
-          self.state = ""
-          self._codeindent = 0
-          self._textindent = 0
+
           self.code_block_marker_missing = False
   
 Determine the state of the block and convert with the matching "handler"::
@@ -804,9 +814,13 @@ Code2Text.documentation_handler
 The *documentation state* handler converts a comment to a documentation
 block by stripping the leading `comment string` from every line::
 
-      def documentation_handler(self, lines):
+      def documentation_handler(self, block):
           """Uncomment documentation blocks in source code
           """
+          
+Strip comment strings::
+
+          lines = [self.uncomment_line(line) for line in block]
   
 If the code block is stripped, the literal marker would lead to an error
 when the text is converted with docutils. Strip it as well. Otherwise, check
@@ -822,17 +836,25 @@ block::
               except IndexError:  # len(lines < 2), e.g. last line of document
                   self.code_block_marker_missing = True
   
-Strip comment strings and yield lines. Consider the case that a blank line
-has a comment string without trailing whitespace::
-        
-          stripped_comment_string = self.comment_string.rstrip()
-          
+Yield lines::
+
           for line in lines:
-              line = line.replace(self.comment_string, "", 1)
-              if line.rstrip() == stripped_comment_string:
-                  line = line.replace(stripped_comment_string, "", 1)
               yield line
   
+Code2Text.uncomment_line
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Strip comment string from a documentation line and return it. Consider the
+case that a blank line has a comment string without trailing whitespace::
+
+      def uncomment_line(self, line):
+          """Return uncommented documentation line"""
+          stripped_comment_string = self.comment_string.rstrip()
+          line = line.replace(self.comment_string, "", 1)
+          if line.rstrip() == stripped_comment_string:
+              line = line.replace(stripped_comment_string, "", 1)
+          return line
+          
   
 Code2Text.code_block_handler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -851,6 +873,7 @@ indentation is controled by `self.codeindent` (default 2).  ::
               self.state = "documentation"
               yield "::\n"
               yield "\n"
+              self.code_block_marker_missing = False
               self.state = "code_block"
           for line in lines:
               yield " "*self.codeindent + line
@@ -1151,8 +1174,11 @@ Instantiation
           # add the options
           p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
                        help="convert code source to text source")
+          p.add_option("-m", "--code-block-marker", dest="code_block_marker",
+                       help="syntax token starting a code block. (default '::')")
           p.add_option("--comment-string", dest="comment_string",
-                       help="documentation block marker (default '# ' (for python))" )
+                       help="documentation block marker in code source "
+                       "(default '# ')")
           p.add_option("-d", "--diff", action="store_true", 
                        help="test for differences to existing file")
           p.add_option("--doctest", action="store_true",
