@@ -240,7 +240,9 @@ the first text block, e.g. using a `parsed literal block`_:
 Doctests
 --------
 
-Pylit supports `Python doctests`_ in a literate script.
+Pylit supports `Python doctests`_ in a literate script. For details see the
+`literate doctests tutorial`_.
+
 We add a `doctest block`_ [#]_ to our example:
 
 .. include:: hello_with_doctest.py
@@ -340,6 +342,7 @@ looks like
 .. _source code encoding:
     http://docs.python.org/tut/node4.html#SECTION004230000000000000000
 
+.. _literate doctests tutorial: literate-doctests/
 .. _doctest:
 .. _Python doctests: http://docs.python.org/lib/module-doctest.html
 .. _Advanced API: http://docs.python.org/lib/doctest-advanced-api.html
