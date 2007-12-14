@@ -6,11 +6,11 @@
  <meta http-equiv="Content-Type"
   content="text/html; charset=<% final_encoding %>" />
  <link rel="stylesheet"
-  href="<% path_to_root %>stylesheets/pylit.css"
+  href="<% path_to_root %>pylit.css"
   type="text/css" />
  <link rel="shortcut icon" 
-  href="<% path_to_root %>favicon.png" 
-  type="image/png" />
+  href="<% path_to_root %>favicon.ico" 
+  type="image/ico" />
 </head>
 <body>
  <div  id="crumbs"> 

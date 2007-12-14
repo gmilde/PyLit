@@ -2,8 +2,10 @@
    restindex
      crumb: Home
      page-title: PyLit
-     file: favicon.png
+     file: favicon.ico
      file: pylit-framed-32.png
+     file: html4css1.css
+     file: pylit.css
    /restindex
 
 ============================================================
