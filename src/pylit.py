@@ -78,8 +78,9 @@
 #                    Expand tabs with `expandtabs_filter`_.
 # :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
 # :2007-06-28: 0.6.1 Bugfix: reset self.code_block_marker_missing
-# :2007-10-04: 0.6.2 Documentation fixes
-#
+# :2007-12-12: 0.7   prepending an empty string to sys.path in run_doctest() to
+# 	       	     allow imports from the current working dir
+# 
 # ::
 
 """pylit: bidirectional converter between a *text source* with embedded
@@ -88,7 +89,7 @@ computer code and a *code source* with embedded documentation.
 
 __docformat__ = 'restructuredtext'
 
-_version = "0.6"
+_version = "0.5"
 
 
 # Introduction
@@ -105,15 +106,11 @@ _version = "0.6"
 # 
 # Requirements
 # ------------
-#
-# PyLit requires Python version 2.3 or higher, the --doctest option requires
-# version 2.4 or higher.
+# 
 # ::
 
-import re
-import os
-import sys
-import optparse
+import __builtin__, os, sys
+import re, optparse
 
 # Customisation
 # =============
@@ -137,9 +134,9 @@ defaults = optparse.Values()
 # defaults and then call main_ e.g.:
 # 
 #   >>> import pylit
-#   >>> defaults.comment_string = "## "
-#   >>> defaults.codeindent = 4
-#   >>> main()
+#   >>> pylit.defaults.comment_string = "## "
+#   >>> pylit.defaults.codeindent = 4
+#   >>> #pylit.main()
 # 
 # The following default values are defined in pylit.py:
 # 
@@ -465,7 +462,7 @@ class TextCodeConverter(object):
 #   :"header":        leading code block: strip `header_string`,
 #   :"documentation": documentation part: comment out,
 #   :"code_block":    literal blocks containing source code: unindent.
-#
+# 
 # ::
 
         self.state = ""
@@ -478,7 +475,7 @@ class TextCodeConverter(object):
 #     in the text-to-code conversion,
 #   * `codeindent` is set in `__init__` to `defaults.codeindent`_ and added to
 #     "code_block" lines in the code-to-text conversion.
-#
+# 
 # ::
         
         self._codeindent = 0
@@ -487,7 +484,7 @@ class TextCodeConverter(object):
 #   * set by `Text2Code.documentation_handler`_ to the minimal indent of a
 #     documentation block,
 #   * used in `Text2Code.set_state`_ to find the end of a code block.
-#
+# 
 # ::
 
         self._textindent = 0
@@ -501,7 +498,7 @@ class TextCodeConverter(object):
 #   and evaluated by `Code2Text.code_block_handler`_, because the
 #   documentation_handler does not know whether the next bloc will be
 #   documentation (with no need for a code_block_marker) or a code block.
-#
+# 
 # ::
 
         self.code_block_marker_missing = False
@@ -846,7 +843,7 @@ class Code2Text(TextCodeConverter):
 
 # Code2Text.uncomment_line
 # ~~~~~~~~~~~~~~~~~~~~~~~~
-
+# 
 # Strip comment string from a documentation line and return it. Consider the
 # case that a blank line has a comment string without trailing whitespace::
 
@@ -1019,12 +1016,13 @@ def dumb_c_preprocessor(data):
 # Unfortunately, the `replace` method of strings does not support negative
 # numbers for the `count` argument:
 # 
-# >>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
+#   >>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
+#   False
 # 
 # However, there is the `rsplit` method, that can be used together with `join`:
 # 
-# >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
-# 
+#   >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
+#   True
 # 
 # dumb_c_postprocessor
 # --------------------
@@ -1185,7 +1183,7 @@ class PylitOptions(object):
         p.add_option("-d", "--diff", action="store_true", 
                      help="test for differences to existing file")
         p.add_option("--doctest", action="store_true",
-                     help="run doctests (requires Python >= 2.4)")
+                     help="run doctest.testfile() on the text version")
         p.add_option("-e", "--execute", action="store_true",
                      help="execute code (Python only)")
         p.add_option("--language", action="store", 
@@ -1420,32 +1418,41 @@ def get_converter(data, txt2code=True, **keyw):
 # 
 # run_doctest
 # ~~~~~~~~~~~
-# 
 # ::
 
 def run_doctest(infile="-", txt2code=True, 
                 globs={}, verbose=False, optionflags=0, **keyw):
     """run doctest on the text source
     """
+
+# Allow imports from the current working dir by prepending an empty string to
+# sys.path (see doc of sys.path())::
+
+    sys.path.insert(0, '')
+
+# Import classes from the doctest module::
+
     from doctest import DocTestParser, DocTestRunner
+
+# Read in source. Make sure it is in text format, as tests in comments are not
+# found by doctest::
+
     (data, out_stream) = open_streams(infile, "-")
-    
-# If source is code, convert to text, as tests in comments are not found by
-# doctest::
-    
     if txt2code is False: 
         converter = Code2Text(data, **keyw)
         docstring = str(converter)
     else: 
         docstring = data.read()
         
-# Use the doctest Advanced API to do all doctests in a given string::
-    
-    test = DocTestParser().get_doctest(docstring, globs={}, name="", 
-                                           filename=infile, lineno=0)
-    runner = DocTestRunner(verbose=verbose, optionflags=optionflags)
+        
+# Use the doctest Advanced API to run all doctests in the source text::
+
+    test = DocTestParser().get_doctest(docstring, globs, name="", 
+                                       filename=infile, lineno=0)
+    runner = DocTestRunner(verbose, optionflags)
     runner.run(test)
     runner.summarize
+    # give feedback also if no failures occured
     if not runner.failures:
         print "%d failures in %d tests"%(runner.failures, runner.tries)
     return runner.failures, runner.tries
@@ -1456,8 +1463,7 @@ def run_doctest(infile="-", txt2code=True,
 # 
 # ::
 
-def diff(infile='-', outfile='-', txt2code=True, **keyw): 
-
+def diff(infile='-', outfile='-', txt2code=True, **keyw):
     """Report differences between converted infile and existing outfile
     
     If outfile is '-', do a round-trip conversion and report differences
@@ -1532,9 +1538,7 @@ def execute(infile="-", txt2code=True, **keyw):
 # helper functions and the converter instantiation.
 # 
 # This allows easy customization for programmatic use -- just call `main`
-# with the appropriate keyword options, e.g.:
-# 
-# >>> main(comment_string="## ")
+# with the appropriate keyword options, e.g. ``pylit.main(comment_string="## ")``
 # 
 # ::
 

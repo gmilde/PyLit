@@ -134,9 +134,9 @@ This allows the easy creation of custom back-ends that customise the
 defaults and then call main_ e.g.:
 
   >>> import pylit
-  >>> defaults.comment_string = "## "
-  >>> defaults.codeindent = 4
-  >>> main()
+  >>> pylit.defaults.comment_string = "## "
+  >>> pylit.defaults.codeindent = 4
+  >>> #pylit.main()
 
 The following default values are defined in pylit.py:
 
@@ -1016,12 +1016,13 @@ A more sophisticated version would also
 Unfortunately, the `replace` method of strings does not support negative
 numbers for the `count` argument:
 
->>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
+  >>> "foo */ baz */ bar".replace(" */", "", -1) == "foo */ baz bar"
+  False
 
 However, there is the `rsplit` method, that can be used together with `join`:
 
->>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
-
+  >>> "".join("foo */ baz */ bar".rsplit(" */", 1)) == "foo */ baz bar"
+  True
 
 dumb_c_postprocessor
 --------------------
@@ -1528,9 +1529,7 @@ extended with "intelligent guesses" by `PylitOptions`_ and passed on to
 helper functions and the converter instantiation.
 
 This allows easy customization for programmatic use -- just call `main`
-with the appropriate keyword options, e.g.:
-
->>> main(comment_string="## ")
+with the appropriate keyword options, e.g. ``pylit.main(comment_string="## ")``
 
 ::
 
