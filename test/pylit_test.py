@@ -966,8 +966,8 @@ block1 = 'first block'
 ## syntax, e.g. after a section header or a list. Therefore the automatic
 ## insertion will use the save form, feel free to correct this by hand.)::
 
-codesamples["insert missing double colon after text block"] = (
-"""# text followed by code without double colon
+codesamples["insert missing double colon after text block"] = ("""\
+# text followed by code without double colon
 
 foo = 'first'
 """,
@@ -980,6 +980,50 @@ foo = 'first'
 """text followed by code without double colon
 
 """)
+
+codesamples["merge subsequent code blocks"] = ("""\
+# leading text::
+
+code block 1
+
+code block 2
+
+
+code block 3 (after double blank line)
+""","""\
+leading text::
+
+  code block 1
+  
+  code block 2
+  
+  
+  code block 3 (after double blank line)
+""")                                               
+
+codesamples["merge subsequent code blocks"] = ("""\
+# leading text
+
+code block 1
+
+# code comment
+code block 2
+
+
+code block 3 (after double blank line)
+""","""\
+leading text
+
+::
+
+  code block 1
+  
+  # code comment
+  code block 2
+  
+  
+  code block 3 (after double blank line)
+""")                                               
 
 ## header samples
 ## ''''''''''''''
