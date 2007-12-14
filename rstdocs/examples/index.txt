@@ -44,7 +44,8 @@ __ pylit.py.txt
 __ 99bottles.py.html
 __ 99bottles.py
 __ 99bottles.py.txt
-  
+.. _LiteratePrograms.org Wiki: 
+     http://en.literateprograms.org/LiteratePrograms:Welcome
   
 Python modules
 --------------
@@ -156,25 +157,22 @@ code, it is easier to copy or paste code examples to and from scripts or an
 interactive program session. Re-converting indents the code snippets
 correctly so they will be literal blocks in the pretty print.
 
-`ginac-tutorial.py`__
+`swiginac_tutorial`_
   is an adaption of the `GiNaC tutorial`_ for doing Computer algebra with
-  GiNaC_ and the Python_ programming language using the swiginac_ wrapper
+  GiNaC_ and the Python programming language using the swiginac_ wrapper
   package.
   
-  It is a work in progress, not completed yet.
+  It is work in progress, not completed yet.
 
-  Sources: `ginac-tutorial.py`__, `ginac-tutorial.py.txt`__
+  Sources are in the `documentation folder`__ of the swiginac SVN repository.
 
-__ ginac-tutorial.py.html
-__ ginac-tutorial.pyr2w
-__ ginac-tutorial.py.txt
+__ http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
 
-.. _`GiNaC tutorial`: http://www.ginac.de/tutorial/
+.. _swiginac_tutorial: 
+    http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/swiginac_tutorial.py.html
+.. _GiNaC tutorial: http://www.ginac.de/tutorial/
 .. _GiNaC: http://www.ginac.de
-.. _Python: http://www.python.org
 .. _swiginac: http://swiginac.berlios.de
-.. _LiteratePrograms.org Wiki: 
-     http://en.literateprograms.org/LiteratePrograms:Welcome
 
 Style sheets
 ------------
