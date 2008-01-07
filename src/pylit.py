@@ -1466,7 +1466,8 @@ def run_doctest(infile="-", txt2code=True,
 def diff(infile='-', outfile='-', txt2code=True, **keyw):
     """Report differences between converted infile and existing outfile
     
-    If outfile is '-', do a round-trip conversion and report differences
+    If outfile does not exist or is '-', do a round-trip conversion and 
+    report differences.
     """
     
     import difflib
@@ -1478,7 +1479,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
     converter = get_converter(data, txt2code, **keyw)
     new = converter()
     
-    if outfile != '-':
+    if outfile != '-' and os.path.exists(outfile):
         outstream = file(outfile)
         old = outstream.readlines()
         oldname = outfile
