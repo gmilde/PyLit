@@ -81,15 +81,29 @@ Articles
   It is also a Python module defining several examples of such rich
   iterators.
 
-  BTW: Running ``doctest`` on the code source will only run doctests within
-  docstrings. In contrast, ``pylit --doctest`` will detect all doctests, in
-  docstrings as well as in text blocks.
-
   Sources: `iterqueue.py`__, `iterqueue.py.txt`__.
 
 __ iterqueue.py.html
 __ iterqueue.py
 __ iterqueue.py.txt
+
+Doctests
+--------
+
+Python's `doctest` module runs tests on usage examples.
+However, running ``doctest`` on the code source will only run doctests
+within docstrings. In contrast, ``pylit --doctest`` will detect all
+doctests, in docstrings as well as in text blocks. 
+
+`literate doctests`_
+  gives more details.
+  
+  Examples: `testfile_literate.py`_, `testmod_literate.py`_
+
+.. _literate doctests:    literate-doctests/index.txt
+.. _testfile_literate.py: literate-doctests/testfile_literate.py
+.. _testmod_literate.py: literate-doctests/testmod_literate.py
+
 
 Test suites
 -----------
