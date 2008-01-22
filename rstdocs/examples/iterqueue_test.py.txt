@@ -1,6 +1,6 @@
 ..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 ===============================================================
 Test the iterator wrappers from iterqueue.py
 ===============================================================
@@ -13,7 +13,7 @@ Test the iterator wrappers from iterqueue.py
   import sys, itertools
   import iterqueue
   from iterqueue import *
-
+  
 Get and sort the wrapper classes
 --------------------------------
 
@@ -22,32 +22,32 @@ List all iterator wrapper objects::
   wrappers = [obj for obj in iterqueue.__dict__.values() 
               if is_iterator_wrapper(obj)]
   # print "\n".join(repr(wrapper) for wrapper in wrappers)
-
+  
 List iterator wrappers that provide a `peek` method::
 
   peekables = [obj for obj in wrappers if is_peekable(obj)]
   # print "Peekables"
   # print "\n".join(repr(peekable) for peekable in peekables)
-
+  
 List iterator wrappers that provide a `push` method::
 
   pushables = [obj for obj in wrappers if is_pushable(obj)]
   # print "Pushables"
   # print "\n".join(repr(pushable) for pushable in pushables)
-
+  
 List iterator wrappers that provide a test for "values available"::
 
   state_reporters = [obj for obj in wrappers if is_state_reporting(obj)]
   # print "State Reporters"
   # print "\n".join(repr(state_reporter) for state_reporter in state_reporters)
-
+  
 List iterator wrappers that implement the "queue" methods:: 
 
   iqueues = [obj for obj in wrappers if is_iterator_queue(obj)]
   # print "Iterator Queues"
   # print "\n".join(repr(iqueue) for iqueue in iqueues)
-
-
+  
+  
 Test Wrappers
 -------------
 
@@ -66,8 +66,8 @@ Test the basic iterator features of an iterator wrapper. ::
       def test_wrappers(self, base=xrange(3)):
           for wrapper in wrappers:
               yield self.wrap_ok, wrapper, base
-
-
+  
+  
 Test Peekables
 --------------
 
@@ -93,7 +93,7 @@ Test Peekables
           """Test generator for peekable iterator wrappers"""
           for wrapper in peekables:
               yield self.peek_ok, wrapper, base
-
+  
 Test Pushables
 --------------
 
@@ -101,7 +101,7 @@ Test Pushables
       
   class Test_Pushables:    
       """Test the push method of iterator wrappers"""
-
+  
       def push_ok(self, wrapper, base):
           """push(value) shall prepend `value` to iterator"""
           print wrapper.push
@@ -121,7 +121,7 @@ Test Pushables
                   it.push("xx")
               result.append(i)
           assert result == [0, 1, 'xx', 2]  
-
+  
       def test_pushables(self, base=xrange(3)):
           """Test generator for pushable iterator wrappers"""
           for wrapper in pushables:
@@ -129,8 +129,8 @@ Test Pushables
                   wrapper.push = wrapper.appendleft
               yield self.push_ok, wrapper, base
               yield self.push_while_iterating_ok, wrapper
-
-
+  
+  
 Test Iterator Queue
 -------------------
 
@@ -163,15 +163,15 @@ Test Iterator Queue
           result = list(it)
           print result
           assert result == list(base) + [9]
-
+  
       def test_iqueues(self, base=xrange(3)):
           """Test generator for iterator-queue wrappers"""
           for wrapper in iqueues:
               yield self.extend_ok, wrapper, base
               yield self.extendleft_ok, wrapper, base
               yield self.append_ok, wrapper, base
-
-
+  
+  
 Test State Reporters
 --------------------
 
@@ -193,13 +193,13 @@ Test State Reporters
           assert list(it1) == list(base)
           assert bool(wrapper(iter([]))) == False
           assert bool(wrapper(iter([1]))) == True
-
+  
       def test_iqueues(self):
           """Test generator for iterator-queue wrappers"""
           for wrapper in state_reporters:
               yield self.bool_ok, wrapper
-
-
+  
+  
   if __name__ == "__main__":  
       import nose
       # this doesnot show any effect :-(

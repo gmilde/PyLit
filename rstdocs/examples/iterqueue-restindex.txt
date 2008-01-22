@@ -1,0 +1,12 @@
+..  iterqueue-restindex.txt: Dummy for rest2web
+
+    -*- rst-mode -*-
+    
+    restindex
+      crumb: iterqueue.py
+      target: iterqueue.py.html
+      file: iterqueue.py
+      file: iterqueue.py.txt
+    /restindex
+      
+.. include:: examples/iterqueue.py.txt

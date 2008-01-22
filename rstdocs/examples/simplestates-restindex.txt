@@ -1,0 +1,12 @@
+..  simplestates-restindex.txt: Dummy for rest2web
+
+    -*- rst-mode -*-
+    
+    restindex
+      crumb: simplestates.py
+      target: simplestates.py.html
+      file: simplestates.py
+      file: simplestates.py.txt
+    /restindex
+      
+.. include:: examples/simplestates.py.txt

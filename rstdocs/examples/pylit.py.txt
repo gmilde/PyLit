@@ -82,6 +82,7 @@ Changelog
                    to allow imports from the current working dir.
 :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
                    and report differences (as with outfile=='-').
+
 ::
 
   """pylit: bidirectional converter between a *text source* with embedded
