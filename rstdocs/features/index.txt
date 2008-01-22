@@ -28,8 +28,12 @@ __ ../examples/pylit.py.html#open-questions
 Syntax highlight
 ----------------
 
-Another open topic is docutils support for `syntax-highlight`_.
+Another open topic is docutils support for syntax-highlight.
+There is experimental code in the Docutils sandbox_ proposing and
+implementing a code-block-directive_ using Pygments_.
 
-.. _syntax-highlight: 
-   http://docutils.sourceforge.net/sandbox/code-block-directive/docs/syntax-highlight.html
+.. _sandbox: http://docutils.sourceforge.net/sandbox/
+.. _code-block-directive: 
+     http://docutils.sourceforge.net/sandbox/code-block-directive
+.. _pygments: http://pygments.org/
 

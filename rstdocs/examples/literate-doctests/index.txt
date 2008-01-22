@@ -1,8 +1,8 @@
 .. -*- rst-mode -*-
 .. 
   restindex
-      crumb: Tutorial
-      page-title: PyLit - Tutorial
+      crumb: Doctests
+      page-title: PyLit - Tutorial - Doctests
       file: testmod_literate.py
       file: testfile_literate.py
   /restindex
@@ -13,43 +13,80 @@ How to write literate doctests with PyLit
 .. sectnum::
 .. contents::
 
+
+Python Doctest Module
+---------------------
+
 *Doctests* are a literate way of testing a Python script.  They are
 supported by the `doctest block`_ syntax in reStructured Text.
 
-The `doctest module`_ searches strings for pieces of text that look like
-interactive Python sessions, and then executes those sessions to verify that
-they work exactly as shown.
+  The `doctest module`_ searches strings for pieces of text that look like
+  interactive Python sessions, and then executes those sessions to verify
+  that they work exactly as shown.
 
-`doctest.testmod()` 
-  will check examples in all docstrings of the module it is called from.
+  There are several common ways to use doctest: 
 
-``python -c "import doctest; doctest.testfile('example.py.txt')"``
-  will check the file ``example.py.txt`` (as if it were a docstring).
+  * To check that a module's docstrings are up-to-date by verifying that all
+    interactive examples still work as documented. 
   
-None of these methods will find doctest blocks in comments. This is why they
-will fail to find doctests in the text blocks of a source in code format
-(say ``example.py``). (See the tutorial_ for discussion.)
-
-However, a literate source can gain a lot from usage examples and integrated
-test that should not necessarily become part of the on-line documentation.
-
-``pylit --doctest``
-  will check a literate source file for doctests in both, docstrings and
-  text parts. It can work with both, text or code format.
+  * To perform regression testing by verifying that interactive examples
+    from a test file or a test object work as expected. 
   
-  In order to do this, it will read the file, transform a code source to
-  text format on-the-fly and feed the result to a DocTestParser_ object.
+  * To write tutorial documentation for a package, liberally illustrated
+    with input-output examples. Depending on whether the examples or the
+    expository text are emphasized, this has the flavor of "literate
+    testing" or "executable documentation". 
+
+  -- Python Library Reference for the `doctest module`_
+
+
+Doctest and PyLit
+-----------------
+
+The most common way to use the doctest module is to check examples in all
+*docstrings* of a module with ``doctest.testmod()``, e.g. ::
+  
+    if __name__ == "__main__":
+        import doctest
+        doctest.testmod()
+  
+You can also check a *text* file as if it were a docstring by calling
+doctest from the command line, e.g. ::
+
+    sh> python -c "import doctest; doctest.testfile('example.py.txt')"
+  
+However, both methods will not check doctest blocks in comments. This is
+why they will fail to find doctests in the text blocks of a literate source
+in code format. (See the tutorial_ for discussion.)
+
+You can of course convert your source to text form and run
+`doctest.testfile` on it. To simplify the task, Pylit supports 
+`Python doctests`_ in a literate source with an option::
+
+    sh> pylit --doctest example.py
+
+will check a literate source file for all doctests regardless of their
+location in docstrings or text parts. It can work with both, text or code
+format.
+  
+In order to do this, it will read the file, transform a code source to text
+format on-the-fly and feed the result to a DocTestParser_ object.
+I.e., no text source file will be created if ``pylit --doctest`` is
+called on a code source file.
 
 This way, it is possible to separate basic examples in doc strings from
 additional test in the literate source.
 
 
-Simple Usage: Checking Examples in Docstrings and Text blocks
--------------------------------------------------------------
+Checking Examples in Docstrings and Documentation text
+------------------------------------------------------
 
 testmod_literate.py_ 
   is a "literate version" of the example in the `doctest module`_ doc that
   does a self test when called as `__main__`.
+  
+  It calls `pylit.run_doctest` to find tests in both docstrings and
+  documentation blocks. 
   
   Test this file with::
   
@@ -57,13 +94,18 @@ testmod_literate.py_
      0 failures in 14 tests
 
 
-Simple Usage: Checking Examples in a Literal Source File
---------------------------------------------------------
+Checking Examples in a Literate Source File
+-------------------------------------------
 
 testfile_literate.py_
   is a "literate version" of the example in the `doctest module`_ doc
   adapted for beeing tested with ``pylit --doctest``.
-
+  
+  Test this file with::
+  
+     sh> pylit --doctest testfile_literate.py
+     0 failures in 19 tests
+     
 
 .. References
    ==========
@@ -73,7 +115,10 @@ testfile_literate.py_
 .. _DocTestParser: http://docs.python.org/lib/doctest-DocTestParser.html
 .. _Advanced API: http://docs.python.org/lib/doctest-advanced-api.html
 
-.. _tutorial: ../
+.. _tutorial: ../tutorial/index.html#doctests
+.. _testmod_literate.py: testmod_literate.py
+.. _testfile_literate.py: testfile_literate.py
+
 
 .. _parsed-literal block: 
     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block

@@ -240,8 +240,7 @@ the first text block, e.g. using a `parsed literal block`_:
 Doctests
 --------
 
-Pylit supports `Python doctests`_ in a literate script. For details see the
-`literate doctests tutorial`_.
+Pylit supports `Python doctests`_ in a literate script. 
 
 We add a `doctest block`_ [#]_ to our example:
 
@@ -276,6 +275,9 @@ Ah yes, we forgot the full-stop in our test. Adding it and testing again::
   0 failures in 1 tests
 
 The printed summary will ensure us that the test actually passed.
+
+Read more about doctests in the `literate doctests example`_.
+
 
 .. [#] There is no double colon before the doctest; a doctest block is
        recognised by starting with the Python interpreter prompt ``>>>``
@@ -342,10 +344,10 @@ looks like
 .. _source code encoding:
     http://docs.python.org/tut/node4.html#SECTION004230000000000000000
 
-.. _literate doctests tutorial: literate-doctests/
 .. _doctest:
 .. _Python doctests: http://docs.python.org/lib/module-doctest.html
 .. _Advanced API: http://docs.python.org/lib/doctest-advanced-api.html
+.. _literate doctests example: ../examples/literate-doctests/index.html
 
 .. _parsed-literal block: 
     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block

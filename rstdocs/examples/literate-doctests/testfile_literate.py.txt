@@ -11,7 +11,6 @@
 testfile_literate
 =================
 
-
 Import
 ------
 
@@ -35,7 +34,7 @@ An elegant solution is to give a usage example in the module's docstring::
   __docformat__ = 'restructuredtext'
   
   
-:Beware: as the docstring is not parsed as separate unit but as part of the
+.. attention:: As the docstring is not parsed as separate unit but as part of the
 	 file, there must be a blank line also after the last doctest block.
 	 Otherwise `doctest` expects ``"""`` to be part of the output.
 
@@ -145,7 +144,8 @@ The type of the return value depends on the size of the result.
 Default Action
 --------------
 
-The script is tested by calling ``pylit --doctest testfile_literate``.
+The script is tested by calling ``pylit --doctest testfile_literate.py``
+or ``pylit --doctest testfile_literate.py.txt``.
 
 This is especially handy for scripts that should performe some default
 action other than a self test, e.g.

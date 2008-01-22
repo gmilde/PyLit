@@ -116,11 +116,18 @@ reading by human beings", i.e. a *literate program* according to the
 
 The tutorial_ and the examples_ show what code and text source may look like.
 
-
 .. [#] Actually, only the syntax for literal blocks is needed for PyLit to
        convert from text to code. If no pretty-printed or web-ready document
        is desired, the programmer does not need to know anything else about
        reStructured Text.
+
+
+Python Doctests
+---------------
+
+Pylit supports `Python doctests`_ in a literate script. For details see the
+`literate doctests example`_.
+
 
 .. References:
 
@@ -137,3 +144,6 @@ The tutorial_ and the examples_ show what code and text source may look like.
 .. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
 .. _include directive:
      http://docutils.sourceforge.net/docs/ref/rst/directives.html#including-an-external-document-fragment
+
+.. _Python doctests: http://docs.python.org/lib/module-doctest.html
+.. _literate doctests example: ../examples/literate-doctests/index.html
