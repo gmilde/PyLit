@@ -1,8 +1,8 @@
 The classical programming example with the greeting from a variable in
 another file::
 
-  execfile("greeting.py")
-  print greeting
+  import greeting
+  print greeting.greeting
 
 Where ``greeting.py`` contains:
 
