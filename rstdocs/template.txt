@@ -17,9 +17,9 @@
   <a class='top-navigation' href="<% path_to_root %>index.html">
     <img class="logo"
        src="<% path_to_root %>pylit-framed-32.png" 
-       alt="" border="0" 
-  />
- </a>
+       alt="PyLit" border="0" 
+    />   
+  </a>
   <a class='top-navigation' href="<% path_to_root %>features/index.html">Features</a>
   <a class='top-navigation' href="<% path_to_root %>tutorial/index.html">Tutorial</a>
   <a class='top-navigation' href="<% path_to_root %>examples/index.html">Examples</a>
