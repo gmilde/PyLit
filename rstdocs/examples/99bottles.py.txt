@@ -76,7 +76,7 @@ where an auxiliary function returns the matching suffix (or not)::
           return ""
   
 Still, the last line come out wrong, as here we have <number-1> bottles. To
-treat this case we eiter could split the last line and treat it differently,
+treat this case we either could split the last line and treat it differently,
 or use a modified template as e.g. ::
 
   verse_template_2 = """ 
@@ -94,7 +94,7 @@ together with::
           verse = verse.replace("<s>", plural_suffix(number-1), 1)
           print verse.replace("<number - 1>", str(number-1 or "No"))
   
-
+  
 Command line use
 ----------------
 
@@ -104,7 +104,7 @@ Print the lyrics if this script is called from the command line::
       print_verses_3()
       print final_verse
   
-
+  
 .. _Wikipedia: http://en.wikipedia.org
 .. _99 bottles of beer: http://en.wikipedia.org/wiki/99_Bottles_of_Beer
 .. _LiteratePrograms.org Wiki: 

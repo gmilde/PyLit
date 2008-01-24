@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# ===============================================================
+# ====================================================
 # pylit.py: Literate programming with reStructuredText
-# ===============================================================
+# ====================================================
 # 
 # :Date:      $Date$
 # :Version:   SVN-Revision $Revision$
@@ -40,16 +40,16 @@
 #                    new `iter_strip` method replacing a lot of ``if``-s.
 # :2007-02-22: 0.2.8 Set `mtime` of outfile to the one of infile.
 # :2007-02-27: 0.3   New `Code2Text` converter after an idea by Riccardo Murri,
-#                    explicite `option_defaults` dict for easier customization.
+#                    explicit `option_defaults` dict for easier customisation.
 # :2007-03-02: 0.3.1 Expand hard-tabs to prevent errors in indentation,
 #                    `Text2Code` now also works on blocks,
 #                    removed dependency on SimpleStates module.
-# :2007-03-06: 0.3.2 Bugfix: do not set `language` in `option_defaults`
+# :2007-03-06: 0.3.2 Bug fix: do not set `language` in `option_defaults`
 #                    renamed `code_languages` to `languages`.
 # :2007-03-16: 0.3.3 New language css,
 #                    option_defaults -> defaults = optparse.Values(),
 #                    simpler PylitOptions: don't store parsed values,
-#                    don't parse at initialization,
+#                    don't parse at initialisation,
 #                    OptionValues: return `None` for non-existing attributes,
 #                    removed -infile and -outfile, use positional arguments.
 # :2007-03-19: 0.3.4 Documentation update,
@@ -64,7 +64,7 @@
 #                    Provide "hooks" for pre- and postprocessing filters.
 #                    Rename states to avoid confusion with formats:
 #                    "text" -> "documentation", "code" -> "code_block".
-# :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganization, 
+# :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganisation, 
 #                    rename parent class Converter -> TextCodeConverter.
 # :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
 #                    TextCodeConverter.converter.
@@ -74,12 +74,14 @@
 #                    Added basic support for 'c' and 'css' languages
 #                    with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
 # :2007-06-06: 0.5   Moved `collect_blocks`_ out of `TextCodeConverter`_,
-#                    bugfix: collect all trailing blank lines into a block.
+#                    bug fix: collect all trailing blank lines into a block.
 #                    Expand tabs with `expandtabs_filter`_.
 # :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
-# :2007-06-28: 0.6.1 Bugfix: reset self.code_block_marker_missing
-# :2007-12-12: 0.7   prepending an empty string to sys.path in run_doctest() to
-# 	       	     allow imports from the current working dir
+# :2007-06-28: 0.6.1 Bug fix: reset self.code_block_marker_missing.
+# :2007-12-12: 0.7   prepending an empty string to sys.path in run_doctest()
+#                    to allow imports from the current working dir.
+# :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
+#                    and report differences (as with outfile=='-').
 # 
 # ::
 
@@ -100,8 +102,8 @@ _version = "0.5"
 # 
 # * a (reStructured) text document with program code embedded in 
 #   *code blocks*, and
-# * a compilable (or executable) code source with *documentation* embedded in
-#   comment blocks
+# * a compilable (or executable) code source with *documentation* 
+#   embedded in comment blocks
 # 
 # 
 # Requirements
@@ -118,14 +120,14 @@ import re, optparse
 # defaults
 # --------
 # 
-# The `defaults` object provides a central repository for default values
-# and their customisation. ::
+# The `defaults` object provides a central repository for default
+# values and their customisation. ::
 
 defaults = optparse.Values()
 
 # It is used for
 # 
-# * the initialization of data arguments in TextCodeConverter_ and
+# * the initialisation of data arguments in TextCodeConverter_ and
 #   PylitOptions_
 #   
 # * completion of command line options in `PylitOptions.complete_values`_.
@@ -210,12 +212,12 @@ defaults.header_string = '..'
 defaults.code_block_marker = '::'
 
 # In a document where code examples are only one of several uses of literal
-# blocks, it is more appropriate to single out the sourcecode with a dedicated
+# blocks, it is more appropriate to single out the source code with a dedicated
 # "code-block" directive.
 # 
 # Some highlight plug-ins require a special "sourcecode" or "code-block"
 # directive instead of the ``::`` literal block marker. Actually,
-# syntax-highlight is possible without changes to docutils with the Pygments_
+# syntax-highlight is possible without changes to Docutils with the Pygments_
 # package using a "code-block" directive. See the `syntax highlight`_ section
 # in the features documentation.
 # 
@@ -241,7 +243,7 @@ defaults.strip = False
 # 
 # Strip literal marker from the end of documentation blocks when
 # converting  to code format. Makes the code more concise but looses the
-# synchronization of line numbers in text and code formats. Can also be used
+# synchronisation of line numbers in text and code formats. Can also be used
 # (together with the auto-completion of the code-text conversion) to change
 # the `code_block_marker`::
 
@@ -270,7 +272,7 @@ defaults.postprocessors = {}
 defaults.codeindent =  2
 
 # In `Text2Code.code_block_handler`_, the codeindent is determined by the
-# first recognized code line (header or first indented literal block
+# first recognised code line (header or first indented literal block
 # of the text source).
 #  
 # defaults.overwrite
@@ -280,7 +282,7 @@ defaults.codeindent =  2
 
 defaults.overwrite = 'update'
 
-# Recognized values:
+# Recognised values:
 # 
 #  :'yes':    overwrite eventually existing `outfile`,
 #  :'update': fail if the `outfile` is newer than `infile`,
@@ -347,11 +349,11 @@ class TextCodeConverter(object):
 # TextCodeConverter.__init__
 # """"""""""""""""""""""""""
 # 
-# Initializing sets the `data` attribute, an iterable object yielding lines of
+# Initialising sets the `data` attribute, an iterable object yielding lines of
 # the source to convert. [1]_ 
 # 
 # Additional keyword arguments are stored as instance variables, overwriting
-# the class defaults. If still empty, `comment_string` is set accordign to the
+# the class defaults. If still empty, `comment_string` is set according to the
 # `language`
 # 
 # ::
@@ -409,7 +411,7 @@ class TextCodeConverter(object):
 # Pre- and postprocessing are only performed, if filters for the current
 # language are registered in `defaults.preprocessors`_ and|or
 # `defaults.postprocessors`_. The filters must accept an iterable as first
-# argument and yield the processed input data linewise.
+# argument and yield the processed input data line-wise.
 # ::
 
     def __iter__(self):
@@ -602,7 +604,7 @@ class Text2Code(TextCodeConverter):
         # elif self.state == "documentation":
         #    self.state = "documentation"
 
-# A "code_block" ends with the first less indented, nonblank line.
+# A "code_block" ends with the first less indented, non-blank line.
 # `_textindent` is set by the documentation handler to the indent of the
 # preceding documentation block::
 
@@ -628,12 +630,12 @@ class Text2Code(TextCodeConverter):
 #!/usr/bin/env python
 
 # In Python, the special comment to indicate the encoding, e.g. 
-# ``# -*- coding: iso-8859-1 -*-``, must occure before any other comment 
+# ``# -*- coding: iso-8859-1 -*-``, must occur before any other comment 
 # or code too.
 # 
 # If we want to keep the line numbers in sync for text and code source, the
 # reStructured Text markup for these header lines must start at the same line
-# as the first header line. Therfore, header lines could not be marked as
+# as the first header line. Therefore, header lines could not be marked as
 # literal block (this would require the ``::`` and an empty line above the
 # code_block).
 # 
@@ -655,7 +657,7 @@ class Text2Code(TextCodeConverter):
 # set off the disadvantages
 # 
 # - it may come as surprise if a part of the file is not "printed",
-# - one more syntax element to learn for rst newbees to start with pylit,
+# - one more syntax element to learn for rst newbies to start with pylit,
 #   (however, starting from the code source, this will be auto-generated)
 # 
 # In the case that there is no matching comment at all, the complete code
@@ -678,7 +680,7 @@ class Text2Code(TextCodeConverter):
 # Text2Code.documentation_handler
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# The 'documentation' handler processes everything that is not recognized as
+# The 'documentation' handler processes everything that is not recognised as
 # "code_block". Documentation is quoted with `self.comment_string` 
 # (or filtered with `--strip=True`). ::
 
@@ -720,7 +722,7 @@ class Text2Code(TextCodeConverter):
 # 
 # The "code_block" handler is called with an indented literal block. It
 # removes leading whitespace up to the indentation of the first code line in
-# the file (this deviation from docutils behaviour allows indented blocks of
+# the file (this deviation from Docutils behaviour allows indented blocks of
 # Python code). ::
 
     def code_block_handler(self, block): 
@@ -823,7 +825,7 @@ class Code2Text(TextCodeConverter):
         lines = [self.uncomment_line(line) for line in block]
 
 # If the code block is stripped, the literal marker would lead to an error
-# when the text is converted with docutils. Strip it as well. Otherwise, check
+# when the text is converted with Docutils. Strip it as well. Otherwise, check
 # for the `code_block_marker` (default ``::``) at the end of the documentation
 # block::
           
@@ -861,7 +863,7 @@ class Code2Text(TextCodeConverter):
 # 
 # The `code_block` handler returns the code block as indented literal
 # block (or filters it, if ``self.strip == True``). The amount of the code
-# indentation is controled by `self.codeindent` (default 2).  ::
+# indentation is controlled by `self.codeindent` (default 2).  ::
 
     def code_block_handler(self, lines):
         """Covert code blocks to text format (indent or strip)
@@ -883,7 +885,7 @@ class Code2Text(TextCodeConverter):
 # Code2Text.strip_code_block_marker
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Replace the literal marker with the equivalent of docutils replace rules
+# Replace the literal marker with the equivalent of Docutils replace rules
 # 
 # * strip `::`-line (and preceding blank line) if on a line on its own
 # * strip `::` if it is preceded by whitespace. 
@@ -1067,9 +1069,9 @@ defaults.postprocessors['text2css'] = dumb_c_postprocessor
 # How to determine which source is up-to-date?
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# - set modification date of `oufile` to the one of `infile` 
+# - set modification date of `outfile` to the one of `infile` 
 # 
-#   Points out that the source files are 'synchronized'. 
+#   Points out that the source files are 'synchronised'. 
 #   
 #   * Are there problems to expect from "backdating" a file? Which?
 # 
@@ -1093,7 +1095,7 @@ defaults.postprocessors['text2css'] = dumb_c_postprocessor
 # Recognised Filename Extensions
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Instead of defining a new extension for "pylit" literate programms,
+# Instead of defining a new extension for "pylit" literate programs,
 # by default ``.txt`` will be appended for the text source and stripped by
 # the conversion to the code source. I.e. for a Python program foo:
 # 
@@ -1148,7 +1150,7 @@ class OptionValues(optparse.Values):
 
 
 # .. [#] The special method `__getattr__` is only called when an attribute
-#        lookup has not found the attribute in the usual places (i.e. it is
+#        look-up has not found the attribute in the usual places (i.e. it is
 #        not an instance attribute nor is it found in the class tree for
 #        self).
 # 
@@ -1379,11 +1381,11 @@ def is_newer(path1, path2):
     
     Compare modification time of files at path1 and path2.
     
-    Non-existing files are considered oldest: Return False if path1 doesnot
-    exist and True if path2 doesnot exist.
+    Non-existing files are considered oldest: Return False if path1 does not
+    exist and True if path2 does not exist.
     
     Return None for equal modification time. (This evaluates to False in a
-    boolean context but allows a test for equality.)
+    Boolean context but allows a test for equality.)
     
     """
     try:
@@ -1452,7 +1454,7 @@ def run_doctest(infile="-", txt2code=True,
     runner = DocTestRunner(verbose, optionflags)
     runner.run(test)
     runner.summarize
-    # give feedback also if no failures occured
+    # give feedback also if no failures occurred
     if not runner.failures:
         print "%d failures in %d tests"%(runner.failures, runner.tries)
     return runner.failures, runner.tries
@@ -1514,7 +1516,7 @@ def diff(infile='-', outfile='-', txt2code=True, **keyw):
 # 
 # Works only for python code.
 # 
-# Doesnot work with `eval`, as code is not just one expression. ::
+# Does not work with `eval`, as code is not just one expression. ::
 
 def execute(infile="-", txt2code=True, **keyw):
     """Execute the input file. Convert first, if it is a text source.
@@ -1538,7 +1540,7 @@ def execute(infile="-", txt2code=True, **keyw):
 # extended with "intelligent guesses" by `PylitOptions`_ and passed on to
 # helper functions and the converter instantiation.
 # 
-# This allows easy customization for programmatic use -- just call `main`
+# This allows easy customisation for programmatic use -- just call `main`
 # with the appropriate keyword options, e.g. ``pylit.main(comment_string="## ")``
 # 
 # ::
@@ -1605,7 +1607,7 @@ def main(args=sys.argv[1:], **defaults):
 
 # .. [#] Make sure the corresponding file object (here `out_stream`) is
 #        closed, as otherwise the change will be overwritten when `close` is 
-#        called afterwards (either explicitely or at program exit).
+#        called afterwards (either explicitly or at program exit).
 # 
 # 
 # Rename the infile to a backup copy if ``--replace`` is set::
@@ -1629,7 +1631,7 @@ if __name__ == '__main__':
 # ----------
 # 
 # * can we gain from using "shutils" over "os.path" and "os"?
-# * use pylint or pyChecker to enfoce a consistent style? 
+# * use pylint or pyChecker to enforce a consistent style? 
 # 
 # Options
 # -------
@@ -1672,13 +1674,13 @@ if __name__ == '__main__':
 # * Warn if a comment in code will become documentation after round-trip?
 # 
 # 
-# doctstrings in code blocks
+# docstrings in code blocks
 # --------------------------
 # 
 # * How to handle docstrings in code blocks? (it would be nice to convert them
 #   to rst-text if ``__docformat__ == restructuredtext``)
 # 
-# TODO: Ask at docutils users|developers
+# TODO: Ask at Docutils users|developers
 # 
 # .. References
 # 

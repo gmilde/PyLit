@@ -11,7 +11,7 @@
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
 # 
-# Detailled documentation of this class and the design rationales (including
+# Detailed documentation of this class and the design rationales (including
 # tested variants) is available in the file simplestates-test.py.txt
 # ::
 
@@ -163,7 +163,7 @@ class SimpleStates:
 # the `__iter__` method above::
 
     def _initialize_state_generators(self):
-        """Generic function to initialize state handlers from generators
+        """Generic function to initialise state handlers from generators
         
         functions whose name matches `[^_]<state>_handler_generator` will
         be converted to iterators and their `.next()` method stored as

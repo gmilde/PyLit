@@ -33,7 +33,7 @@ With the ``-h`` (or ``--help``) argument, the script prints a usage info::
         Convert between (reStructured) text source with embedded code,
         and code source with embedded documentation (comment blocks)
         
-        The special filename '-' stands for standard in and output.
+        The special file name '-' stands for standard in and output.
     
     
 Options

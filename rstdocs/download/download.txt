@@ -20,14 +20,14 @@ machine, you can get it from http://www.python.org/download/
 Tools
 -----
 
-* docutils_: conversion of the text source to HTML or PDF formats (not
-  stricly required by PyLit but needed for "pretty printing")
+* Docutils_: conversion of the text source to HTML or PDF formats (not
+  strictly required by PyLit but needed for "pretty printing")
             
 * `Editor Support for reStructuredText`_
 
 * `pylit functions`_ for the `JED editor`_
 
-.. _docutils: http://docutils.sourceforge.net/
+.. _Docutils: http://docutils.sourceforge.net/
 .. _`Editor Support for reStructuredText`: 
      http://docutils.sourceforge.net/tools/editors/README.html
 .. _`pylit functions`: http://jedmodes.sourceforge.net/mode/pylit/     

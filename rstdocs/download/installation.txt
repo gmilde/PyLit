@@ -17,8 +17,8 @@ PATH a small executable script, pylit_:
   .. include:: pylit
      :literal:
 
-This has the advantage, that Python can preparse ``pylit.py`` for faster
-execution on subsequent calls.
+This has the advantage, that Python can compile ``pylit.py`` to byte-code
+for faster execution with subsequent calls.
 
 .. _module search path:
     http://docs.python.org/tut/node8.html#SECTION008110000000000000000

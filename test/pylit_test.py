@@ -14,7 +14,7 @@
 ## .. contents::
 ## 
 ## 
-## A catalog of errors
+## A catalogue of errors
 ## ----------------------
 ## 
 ## from file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html
@@ -239,20 +239,22 @@ def test_x2u_filter():
 ## ::
 
 class test_TextCodeConverter(object):
-    """Test the TextCodeConverter parent class"""
+    """Test the TextCodeConverter parent class
+    """
     
 ## ::
 
-    def check_marker_regexp_true(self, sample):
-        match = self.converter.marker_regexp.search(sample)
-        print 'marker: %r; sample %r' %(self.converter.code_block_marker, sample)
+    def check_marker_regexp_true(self, sample, converter):
+        match = converter.marker_regexp.search(sample)
+        print 'marker: %r; sample %r' %(converter.code_block_marker, sample)
         print 'match %r'%match
         assert match is not None
 
 ## ::
 
-    def check_marker_regexp_false(self, sample):
-        assert self.converter.marker_regexp.search(sample) is None
+    def check_marker_regexp_false(self, sample, converter):
+        print 'marker: %r; sample %r' %(converter.code_block_marker, sample)
+        assert converter.marker_regexp.search(sample) is None
         
 ## ::
 
@@ -268,7 +270,7 @@ class test_TextCodeConverter(object):
                    ' indented text :: ',
                    '. no-directive::',
                    'a .. directive:: somewhere::']
-        directive = ['.. code-block:: python',
+        directives = ['.. code-block:: python',
                      '  .. code-block:: python',
                      '.. code-block:: python listings',
                      '  .. code-block:: python listings']
@@ -276,18 +278,21 @@ class test_TextCodeConverter(object):
                   '.. ::',
                   'text:']
         # default code_block_marker ('::')
-        self.converter = TextCodeConverter(textdata)        
+        self.converter = TextCodeConverter(textdata)
+        assert self.converter.code_block_marker == '::'
+        # self.converter is not seen by the check_marker_regexp_true() method
         for sample in literal:
-            yield (self.check_marker_regexp_true, sample)
-        for sample in directive+misses:
-            yield (self.check_marker_regexp_false, sample)
+            yield (self.check_marker_regexp_true, sample, self.converter)
+        for sample in directives+misses:
+            yield (self.check_marker_regexp_false, sample, self.converter)
         # code-block directive as marker
         self.converter = TextCodeConverter(textdata, 
                                            code_block_marker='.. code-block::')
-        for sample in directive:
-            yield (self.check_marker_regexp_true, sample)
+        assert self.converter.code_block_marker == '.. code-block::'
+        for sample in directives:
+            yield (self.check_marker_regexp_true, sample, self.converter)
         for sample in literal+misses:
-            yield (self.check_marker_regexp_false, sample)
+            yield (self.check_marker_regexp_false, sample, self.converter)
         
 ## ::
 
@@ -531,7 +536,7 @@ class test_Text2Code(object):
 ## It is an reStructuredText syntax error, if a "literal block
 ## marker" is not followed by a blank line.
 ## 
-## Assuming that no double colon at end of line occures accidentially,
+## Assuming that no double colon at end of line occurs accidentally,
 ## pylit could fix this and issue a warning::
 
 # Do we need this feature? (Complicates code a lot)
@@ -553,7 +558,7 @@ class test_Text2Code(object):
 ## reStructuredText syntax demands a paragraph separator (blank line) before
 ## it.
 ## 
-## Assuming that the unindent is not accidential, pylit could fix this and 
+## Assuming that the unindent is not accidental, pylit could fix this and 
 ## issues a warning::
 
 # Do we need this feature? (Complicates code)
@@ -858,7 +863,7 @@ class test_Code2Text(object):
 ## ``comment_string = "# "``, a line ``"#something\n"`` will count as code.
 ## 
 ## However, if a comment line is blank, trailing whitespace in the comment
-## string should be ignored, i.e. ``#\n`` is recognized as a blank text line::
+## string should be ignored, i.e. ``#\n`` is recognised as a blank text line::
 
 codesamples["ignore trailing whitespace in comment string for blank line"] = (
 """# ::
@@ -879,8 +884,8 @@ more text
 ## No blank line after text
 ## ''''''''''''''''''''''''
 ## 
-## If a matching comment precedes oder follows a code line (i.e. any line
-## without matching comment) without a blank line inbetween, it counts as code
+## If a matching comment precedes or follows a code line (i.e. any line
+## without matching comment) without a blank line in between, it counts as code
 ## line.
 ## 
 ## This will keep small inline comments close to the code they comment on. It
@@ -958,7 +963,7 @@ block1 = 'first block'
 ## 
 ## If text (with matching comment string) is followed by code (line(s) without
 ## matching comment string), but there is no double colon at the end, back
-## conversion would not recognize the end of text!
+## conversion would not recognise the end of text!
 ## 
 ## Therefore, pylit adds a paragraph containing only ``::`` -- the literal
 ## block marker in expanded form. (While it would in many cases be nicer to
@@ -966,8 +971,8 @@ block1 = 'first block'
 ## syntax, e.g. after a section header or a list. Therefore the automatic
 ## insertion will use the save form, feel free to correct this by hand.)::
 
-codesamples["insert missing double colon after text block"] = ("""\
-# text followed by code without double colon
+codesamples["insert missing double colon after text block"] = (
+"""# text followed by code without double colon
 
 foo = 'first'
 """,
@@ -980,50 +985,6 @@ foo = 'first'
 """text followed by code without double colon
 
 """)
-
-codesamples["merge subsequent code blocks"] = ("""\
-# leading text::
-
-code block 1
-
-code block 2
-
-
-code block 3 (after double blank line)
-""","""\
-leading text::
-
-  code block 1
-  
-  code block 2
-  
-  
-  code block 3 (after double blank line)
-""")                                               
-
-codesamples["merge subsequent code blocks"] = ("""\
-# leading text
-
-code block 1
-
-# code comment
-code block 2
-
-
-code block 3 (after double blank line)
-""","""\
-leading text
-
-::
-
-  code block 1
-  
-  # code comment
-  code block 2
-  
-  
-  code block 3 (after double blank line)
-""")                                               
 
 ## header samples
 ## ''''''''''''''
@@ -1089,7 +1050,7 @@ print 'hello world'
 ## 
 ## ::
 
-css_code = ['/* import the default docutils style sheet */\n',
+css_code = ['/* import the default Docutils style sheet */\n',
             '/* --------------------------------------- */\n',
             '\n',
             '/* :: */\n',
@@ -1099,7 +1060,7 @@ css_code = ['/* import the default docutils style sheet */\n',
             
 ## ::
 
-css_filtered_code = ['// import the default docutils style sheet\n',
+css_filtered_code = ['// import the default Docutils style sheet\n',
                      '// ---------------------------------------\n',
                      '\n',
                      '// ::\n',

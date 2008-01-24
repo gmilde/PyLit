@@ -18,7 +18,7 @@ Python Doctest Module
 ---------------------
 
 *Doctests* are a literate way of testing a Python script.  They are
-supported by the `doctest block`_ syntax in reStructured Text.
+supported by the `doctest block`_ syntax in reStructuredText.
 
   The `doctest module`_ searches strings for pieces of text that look like
   interactive Python sessions, and then executes those sessions to verify
@@ -34,7 +34,7 @@ supported by the `doctest block`_ syntax in reStructured Text.
   
   * To write tutorial documentation for a package, liberally illustrated
     with input-output examples. Depending on whether the examples or the
-    expository text are emphasized, this has the flavor of "literate
+    expository text are emphasised, this has the flavor of "literate
     testing" or "executable documentation". 
 
   -- Python Library Reference for the `doctest module`_
@@ -99,7 +99,7 @@ Checking Examples in a Literate Source File
 
 testfile_literate.py_
   is a "literate version" of the example in the `doctest module`_ doc
-  adapted for beeing tested with ``pylit --doctest``.
+  adapted for being tested with ``pylit --doctest``.
   
   Test this file with::
   

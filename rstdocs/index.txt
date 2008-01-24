@@ -25,7 +25,7 @@ PyLit: Literate programming with reStructuredText
 Welcome at the PyLit home page. Here you will find information and
 material for the following topics:
 
-`Pylit Features`__ 
+`PyLit Features`__ 
   `PyLit` (Python-Literate) is a `pure Python module`__ providing a
   bidirectional text <--> code converter. 
   
@@ -55,7 +55,7 @@ __ examples/index.html
 
 `Download, Installation, Usage`__
   PyLit requires functioning Python_ installation and the `pylit.py`_  module.
-  Installation_ and usage_ are straigtforward.
+  Installation_ and usage_ are straightforward.
   
   Docutils_ are not strictly required by PyLit itself but for conversion
   of the text source to HTML, LaTeX, or PDF formats.
@@ -118,12 +118,12 @@ Copyright
 About this site
   The PyLit home page is located at http://pylit.berlios.de/
   
-  This site is created from `reStructured Text`_ sources with Docutils_ and
+  This site is created from `reStructuredText`_ sources with Docutils_ and
   the rest2web_ site builder.
   
   `BerliOS Developer`_ is a free (and ad-free!) service to Open Source
   developers by the Fraunhofer-Institut für Offene Kommunikationssysteme 
   (FOKUS) in Berlin.
   
-.. _reStructured Text: http://docutils.sourceforge.net/rst.html
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/

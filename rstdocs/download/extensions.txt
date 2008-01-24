@@ -6,14 +6,14 @@
       page-title: PyLit - Usage - Filename Extensions
   /restindex
 
-Extensions for pylit files
+Extensions for PyLit files
 --------------------------
 
-Finding an easy to remember, unused filename extension is not easy.
+Finding an easy to remember, unused file name extension is not easy.
 
 .py.txt
   a double extension (similar to .tar.gz, say) seems most appropriate
-  (at least on UNIX). However, it fails on FAT16 filesystems.
+  (at least on UNIX). However, it fails on FAT16 file systems.
   The same scheme can be used for c.txt, p.txt and the like.
 
 .pytxt
@@ -38,8 +38,7 @@ Finding an easy to remember, unused filename extension is not easy.
 All these extensions are Python specific. A new search for nice and unused
 extensions would have to be repeated for every language supported by PyLit.
 
-After considering the alternatives, the additional extension
-``.txt`` was chosen for the text source (for Python this becomes
-``py.txt``).
+After considering the alternatives, the additional extension ``.txt`` was
+chosen for the text source (for Python this becomes ``py.txt``).
 
 

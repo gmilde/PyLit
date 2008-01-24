@@ -256,7 +256,7 @@ How does PyLit differ from the web-like literate programming frameworks
   - PyLit cannot support export to several code files from one text source.
   
 
-.. _docutils: http://docutils.sourceforge.net/
+.. _Docutils: http://docutils.sourceforge.net/
 .. _Features: /features/index.html
 
 .. _WEB: http://www.literateprogramming.com/knuthweb.pdf
@@ -273,10 +273,10 @@ SourceBrowser_ is a complex tool generating a hyper-linked representation of
 complex software projects.
 
   SourceBrowser is a documentation meta-programming tool that generates a
-  wiki representation of a source tree. 
+  Wiki representation of a source tree. 
 
   It provides a *Source Annotation Language* for writing a documentation
-  meta-program and a tool for generating a static wiki for the host program.
+  meta-program and a tool for generating a static Wiki for the host program.
   
   -- SourceBrowser_ home page
 
@@ -373,7 +373,7 @@ output).
 __ http://en.wikipedia.org/wiki/Documentation_generator
 
   pyreport is a program that runs a python script and captures its output,
-  compiling it to a pretty report in a PDF or an html file. It can display
+  compiling it to a pretty report in a PDF or an HTML file. It can display
   the output embedded in the code that produced it and can process special
   comments (literate comments) according to markup languages (rst or LaTeX)
   to compile a very readable document.

@@ -1,6 +1,6 @@
 ..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 ============================================================
 simplestates.py: Generic state machine class using iterators
 ============================================================
@@ -11,27 +11,27 @@ simplestates.py: Generic state machine class using iterators
             Released under the terms of the GNU General Public License 
             (v. 2 or later)
 
-Detailled documentation of this class and the design rationales (including
+Detailed documentation of this class and the design rationales (including
 tested variants) is available in the file simplestates-test.py.txt
 ::
 
   """Simple generic state machine class using iterators
-
+  
   Usage
   =====
-
+  
   Example: A two-state machine sorting numbers in the categories 
            "< 3" and ">= 3".
-
+  
   Preparation
   -----------
-
+  
   Import the basic class::
-
+  
   >>> from simplestates import SimpleStates
-
+  
   Subclass and add state handlers:
-
+  
   >>> class StateExample(SimpleStates):
   ...    def high_handler_generator(self):
   ...        result = []
@@ -53,43 +53,43 @@ tested variants) is available in the file simplestates-test.py.txt
   ...            else:
   ...                result.append(token)
   ...        yield result
-
-
+  
+  
   Set up an instance of the StateExample machine with some test data::
-
+  
   >>> testdata = [1, 2, 3, 4, 5, 4, 3, 2, 1]
   >>> testmachine = StateExample(testdata, state="low")
-
+  
   >>> print [name for name in dir(testmachine) if name.endswith("generator")]
   ['high_handler_generator', 'low_handler_generator']
-
-
+  
+  
   Running
   -------
-
+  
   Iterating over the state machine yields the results of state processing::
-
+  
   >>> for result in testmachine:
   ...     print result,
   ...
   [1, 2, 3] [5, 4] [2, 1]
-
+  
   For a correct working sort algorithm, we would expect::
     
     [1, 2, 3] [4, 5, 4] [3, 2, 1]
-
+  
   However, to achieve this a backtracking algorithm is needed. See iterqueue.py
   and simplestates-test.py for an example.
-
-
+  
+  
   The `__call__` method returns a list of results. It is used if you call 
   an instance of the class::
-
+  
   >>> testmachine()
   [[1, 2, 3], [5, 4], [2, 1]]
-
+  
   """
-
+  
 Abstract State Machine Class
 ============================
 
@@ -106,7 +106,7 @@ Abstract State Machine Class
       """
       state = 'start'
       state_handler_generator_suffix = "_handler_generator"
-
+  
 Initialisation
 --------------
 
@@ -131,11 +131,11 @@ Initialisation
           self.data = data
           for (key, value) in keyw.iteritems():
               setattr(self, key, value)
-
-
-
-
-
+  
+  
+  
+  
+  
 Iteration over class instances
 ------------------------------
 
@@ -158,12 +158,12 @@ data calling the state methods::
           # now start the iteration
           while True:
               yield getattr(self, self.state)()
-
+  
 a helper function generates state handlers from generators. It is called by
 the `__iter__` method above::
 
       def _initialize_state_generators(self):
-          """Generic function to initialize state handlers from generators
+          """Generic function to initialise state handlers from generators
           
           functions whose name matches `[^_]<state>_handler_generator` will
           be converted to iterators and their `.next()` method stored as
@@ -176,7 +176,7 @@ the `__iter__` method above::
           for name in shg_names:
               shg = getattr(self, name)
               setattr(self, name[:-len(suffix)], shg().next)
-
+  
 Use instances like functions
 ----------------------------
 
@@ -186,7 +186,7 @@ method::
       def __call__(self):
           """Iterate over state-machine and return results as a list"""
           return [token for token in self]
-
+  
 Command line usage
 ==================
 

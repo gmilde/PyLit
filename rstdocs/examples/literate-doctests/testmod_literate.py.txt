@@ -35,7 +35,7 @@ Otherwise `doctest` expects ``"""`` to be part of the output.
 factorial
 ---------
 The functions docstring can be kept concise and additional discussion
-reffered to the text part of the literate source::
+referred to the text part of the literate source::
   
   def factorial(n):
       """Return the factorial of `n`, an exact integer >= 0.
@@ -92,7 +92,7 @@ ridiculously large:
           ...
       OverflowError: n too large
 
-The factorial of neagive values is not defined:
+The factorial of negative values is not defined:
       
       >>> factorial(-1)
       Traceback (most recent call last):
@@ -137,7 +137,7 @@ command line)::
 invocation of this test.)
     
 Doctests can still be disabled or commented - make sure they are not
-recognized as text block (no double colon here):
+recognised as text block (no double colon here):
 
   # a silly doctest
   # >>> False

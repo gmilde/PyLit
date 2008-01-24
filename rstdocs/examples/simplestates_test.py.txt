@@ -1,6 +1,6 @@
 ..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 Test the simplestates.py generic state machine
 ==============================================
 
@@ -29,7 +29,7 @@ First version of an abstract state machine
       init_state -- name of the first state_handler method
       """
       init_state = 'start'
-
+  
 Initialisation 
 
 * sets the data object to the `data` argument.  
@@ -48,7 +48,7 @@ Initialisation
           """
           self.data = data
           self.__dict__.update(keyw)
-
+  
 The special `__iter__` method returns an iterator_. This allows to use
 a  class instance directly in an iteration loop.  We define it as is a
 generator_ method that sets the initial state and then iterates over the
@@ -58,13 +58,13 @@ data calling the state methods::
           self.state_handler = getattr(self, self.init_state)
           for token in self.data:
               yield self.state_handler(token)
-
+  
 To use class instances as callable objects, we add a `__call__` method::
 
       def __call__(self):
           """Run state-machine and return tokens as a list"""
           return [token for token in self]
-
+  
 Example 1: A two-state machine sorting numbers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -74,7 +74,7 @@ Our small example state machine subclasses the `SimpleStates1` class::
       """A silly example two-state machine sorting numbers 
       in the categories "low" (< 3) and "high" (>= 3).
       """
-
+  
 It will be completed by two state methods and a `__str__` method.
 
 State Methods
@@ -96,7 +96,7 @@ data token), if token is bigger than 3. If not, it returns "l(token)"::
               # backtracking
               return self.state_handler(token)
           return "l(%d)"%token
-
+  
 The `high` method switches to `low`, if token is bigger than 3. If not, it
 returns "h(token)"::
 
@@ -107,13 +107,13 @@ returns "h(token)"::
               # backtracking
               return self.state_handler(token)
           return "h(%d)"%token
-
+  
 Conversion of the class instance to a string is done by joining the list
 that is returned by a call to the instance with spaces::
 
       def __str__(self):
           return " ".join(self())
-
+  
 Test
 ----
 
@@ -126,7 +126,7 @@ ends with "[Tt]est"). This is similar to the more known "py.test".
 We set up some test data::
 
   testdata = [1, 2, 3, 4, 5, 4, 3, 2, 1]
-
+  
 and define a test function::
 
   def test_Example1():
@@ -140,11 +140,11 @@ and define a test function::
       assert statemachine() == ['l(1)','l(2)','l(3)',  # low numbers
                                'h(4)','h(5)','h(4)',  # high numbers
                                'l(3)','l(2)','l(1)']  # low again
-
+  
       # Converting to a string should call the __str__ method::
       print str(statemachine)
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
-
+  
 Discussion
 ----------
 
@@ -171,9 +171,9 @@ We subclass our first version and modify to our needs::
   class SimpleStates2(SimpleStates1):
       """second version of the abstract state machine class
       """
-
-We add the initialization of the data to the `__iter__` method. The data is
-transformed inta an iterator_ first. ::
+  
+We add the initialisation of the data to the `__iter__` method. The data is
+transformed into an iterator_ first. ::
 
       def __iter__(self):
           self.data_iterator = iter(self.data)
@@ -182,7 +182,7 @@ transformed inta an iterator_ first. ::
           # (state methods should call self.data_iterator.next() instead)
           while True:
               yield self.state_handler()
-
+  
 Iterators "use up" the data, so the state methods will always get a "new"
 token until the data is fully "used up" and `StopIteration` is raised
 aborting the iteration.
@@ -202,7 +202,7 @@ and adds 2 methods as state handlers. ::
       """An example two-state machine sorting numbers 
       in the categories "low" (< 3) and "high" (>= 3).
       """
-
+  
 State methods
 -------------
 
@@ -223,7 +223,7 @@ sorting algorithm. ::
           if token <= 3:
               self.state_handler = self.low
           return "h(%d)"%token
-
+  
 Test
 ----
 
@@ -231,7 +231,7 @@ Define a second test function::
 
   def test_Example2():
       statemachine = Example2(testdata, init_state='low')
-
+  
 Calling an instance should return a list of results. However, as
 we cannot backtrack on a normal iterator, the result is not as we expected:
 There is a "hysteresis" the "switch triggering" token is always processed by
@@ -241,7 +241,7 @@ the "old" state::
       assert statemachine() == ['l(1)', 'l(2)', 'l(3)', # low numbers
                                'l(4)', 'h(5)', 'h(4)', # high numbers
                                'h(3)', 'l(2)', 'l(1)'] # low numbers
-
+  
 Discussion
 ----------
 
@@ -266,7 +266,7 @@ No changes are needed to the abstract base class, so that Example 3 can
 build on `StateMachine2`::
 
   class Example3(SimpleStates2):
-
+  
 Example 3: A two-state machine with state handler generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -301,8 +301,8 @@ for loop over self.data and the `yield` keyword.
                   sum = 0 # next iteration continues here
           # no more tokens but sum not reached
           yield "p=%d"%sum # partial sum
-
-The iterator must instanciate the state-iterators before starting the
+  
+The iterator must instantiate the state-iterators before starting the
 iteration loop::
 
       def __iter__(self):
@@ -322,7 +322,7 @@ iteration loop::
           # now start the iteration, aborts if data is empty
           while True:
               yield self.state_handler()
-
+  
 Test
 -------
 
@@ -330,21 +330,21 @@ Again define a test function that gets an instance of the Example3 class ::
 
   def test_Example3():
       statemachine = Example3(testdata, init_state='low')
-
+  
 Calling statemachine() should iterate over the test data and return the
 processed values as list::
 
       print statemachine()
       assert statemachine() == ['s=10','h(5)','h(4)','h(3)', 'p=3']
-
+  
 Backtracking
 ============
 
-the iterqueue module provides an "extendable" iterator with, e.g.,
+the iterqueue module provides an "extensible" iterator with, e.g.,
 an `appendleft` method to push back values::
 
   from iterqueue import XIter
-
+  
 Thus we can prepend a non-processed data item
 to the data iterator for use by the next state handler
 
@@ -356,7 +356,7 @@ Again we start from the `SimpleStates2` base class::
   class Example4(SimpleStates2):
       """two-state machine with generators and backtracking
       """
-
+  
 Let the iterator wrap the data in an XIter instance with `appendleft`
 method::
 
@@ -376,7 +376,7 @@ method::
           # now start the iteration
           while True:
               yield self.state_handler()
-
+  
 Add state method generators that use the "backtracking" feature::
 
       def high_handler_generator(self):
@@ -410,13 +410,13 @@ Add state method generators that use the "backtracking" feature::
                   yield self.state_handler()
               else:
                   yield "l(%d)"%token
-
+  
 The `__str__` converter should ignore the switch-indicator::
 
       def __str__(self):
           tokens = [token for token in self() if token != None]
           return " ".join(tokens)
-
+  
 Test
 -------
 
@@ -425,7 +425,7 @@ class ::
 
   def test_Example4():
       statemachine = Example4(testdata, init_state='low')
-
+  
 Calling statemachine() should iterate over the test data and return the
 processed values as list. If the state of the machine changes, the special
 "non-value" `None` is returned. ::
@@ -434,12 +434,12 @@ processed values as list. If the state of the machine changes, the special
       assert statemachine() == ['l(1)', 'l(2)', 'l(3)', 
                                'h(4)', 'h(5)', 'h(4)', None, # switch indicator
                                'l(3)', 'l(2)', 'l(1)']
-
+  
 Converting to a string should skip the `None` values::
 
       print statemachine
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
-
+  
 Discussion
 ----------
 
@@ -462,7 +462,7 @@ Converting all state method generators with a generic function
 ==============================================================
 
 In `Example4`, we had to redefine the `__iter__` method to convert the
-methode state generators into iterators. It would be nice if this could be
+method state generators into iterators. It would be nice if this could be
 done in the base class. 
 
 `SimpleStates3` adds a generic function for this task that relies on a
@@ -475,7 +475,7 @@ simple naming convention: functions whose name matches
       """generic state machine acting on iterable data
       """
       def _initialize_state_generators(self):
-          """Generic function to initialize state handlers from generators
+          """Generic function to initialise state handlers from generators
           
           functions whose name matches `[^_]<state>_handler_generator` should
           be converted to iterators and their `.next()` method stored as
@@ -506,7 +506,7 @@ simple naming convention: functions whose name matches
           # now start the iteration
           while True:
               yield self.state_handler()
-
+  
 Example 5
 ~~~~~~~~~
 
@@ -516,7 +516,7 @@ class.::
   class Example5(Example4, SimpleStates5):
       """one more example"""
       pass
-
+  
 Test
 ----
 
@@ -528,13 +528,13 @@ should be skipped by the `_initialize_state_generators` method::
       E5._bogus_handler_generator = "low"
       def test_initialize_state_generators(self):
           self.E5._initialize_state_generators()
-
+  
 A test function. This time with an instance of the Example5 class ::
 
   def test_Example5():
       statemachine = Example5(testdata, init_state='low')
       print statemachine.__dict__
-
+  
 Calling statemachine() should iterate over the test data and return the
 processed values as list. If the state of the machine changes, the special
 "non-value" `None` is returned. ::
@@ -543,12 +543,12 @@ processed values as list. If the state of the machine changes, the special
       assert statemachine() == ['l(1)', 'l(2)', 'l(3)', 
                                'h(4)', 'h(5)', 'h(4)', None, # switch indicator
                                'l(3)', 'l(2)', 'l(1)']
-
+  
 Converting to a string should skip the `None` values::
 
       print statemachine
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
-
+  
 Putting it together
 ===================
 
@@ -596,18 +596,18 @@ subclasses SimpleStates and adds state method generators for "high" and
                   yield self.state_handler()
               else:
                   yield "l(%d)"%token
-
+  
 Test
 ----
 
 In order not to make it dependent on the iterqueue module, the final
-`SimpleStates` doesnot wrap the data in an XIter instance. This step should
-be done at the instanciation of a state machine. ::
+`SimpleStates` does not wrap the data in an XIter instance. This step should
+be done at the instantiation of a state machine. ::
 
   def test_Example5():
       statemachine = Example5(XIter(testdata), init_state='low')
       print statemachine.__dict__
-
+  
 Calling statemachine() should iterate over the test data and return the
 processed values as list::
 
@@ -617,7 +617,7 @@ processed values as list::
       assert statemachine() == ['l(1)', 'l(2)', 'l(3)', 
                                'h(4)', 'h(5)', 'h(4)', None,
                                'l(3)', 'l(2)', 'l(1)']
-
+  
 Index
 =====
 

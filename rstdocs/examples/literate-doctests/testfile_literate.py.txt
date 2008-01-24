@@ -62,7 +62,7 @@ factorial
 ---------
 
 The functions docstring can be kept concise and additional discussion
-reffered to the text part of the literate source::
+referred to the text part of the literate source::
   
   def factorial(n):
       """Return the factorial of `n`, an exact integer >= 0.
@@ -119,7 +119,7 @@ ridiculously large:
           ...
       OverflowError: n too large
 
-The factorial of neagive values is not defined:
+The factorial of negative values is not defined:
       
       >>> factorial(-1)
       Traceback (most recent call last):
@@ -147,7 +147,7 @@ Default Action
 The script is tested by calling ``pylit --doctest testfile_literate.py``
 or ``pylit --doctest testfile_literate.py.txt``.
 
-This is especially handy for scripts that should performe some default
+This is especially handy for scripts that should perform some default
 action other than a self test, e.g.
 
 Print the first 10 natural numbers and their factorials if

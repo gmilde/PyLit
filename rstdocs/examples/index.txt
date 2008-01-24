@@ -50,7 +50,7 @@ __ 99bottles.py.txt
 Python modules
 --------------
 
-Typically, most of a Python modules's documentation is in docstrings as it
+Typically, most of a Python module's documentation is in docstrings as it
 should be available by pydoc_ (the Python help and module browser utility).
 Currently, docstrings are treated as code parts by PyLit.
 
@@ -98,7 +98,7 @@ doctests, in docstrings as well as in text blocks.
 This way, doctests that do not need to become part of the on-line
 documentation can reside in the documentation blocks: Comprehensive
 tests can be placed in the same file as the tested code without resulting in
-bloated docstrings taking up precious ressources and loading time (as they
+bloated docstrings taking up precious resources and loading time (as they
 will be stripped from the byte-compiled module).
 
 As the containing module is not loaded when the file is tested with 
@@ -218,7 +218,7 @@ __ http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
 Style sheets
 ------------
 
-Not only code, but also cascading style sheets can gain from beeing made
+Not only code, but also cascading style sheets can gain from being made
 literate documents.
 
 `pygments-default.css`__
@@ -235,7 +235,7 @@ Configuration files
 
 An interesting use case will be configuration files. Generating a template
 as well as user documentation from the same source helps to keep them
-synchronized.
+synchronised.
 
 
 

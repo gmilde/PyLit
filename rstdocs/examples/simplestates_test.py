@@ -1,7 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: iso-8859-1 -*-
 
-# # -*- coding: iso-8859-1 -*-
-# 
 # Test the simplestates.py generic state machine
 # ==============================================
 # 
@@ -173,8 +172,8 @@ class SimpleStates2(SimpleStates1):
     """second version of the abstract state machine class
     """
 
-# We add the initialization of the data to the `__iter__` method. The data is
-# transformed inta an iterator_ first. ::
+# We add the initialisation of the data to the `__iter__` method. The data is
+# transformed into an iterator_ first. ::
 
     def __iter__(self):
         self.data_iterator = iter(self.data)
@@ -303,7 +302,7 @@ class Example3(SimpleStates2):
         # no more tokens but sum not reached
         yield "p=%d"%sum # partial sum
 
-# The iterator must instanciate the state-iterators before starting the
+# The iterator must instantiate the state-iterators before starting the
 # iteration loop::
 
     def __iter__(self):
@@ -341,7 +340,7 @@ def test_Example3():
 # Backtracking
 # ============
 # 
-# the iterqueue module provides an "extendable" iterator with, e.g.,
+# the iterqueue module provides an "extensible" iterator with, e.g.,
 # an `appendleft` method to push back values::
 
 from iterqueue import XIter
@@ -463,7 +462,7 @@ def test_Example4():
 # ==============================================================
 # 
 # In `Example4`, we had to redefine the `__iter__` method to convert the
-# methode state generators into iterators. It would be nice if this could be
+# method state generators into iterators. It would be nice if this could be
 # done in the base class. 
 # 
 # `SimpleStates3` adds a generic function for this task that relies on a
@@ -476,7 +475,7 @@ class SimpleStates5(SimpleStates2):
     """generic state machine acting on iterable data
     """
     def _initialize_state_generators(self):
-        """Generic function to initialize state handlers from generators
+        """Generic function to initialise state handlers from generators
         
         functions whose name matches `[^_]<state>_handler_generator` should
         be converted to iterators and their `.next()` method stored as
@@ -602,8 +601,8 @@ class Example6(simplestates.SimpleStates):
 # ----
 # 
 # In order not to make it dependent on the iterqueue module, the final
-# `SimpleStates` doesnot wrap the data in an XIter instance. This step should
-# be done at the instanciation of a state machine. ::
+# `SimpleStates` does not wrap the data in an XIter instance. This step should
+# be done at the instantiation of a state machine. ::
 
 def test_Example5():
     statemachine = Example5(XIter(testdata), init_state='low')

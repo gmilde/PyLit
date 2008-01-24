@@ -90,7 +90,7 @@ __ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION00022000000000000
 reStructured Text
 -----------------
 
-PyLit uses `reStructured Text`_ from Python docutils_ for hyperlinks and
+PyLit uses `reStructured Text`_ from Python Docutils_ for hyperlinks and
 text markup. [#]_
 
 * reStructured Text is an "ASCII-markup" language. Its syntax is very similar
@@ -103,7 +103,7 @@ text markup. [#]_
 * Special editor modes for editing reStructuredText already exist (see
   `Editor Support for reStructuredText`_.) 
 
-* With docutils_, the text source can be converted to a nice looking,
+* With Docutils_, the text source can be converted to a nice looking,
   hyper-linked, browsable HTML documentation as well as to a LaTeX document 
   (and with pdflatex further to a printer-ready PDF manual).
 
@@ -131,7 +131,7 @@ Pylit supports `Python doctests`_ in a literate script. For details see the
 
 .. References:
 
-.. _docutils: http://docutils.sourceforge.net/rst.html
+.. _Docutils: http://docutils.sourceforge.net/rst.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Python: http://www.python.org
 .. _`Editor Support for reStructuredText`:

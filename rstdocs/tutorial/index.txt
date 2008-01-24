@@ -56,7 +56,7 @@ Now we can add some more documentation and a link (of course, knowledge of
 .. include:: hello_2.py.txt
      :literal:
 
-Pretty-printed with docutils, it looks like
+Pretty-printed with Docutils, it looks like
 
 .. admonition:: hello_2
 
@@ -85,8 +85,8 @@ Points to mention:
   first line that is not more indented than the preceding text block.)
 
 
-Textblocks and Comments
------------------------
+Text blocks and Comments
+------------------------
 
 Comment lines are only transformed to a text block, if they
 
@@ -157,7 +157,7 @@ How can I include a literal block that should not be in the executable code
 Workarounds:
   
 - Use a `parsed-literal block`_ directive and mark lines containing
-  "accidential" markup as `inline literals`_. E.g. ::
+  "accidental" markup as `inline literals`_. E.g. ::
   
     This will be printed as literal block but not become part of the source
     code:
@@ -198,7 +198,7 @@ File Headers
 Sometimes code needs to remain on the first line(s) of the document to be
 valid. The most common example is the shebang_ line that tells a POSIX shell
 how to process an executable file. In Python, the magic comment specifying
-the `source code encoding`_ must occure on line one or two:
+the `source code encoding`_ must occur on line one or two:
 
 .. include:: hello_with_header.py
      :literal:
@@ -208,7 +208,7 @@ Headers are converted to a comment in the text source:
 .. include:: hello_with_header.py.txt
      :literal:
 
-Pretty-printed with docutils, it looks like
+Pretty-printed with Docutils, it looks like
 
 .. admonition:: hello_with_header
 
@@ -251,7 +251,7 @@ Now try it with ::
 
   #>  python -c "import doctest; doctest.testfile('hello_with_doctest.py')"
   
-There is no output. So everything is OK? Unfortunatly not:
+There is no output. So everything is OK? Unfortunately not:
 ``doctest.testfile`` does not find the test, as it is "hidden" in a comment.
 [#]_ 
 
@@ -307,7 +307,7 @@ The documentation of the calling file can include the executed file
 .. include:: hello_multifile.py
      :literal:
 
-Saved to ``hello_multifile.py.txt`` and pretty-printed with docutils, this
+Saved to ``hello_multifile.py.txt`` and pretty-printed with Docutils, this
 looks like
 
 .. admonition:: hello_multifile
