@@ -82,6 +82,8 @@
 #                    to allow imports from the current working dir.
 # :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
 #                    and report differences (as with outfile=='-').
+# :2008-01-28: 0.7.2 Do not add missing code-block separators with doctest_run
+# 	       	     on the code source. Keeps lines consistent.
 # 
 # ::
 
@@ -339,6 +341,7 @@ class TextCodeConverter(object):
     codeindent =  defaults.codeindent
     header_string = defaults.header_string
     code_block_marker = defaults.code_block_marker
+    add_missing_code_block_marker = True # you want this (except for doctest)
     strip = defaults.strip
     strip_marker = defaults.strip_marker 
     state = "" # type of current block, see `TextCodeConverter.convert`_
@@ -504,6 +507,8 @@ class TextCodeConverter(object):
 # ::
 
         self.code_block_marker_missing = False
+
+
 
 # Determine the state of the block and convert with the matching "handler"::
 
@@ -831,7 +836,7 @@ class Code2Text(TextCodeConverter):
           
         if self.strip or self.strip_marker:
             self.strip_code_block_marker(lines)
-        else:
+        elif self.add_missing_code_block_marker:
             try:
                 self.code_block_marker_missing = \
                     not self.marker_regexp.search(lines[-2])
@@ -1441,7 +1446,7 @@ def run_doctest(infile="-", txt2code=True,
 
     (data, out_stream) = open_streams(infile, "-")
     if txt2code is False: 
-        converter = Code2Text(data, **keyw)
+        converter = Code2Text(data, add_missing_code_block_marker=False, **keyw)
         docstring = str(converter)
     else: 
         docstring = data.read()
