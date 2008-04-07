@@ -82,8 +82,11 @@
 #                    to allow imports from the current working dir.
 # :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
 #                    and report differences (as with outfile=='-').
-# :2008-01-28: 0.7.2 Do not add missing code-block separators with doctest_run
-# 	       	     on the code source. Keeps lines consistent.
+# :2008-01-28: 0.7.2 Do not add missing code-block separators with 
+# 	       	     `doctest_run` on the code source. Keeps lines consistent.
+# :2008-04-07: 0.7.3 Use value of code_block_marker for insertion of missing
+# 	       	     transition marker in Code2Text.code_block_handler
+#		     Add "shell" to defaults.languages
 # 
 # ::
 
@@ -152,11 +155,12 @@ defaults = optparse.Values()
 # The ``--language`` command line option or setting ``defaults.language`` in
 # programmatic use override this auto-setting feature. ::
 
-defaults.languages  = {".py": "python", 
-                       ".sl": "slang", 
+defaults.languages  = {".py":  "python", 
+                       ".sh":  "shell",
+                       ".sl":  "slang", 
                        ".css": "css",
-                       ".c": "c",
-                       ".cc": "c++"}
+                       ".c":   "c",
+                       ".cc":  "c++"}
 
 
 # defaults.fallback_language
@@ -184,6 +188,7 @@ defaults.text_extensions = [".txt"]
 # trailing whitespace. ::
 
 defaults.comment_strings = {"python": '# ',
+                            "shell":  '# ',
                             "slang":  '% ', 
                             "css":    '// ',
                             "c":      '// ',
@@ -209,10 +214,8 @@ defaults.header_string = '..'
 # 
 # Marker string for a code block in the text source.
 # 
-# Default is a literal-block marker::
-
-defaults.code_block_marker = '::'
-
+# Default is a literal-block marker ``::``
+#
 # In a document where code examples are only one of several uses of literal
 # blocks, it is more appropriate to single out the source code with a dedicated
 # "code-block" directive.
@@ -230,8 +233,11 @@ defaults.code_block_marker = '::'
 # 
 # Another use would be to mark some code-blocks inactive allowing a literate
 # source to contain code-blocks that should become active only in some cases.
-# 
-#   
+# ::
+
+defaults.code_block_marker = '::'
+#defaults.code_block_marker = '.. code-block:: python'
+   
 #   
 # defaults.strip
 # ~~~~~~~~~~~~~~
@@ -878,7 +884,7 @@ class Code2Text(TextCodeConverter):
         # eventually insert transition marker
         if self.code_block_marker_missing:
             self.state = "documentation"
-            yield "::\n"
+            yield self.code_block_marker+"\n"
             yield "\n"
             self.code_block_marker_missing = False
             self.state = "code_block"
