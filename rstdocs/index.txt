@@ -12,20 +12,21 @@
 PyLit: Literate programming with reStructuredText
 ============================================================
 
+Welcome at the PyLit home page. Here you will find information and
+material for the following topics:
+
+`Literate Programming`__
+  Philosophy, technique, and literate programming systems.
+
+__ literate-programming/index.html
 
     The idea is that you do not document programs (after the fact), but
     write documents that *contain* the programs.
 
     -- John Max Skaller in a `Charming Python interview`_.
 
-.. _Charming Python interview:
-     http://www-128.ibm.com/developerworks/library/l-pyth7.html
 
-
-Welcome at the PyLit home page. Here you will find information and
-material for the following topics:
-
-`PyLit Features`__ 
+`Features`__ 
   `PyLit` (Python-Literate) is a `pure Python module`__ providing a
   bidirectional text <--> code converter. 
   
@@ -41,6 +42,18 @@ __ features/index.html
 __ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
 
 
+Download_, Installation_, Usage_
+  PyLit requires functioning Python_ installation and the `pylit.py`_  module.
+
+  Docutils_ are not strictly required by PyLit itself but for conversion
+  of the text source to HTML, LaTeX, or PDF formats.
+
+  Installation_ and usage_ are straightforward.
+
+.. _download:  download/index.html#download
+.. _installation: download/index.html#installation
+.. _usage: download/index.html#usage
+  
 Tutorial__ 
   How to write literate programs with PyLit.
   
@@ -53,27 +66,10 @@ Examples__
 __ examples/index.html
 
 
-`Download, Installation, Usage`__
-  PyLit requires functioning Python_ installation and the `pylit.py`_  module.
-  Installation_ and usage_ are straightforward.
-  
-  Docutils_ are not strictly required by PyLit itself but for conversion
-  of the text source to HTML, LaTeX, or PDF formats.
-  
-__ download/index.html
-
-
-`Literate Programming`__
-  Philosophy, technique, and literate programming systems.
-
-__ literate-programming/index.html
-
 
 .. _pylit.py: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
 .. _Python: http:www.python.org
 .. _Docutils: http://docutils.sourceforge.net/
-.. _installation: download/index.html#installation
-.. _usage: download/index.html#usage
 
 
 `Project page`_
@@ -91,9 +87,9 @@ __ literate-programming/index.html
 
 
 Changes_ 
-  The project is still in an early "alpha" stage. It works for me, but your
-  mileage might vary. Usage, behaviour, and API are not fixed yet. Ideas and
-  feedback welcome.
+  I am using PyLit in my daily work for more than two years now without 
+  major problems. However, usage, behaviour, and API are not fixed yet. 
+  It works for me, but your mileage might vary. Ideas and feedback welcome.
   
 .. _changes: examples/pylit.py.html#changelog
 
@@ -104,10 +100,11 @@ No Warranty
   FOR A PARTICULAR PURPOSE.  See the `GNU General Public License`_ for more
   details.
   
-  Remember to back up your data!
+  Remember to back up your data. I recomend to use a version control system 
+  for code and text development.
 
 Copyright
-  PyLit is Copyright 2005, 2007 Guenter Milde.
+  © 2005, 2006, 2007 Günter Milde.
   
   It is `free software`_, released under the `GNU General Public License`_
   (GPL) 
@@ -122,8 +119,10 @@ About this site
   the rest2web_ site builder.
   
   `BerliOS Developer`_ is a free (and ad-free!) service to Open Source
-  developers by the Fraunhofer-Institut f�r Offene Kommunikationssysteme 
+  developers by the Fraunhofer-Institut für Offene Kommunikationssysteme 
   (FOKUS) in Berlin.
   
+.. _Charming Python interview:
+     http://www-128.ibm.com/developerworks/library/l-pyth7.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/

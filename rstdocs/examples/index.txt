@@ -95,16 +95,15 @@ However, running ``doctest`` on the code source will only run doctests
 within docstrings. In contrast, ``pylit --doctest`` will detect all
 doctests, in docstrings as well as in text blocks. 
 
-This way, doctests that do not need to become part of the on-line
-documentation can reside in the documentation blocks: Comprehensive
-tests can be placed in the same file as the tested code without resulting in
-bloated docstrings taking up precious resources and loading time (as they
-will be stripped from the byte-compiled module).
+This way, the docstrings can be kept concise and to the point while at the
+same time comprehensive tests can be placed in the code file without
+resulting in bloated docstrings taking up precious resources and loading
+time (as they will be stripped from the byte-compiled module).
 
-As the containing module is not loaded when the file is tested with 
-``pylit --doctest``, a doctest block must import it before any of its
-objects can be used. An elegant solution is to give a usage example in the
-module's docstring. 
+As the code source is not loaded automatically when the file is tested with
+``pylit --doctest``, a leading doctest block must import the module before
+any of its objects can be used. An elegant solution is to give a usage
+example in the module's docstring or leading comment. 
 
 `literate doctests`_ provides more details and two examples:
 
