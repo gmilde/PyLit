@@ -15,19 +15,16 @@ PyLit: Literate programming with reStructuredText
 Welcome at the PyLit home page. Here you will find information and
 material for the following topics:
 
-`Literate Programming`__
+`Literate Programming <literate-programming/>`__
   Philosophy, technique, and literate programming systems.
-
-__ literate-programming/index.html
 
     The idea is that you do not document programs (after the fact), but
     write documents that *contain* the programs.
 
     -- John Max Skaller in a `Charming Python interview`_.
 
-
-`Features`__ 
-  `PyLit` (Python-Literate) is a `pure Python module`__ providing a
+`Features <features>`__ 
+  `PyLit` (Python-Literate) is a `pure Python module`_ providing a
   bidirectional text <--> code converter. 
   
   A literate program source can be either in "text" or "code" format.
@@ -38,39 +35,22 @@ __ literate-programming/index.html
   * The "text" source can be converted to HTML or LaTeX documents with the
     Python Docutils_.
   
-__ features/index.html
-__ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
-
-
 Download_, Installation_, Usage_
   PyLit requires functioning Python_ installation and the `pylit.py`_  module.
-
-  Docutils_ are not strictly required by PyLit itself but for conversion
-  of the text source to HTML, LaTeX, or PDF formats.
-
   Installation_ and usage_ are straightforward.
+
+  Docutils_ can be used for conversion of the text source to HTML, LaTeX, or
+  PDF formats.
 
 .. _download:  download/index.html#download
 .. _installation: download/index.html#installation
 .. _usage: download/index.html#usage
   
-Tutorial__ 
+`Tutorial <tutorial>`__ 
   How to write literate programs with PyLit.
   
-__ tutorial/index.html
-
-  
-Examples__ 
+`Examples <examples>`__ 
   Use cases for literate programming with PyLit.
-
-__ examples/index.html
-
-
-
-.. _pylit.py: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
-.. _Python: http:www.python.org
-.. _Docutils: http://docutils.sourceforge.net/
-
 
 `Project page`_
   The PyLit project is hosted at `BerliOS Developer`_. The `project page`_
@@ -87,9 +67,8 @@ __ examples/index.html
 
 
 Changes_ 
-  I am using PyLit in my daily work for more than two years now without 
-  major problems. However, usage, behaviour, and API are not fixed yet. 
-  It works for me, but your mileage might vary. Ideas and feedback welcome.
+  Usage, behaviour, and API are not fixed yet. 
+  Ideas and feedback welcome.
   
 .. _changes: examples/pylit.py.html#changelog
 
@@ -100,17 +79,18 @@ No Warranty
   FOR A PARTICULAR PURPOSE.  See the `GNU General Public License`_ for more
   details.
   
+  I am using PyLit in my daily work for more than two years now without 
+  major problems.
+  It works for me, but your mileage might vary.
+  
   Remember to back up your data. I recomend to use a version control system 
   for code and text development.
 
 Copyright
   © 2005, 2006, 2007 Günter Milde.
   
-  It is `free software`_, released under the `GNU General Public License`_
+  PyLit is `free software`_, released under the `GNU General Public License`_
   (GPL) 
-
-.. _`free software`: http://www.gnu.org/philosophy/free-sw.html
-.. _`GNU General Public License`: http://www.gnu.org/copyleft/gpl.html
 
 About this site
   The PyLit home page is located at http://pylit.berlios.de/
@@ -126,3 +106,12 @@ About this site
      http://www-128.ibm.com/developerworks/library/l-pyth7.html
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/
+
+.. _pylit.py: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
+.. _Python: http:www.python.org
+.. _Docutils: http://docutils.sourceforge.net/
+.. _pure Python module: 
+    http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
+
+.. _`free software`: http://www.gnu.org/philosophy/free-sw.html
+.. _`GNU General Public License`: http://www.gnu.org/copyleft/gpl.html
