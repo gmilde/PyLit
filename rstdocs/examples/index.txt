@@ -23,27 +23,20 @@ The text parts can be used to structure the script, for additional
 explanations, documentation of variants and discussion why a specific
 approach was chosen.
 
-`pylit.py`__
+`pylit <pylit.py.html>`__
   is a script intended for the "end user". Both, command line
   and programmatic use is possible. 
   
-  Sources: `pylit.py`__, `pylit.py.txt`__
+  Sources: `<pylit.py>`_, `<pylit.py.txt>`_
 
-__ pylit.py.html
-__ pylit.py
-__ pylit.py.txt
-  
 
-`99bottles.py`__
+`99bottles <99bottles.py.html>`__
   This is used as an introductory example to literate programming
   in the `LiteratePrograms.org Wiki`_. Riccardo Murri wrote a Python
   implementation.
   
-  Sources: `99bottles.py`__, `99bottles.py.txt`__
+  Sources: `<99bottles.py>`_, `<99bottles.py.txt>`_
 
-__ 99bottles.py.html
-__ 99bottles.py
-__ 99bottles.py.txt
 .. _LiteratePrograms.org Wiki: 
      http://en.literateprograms.org/LiteratePrograms:Welcome
   
@@ -62,30 +55,24 @@ of such "literate comments".
 
 .. _pydoc: http://docs.python.org/lib/module-pydoc.html
 
-`simplestates.py`__
+`simplestates <simplestates.py.html>`__
   is a module providing the state machine used in earlier PyLit versions.
 
-  Sources: `simplestates.py`__, `simplestates.py.txt`__
+  Sources: `<simplestates.py>`_, `<simplestates.py.txt>`_
 
-__ simplestates.py.html
-__ simplestates.py
-__ simplestates.py.txt
 
 Articles
 --------
   
-`iterqueue.py`__
+`iterqueue <iterqueue.py.html>`__
   is a survey over the various options and attempts to extend
   an iterator with methods for `peek`, `pushback` or `test of emptiness`.
 
   It is also a Python module defining several examples of such rich
   iterators.
 
-  Sources: `iterqueue.py`__, `iterqueue.py.txt`__.
+  Sources: `<iterqueue.py>`_, `<iterqueue.py.txt>`__.
 
-__ iterqueue.py.html
-__ iterqueue.py
-__ iterqueue.py.txt
 
 Doctests
 --------
@@ -142,46 +129,31 @@ test discovery & execution framework. (They should be compatible to
 .. _py.test: http://codespeak.net/py/current/doc/test.html
 
 
-`simplestates_test.py`__
-  is not only the unit test module for simplestates.py,
-  it also defines and tests variants of the state machine class.
+`simplestates_test <simplestates_test.py.html>`__
+  is not a unit test module for simplestates.py, that also
+  defines and tests variants of the state machine class.
 
-  Sources: `simplestates_test.py`__, `simplestates_test.py.txt`__.
+  Sources: `<simplestates_test.py>`_, `<simplestates_test.py.txt>`_.
 
-__ simplestates_test.py.html
-__ simplestates_test.py
-__ simplestates_test.py.txt
 
-`pylit_test.py`__
+`pylit_test <pylit_test.py.html>`__
   contains the unit tests for the ``pylit.py`` text <--> code converter
 
-  Sources: `pylit_test.py`__, and `pylit_test.py.txt`__.
+  Sources: `<pylit_test.py>`_, and `<pylit_test.py.txt>`_.
    
-__ pylit_test.py.html
-__ pylit_test.py
-__ pylit_test.py.txt
 
-
-`iterqueue_test.py`__
+`iterqueue_test <iterqueue_test.py.html>`__
   tests the functionality of the iterator wrapper classes defined in
   `iterqueue.py`
   
-  Sources: `iterqueue_test.py`__, `iterqueue_test.py.txt`__.
-
-__ iterqueue_test.py.html
-__ iterqueue_test.py
-__ iterqueue_test.py.txt
+  Sources: `<iterqueue_test.py>`_, `<iterqueue_test.py.txt>`_.
 
    
-`iterqueue_speed_test.py`__
+`iterqueue_speed_test <iterqueue_speed_test.py.html>`__
   Profiling of the iterator wrapper classes defined in
   `iterqueue.py`
   
-  Sources: `iterqueue_speed_test.py`__, `iterqueue_speed_test.py.txt`__
-
-__ iterqueue_speed_test.py.html
-__ iterqueue_speed_test.py
-__ iterqueue_speed_test.py.txt
+  Sources: `<iterqueue_speed_test.py>`_, `<iterqueue_speed_test.py.txt>`_
 
 
 Tutorials
@@ -214,11 +186,24 @@ __ http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
 .. _GiNaC: http://www.ginac.de
 .. _swiginac: http://swiginac.berlios.de
 
+LaTeX packages
+--------------
+
+The "orthogonal" syntax of reStructuredText and LaTeX makes the documentation
+of a LaTeX package in the source document far more readable than using LaTeX
+markup.
+
+`isomath <isomath.sty.html>`__
+  is a LaTeX package for typesetting math according to International
+  Standards ISO 31-0:1992 to ISO 31-13:1992..
+  
+  Sources: `<isomath.sty>`_, `<isomath.sty.txt>`_
+
+
 Style sheets
 ------------
 
-Not only code, but also cascading style sheets can gain from being made
-literate documents.
+Also cascading style sheets can gain from being made literate documents.
 
 `pygments-default.css`__
   is a style sheet that provides colour to code blocks.
