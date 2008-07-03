@@ -83,10 +83,11 @@
 # :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
 #                    and report differences (as with outfile=='-').
 # :2008-01-28: 0.7.2 Do not add missing code-block separators with 
-# 	       	     `doctest_run` on the code source. Keeps lines consistent.
+#                    `doctest_run` on the code source. Keeps lines consistent.
 # :2008-04-07: 0.7.3 Use value of code_block_marker for insertion of missing
-# 	       	     transition marker in Code2Text.code_block_handler
-#		     Add "shell" to defaults.languages
+#                    transition marker in Code2Text.code_block_handler
+#                    Add "shell" to defaults.languages
+# :2008-06-23: 0.7.4 Add "latex" to defaults.languages
 # 
 # ::
 
@@ -155,12 +156,15 @@ defaults = optparse.Values()
 # The ``--language`` command line option or setting ``defaults.language`` in
 # programmatic use override this auto-setting feature. ::
 
-defaults.languages  = {".py":  "python", 
-                       ".sh":  "shell",
-                       ".sl":  "slang", 
+defaults.languages  = {".c":   "c",
+                       ".cc":  "c++",
                        ".css": "css",
-                       ".c":   "c",
-                       ".cc":  "c++"}
+                       ".py":  "python", 
+                       ".sh":  "shell",
+                       ".sl":  "slang",
+                       ".sty": "latex",
+                       ".tex": "latex"
+                      }
 
 
 # defaults.fallback_language
@@ -187,12 +191,14 @@ defaults.text_extensions = [".txt"]
 # Dictionary of comment strings for known languages. Comment strings include
 # trailing whitespace. ::
 
-defaults.comment_strings = {"python": '# ',
-                            "shell":  '# ',
-                            "slang":  '% ', 
-                            "css":    '// ',
+defaults.comment_strings = {"css":    '// ',
                             "c":      '// ',
-                            "c++":    '// '}  
+                            "c++":    '// ',
+                            "latex":  '% ',
+                            "python": '# ',
+                            "shell":  '# ',
+                            "slang":  '% '
+                           }
 
 # Used in Code2Text_ to recognise text blocks and in Text2Code_ to format
 # text blocks as comments.
@@ -215,7 +221,7 @@ defaults.header_string = '..'
 # Marker string for a code block in the text source.
 # 
 # Default is a literal-block marker ``::``
-#
+# 
 # In a document where code examples are only one of several uses of literal
 # blocks, it is more appropriate to single out the source code with a dedicated
 # "code-block" directive.
@@ -238,7 +244,7 @@ defaults.header_string = '..'
 defaults.code_block_marker = '::'
 #defaults.code_block_marker = '.. code-block:: python'
    
-#   
+
 # defaults.strip
 # ~~~~~~~~~~~~~~
 # 
@@ -1692,6 +1698,24 @@ if __name__ == '__main__':
 #   to rst-text if ``__docformat__ == restructuredtext``)
 # 
 # TODO: Ask at Docutils users|developers
+# 
+# Plug-ins
+# --------
+# 
+# Specify a path for user additions and plug-ins. This would require to
+# convert Pylit from a pure module to a package...
+# 
+#   6.4.3 Packages in Multiple Directories
+# 
+#   Packages support one more special attribute, __path__. This is initialized
+#   to be a list containing the name of the directory holding the package's
+#   __init__.py before the code in that file is executed. This
+#   variable can be modified; doing so affects future searches for modules and
+#   subpackages contained in the package.
+# 
+#   While this feature is not often needed, it can be used to extend the set
+#   of modules found in a package. 
+# 
 # 
 # .. References
 # 
