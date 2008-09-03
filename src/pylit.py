@@ -383,6 +383,8 @@ class TextCodeConverter(object):
         self.__dict__.update(keyw)
         if not self.comment_string:
             self.comment_string = self.comment_strings[self.language]
+        self.stripped_comment_string = self.comment_string.rstrip()
+
             
 # Pre- and postprocessing filters are set (with
 # `TextCodeConverter.get_filter`_)::
@@ -398,8 +400,7 @@ class TextCodeConverter(object):
 
         marker = self.code_block_marker
         if marker == '::':
-            self.marker_regexp = re.compile('^( *(?!\.\.).*)(%s)([ \n]*)$' 
-                                            % marker)
+            self.marker_regexp = re.compile('^( *(?!\.\.).*)(::)([ \n]*)$')
         else:
             # assume code_block_marker is a directive like '.. code-block::'
             self.marker_regexp = re.compile('^( *)(%s)(.*\n?)$' % marker)
@@ -863,15 +864,14 @@ class Code2Text(TextCodeConverter):
 # Code2Text.uncomment_line
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# Strip comment string from a documentation line and return it. Consider the
+# Return documentation line after stripping comment string. Consider the
 # case that a blank line has a comment string without trailing whitespace::
 
     def uncomment_line(self, line):
         """Return uncommented documentation line"""
-        stripped_comment_string = self.comment_string.rstrip()
         line = line.replace(self.comment_string, "", 1)
-        if line.rstrip() == stripped_comment_string:
-            line = line.replace(stripped_comment_string, "", 1)
+        if line.rstrip() == self.stripped_comment_string:
+            line = line.replace(self.stripped_comment_string, "", 1)
         return line
         
 
@@ -1659,25 +1659,25 @@ if __name__ == '__main__':
 # * Is it sensible to offer the `header_string` option also as command line
 #   option?
 # 
-# * treatment of blank lines:
+# treatment of blank lines
+# ------------------------
 # 
-#   * Alternatives: Keep blank lines blank
+# Alternatives: Keep blank lines blank
 #     
-#     + "always",
-#   
-#     + "if empty" (no whitespace). Comment if there is whitespace.
-#   
-#       This would allow non-obstructing markup but unfortunately this is (in
-#       most editors) also non-visible markup -> bad.
-#   
-#     + "if double" (if there is more than one consecutive blank line)
-#   
-#     + "never" (current setting)
+# - "never" (current setting) -> "visually merges" all documentation
+#    if there is no interjacent code
 # 
-#   So the setting could be something like::
-
-#     defaults.keep_blank_lines = { "python": "if double",
-#                                   "elisp": "always"}
+# - "always" -> disrupts documentation blocks,
+# 
+# - "if empty" (no whitespace). Comment if there is whitespace.
+# 
+#   This would allow non-obstructing markup but unfortunately this is (in
+#   most editors) also non-visible markup.
+# 
+# + "if double" (if there is more than one consecutive blank line)
+#   
+#   With this handling, the "visual gap" remains in both, text and code
+#   source.
 # 
 #   
 # Parsing Problems
