@@ -1,0 +1,12 @@
+..  pygments-default-restindex.txt: Dummy for rest2web
+
+    -*- rst-mode -*-
+    
+    restindex
+      crumb: pygments-default.css
+      target: pygments-default.css.html
+      file: pygments-default.css
+      file: pygments-default.css.txt
+    /restindex
+      
+.. include:: examples/pygments-default.css.txt

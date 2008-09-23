@@ -1,0 +1,12 @@
+..  listings-tex-options-restindex.txt: Dummy for rest2web
+
+    -*- rst-mode -*-
+    
+    restindex
+      crumb: listings-tex-options.sty
+      target: listings-tex-options.sty.html
+      file: listings-tex-options.sty
+      file: listings-tex-options.sty.txt
+    /restindex
+      
+.. include:: examples/listings-tex-options.sty.txt

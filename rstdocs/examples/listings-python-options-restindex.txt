@@ -1,0 +1,12 @@
+..  listings-python-options-restindex.txt: Dummy for rest2web
+
+    -*- rst-mode -*-
+    
+    restindex
+      crumb: listings-python-options.sty
+      target: listings-python-options.sty.html
+      file: listings-python-options.sty
+      file: listings-python-options.sty.txt
+    /restindex
+      
+.. include:: examples/listings-python-options.sty.txt
