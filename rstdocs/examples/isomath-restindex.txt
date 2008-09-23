@@ -8,6 +8,7 @@
       target: isomath.sty.html
       file: isomath.sty
       file: isomath.sty.txt
+      file: isomath.sty.pdf
       file: isomath-test.tex
     /restindex
       
