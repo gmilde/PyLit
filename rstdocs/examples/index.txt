@@ -71,7 +71,7 @@ Articles
   It is also a Python module defining several examples of such rich
   iterators.
 
-  Sources: `<iterqueue.py>`_, `<iterqueue.py.txt>`__.
+  Sources: `<iterqueue.py>`_, `<iterqueue.py.txt>`_.
 
 
 Doctests
@@ -114,12 +114,12 @@ example in the module's docstring or leading comment.
 .. _testmod_literate.py: literate-doctests/testmod_literate.py
 .. _testfile_literate.py: literate-doctests/testfile_literate.py
 
-Test suites
------------
+Test scripts
+------------
 
 Test suites are a good example for the advantages of literate programming.
 Documenting the rationale and design as well as test considerations can help
-a lot when maintaining and extending the suite.
+a lot when maintaining and extending the tests.
 
 The following unit test modules are tested using the nose_ unit
 test discovery & execution framework. (They should be compatible to
@@ -165,9 +165,9 @@ code, it is easier to copy or paste code examples to and from scripts or an
 interactive program session. Re-converting indents the code snippets
 correctly so they will be literal blocks in the pretty print.
 
-In Python, code examples can be given as both, code blocks and doctest_ blocks. 
-With a 'usage' example that imports the code source as module, doctest
-blocks can also test examples from literal code blocks.
+In Python, code examples can be given as both, code blocks and doctest_
+blocks.  With a 'usage' example that imports the code source as module,
+doctest blocks can also test examples from literal code blocks.
 
 `swiginac_tutorial`_
   is an adaption of the `GiNaC tutorial`_ for doing Computer algebra with
@@ -193,11 +193,30 @@ The "orthogonal" syntax of reStructuredText and LaTeX makes the documentation
 of a LaTeX package in the source document far more readable than using LaTeX
 markup.
 
+`listings-python-options <listings-python-options.sty.html>`__ 
+  sets up the listings environment for literate Python scripts. Using this
+  together with the ``--stylesheet=listings-python-options.sty`` and
+  ``--literal-block-env=lstlisting`` options to ``rst2latex.py`` results in
+  syntax-highlight for literal blocks in the latex (and PDF via LaTeX)
+  output.
+  
+  Sources: `<listings-python-options.sty>`_, `<listings-python-options.sty.txt>`_
+
+`listings-tex-options <listings-tex-options.sty.html>`__
+  sets up the listings environment for literate LaTeX packages. Use with 
+  ``--stylesheet=listings-tex-options.sty --literal-block-env=lstlisting``
+  
+  Sources: `<listings-tex-options.sty>`_, `<listings-tex-options.sty.txt>`_
+
 `isomath <isomath.sty.html>`__
   is a LaTeX package for typesetting math according to International
-  Standards ISO 31-0:1992 to ISO 31-13:1992..
-  
+  Standard ISO 31 `Quantities and units`.
+      
   Sources: `<isomath.sty>`_, `<isomath.sty.txt>`_
+  
+  PDF: `<isomath.sty.pdf>`_
+  
+  Testfile: `<isomath-test.tex>`_
 
 
 Style sheets
@@ -205,14 +224,10 @@ Style sheets
 
 Also cascading style sheets can gain from being made literate documents.
 
-`pygments-default.css`__
+`pygments-default <pygments-default.css.html>`__
   is a style sheet that provides colour to code blocks.
   
-  Sources: `pygments-default.css`__, `pygments-default.css.txt`__
-
-__ ../features/pygments-default.css.html
-__ ../features/pygments-default.css
-__ ../features/pygments-default.css.txt
+  Sources: `<pygments-default.css>`_, `<pygments-default.css.txt>`_
 
 Configuration files
 -------------------

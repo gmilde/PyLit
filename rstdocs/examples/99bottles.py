@@ -76,7 +76,7 @@ def plural_suffix(number):
         return ""
 
 # Still, the last line come out wrong, as here we have <number-1> bottles. To
-# treat this case we eiter could split the last line and treat it differently,
+# treat this case we either could split the last line and treat it differently,
 # or use a modified template as e.g. ::
 
 verse_template_2 = """ 

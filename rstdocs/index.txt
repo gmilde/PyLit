@@ -24,7 +24,7 @@ material for the following topics:
 
     -- John Max Skaller in a `Charming Python interview`_.
 
-`Features <features>`__ 
+`Features <features/>`__ 
   `PyLit` (Python-Literate) is a `pure Python module`_ providing a
   bidirectional text <--> code converter. 
   
@@ -47,10 +47,10 @@ Download_, Installation_, Usage_
 .. _installation: download/index.html#installation
 .. _usage: download/index.html#usage
   
-`Tutorial <tutorial>`__ 
+`Tutorial <tutorial/>`__ 
   How to write literate programs with PyLit.
   
-`Examples <examples>`__ 
+`Examples <examples/>`__ 
   Use cases for literate programming with PyLit.
 
 `Project page`_
