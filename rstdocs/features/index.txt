@@ -3,6 +3,7 @@
   restindex
       crumb: Features
       page-title: Pylit - Features
+      encoding: utf8
   /restindex
 
 

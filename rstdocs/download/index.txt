@@ -3,6 +3,7 @@
       crumb: Download
       page-title: PyLit - Download, Installation, and Usage 
       file: pylit
+      encoding: utf8
    /restindex
 
 Download, Installation, Usage

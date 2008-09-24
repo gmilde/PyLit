@@ -7,6 +7,7 @@
       target: iterqueue_test.py.html
       file: iterqueue_test.py
       file: iterqueue_test.py.txt
+      encoding: utf8
     /restindex
       
 .. include:: examples/iterqueue_test.py.txt

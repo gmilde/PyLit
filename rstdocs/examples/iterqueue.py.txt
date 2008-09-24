@@ -1,5 +1,5 @@
 ..  #!/usr/bin/env python
-  # -*- coding: iso-8859-1 -*-
+  # -*- coding: utf8 -*-
 
 ************************************
 Extending Iterators for use as Queue
@@ -522,7 +522,7 @@ PushIterator
 ------------
 
 In the slides to the `Effective Python Programming`_ OSCON 2005 tutorial by
-Anthony Baxter, I found a genially simple example for an iterator with a
+AnthonyÂ Baxter, I found a genially simple example for an iterator with a
 `push` method. 
 
 .. _`Effective Python Programming`: 

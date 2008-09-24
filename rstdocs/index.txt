@@ -6,7 +6,7 @@
      file: pylit-framed-32.png
      file: html4css1.css
      file: pylit.css
-     output-encoding: utf8
+     encoding: utf8
    /restindex
 
 ============================================================
@@ -67,12 +67,15 @@ Download_, Installation_, Usage_
 .. _`SVN repository`: http://svn.berlios.de/wsvn/pylit
 
 
-Changes_ 
+Changes_
+  PyLit `versions`_ and `SVN log`_.
+  
   Usage, behaviour, and API are not fixed yet. 
   Ideas and feedback welcome.
-  
-.. _changes: examples/pylit.py.html#changelog
 
+.. _changes:  
+.. _versions: examples/pylit.py.html#changelog
+.. _SVN log: http://svn.berlios.de/wsvn/pylit/?op=log
 
 No Warranty
   PyLit is distributed in the hope that it will be useful, but WITHOUT ANY

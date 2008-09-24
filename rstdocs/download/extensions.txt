@@ -4,6 +4,7 @@
   restindex
       crumb: Extensions
       page-title: PyLit - Usage - Filename Extensions
+      encoding: utf8
   /restindex
 
 Extensions for PyLit files

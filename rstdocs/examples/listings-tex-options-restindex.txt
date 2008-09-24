@@ -7,6 +7,7 @@
       target: listings-tex-options.sty.html
       file: listings-tex-options.sty
       file: listings-tex-options.sty.txt
+      encoding: utf8
     /restindex
       
 .. include:: examples/listings-tex-options.sty.txt

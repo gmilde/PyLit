@@ -7,6 +7,7 @@
       target: simplestates.py.html
       file: simplestates.py
       file: simplestates.py.txt
+      encoding: utf8
     /restindex
       
 .. include:: examples/simplestates.py.txt

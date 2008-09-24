@@ -7,6 +7,7 @@
       target: pylit_test.py.html
       file: pylit_test.py
       file: pylit_test.py.txt
+      encoding: utf8
     /restindex
       
 .. include:: examples/pylit_test.py.txt

@@ -4,6 +4,7 @@
   restindex
       crumb: Usage
       page-title: PyLit - Usage
+      encoding: utf8
   /restindex
 
 Usage

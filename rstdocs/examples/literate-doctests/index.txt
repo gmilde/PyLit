@@ -1,10 +1,11 @@
 .. -*- rst-mode -*-
 .. 
   restindex
-      crumb: Doctests
-      page-title: PyLit - Tutorial - Doctests
-      file: testmod_literate.py
-      file: testfile_literate.py
+     crumb: Doctests
+     page-title: PyLit - Tutorial - Doctests
+     file: testmod_literate.py
+     file: testfile_literate.py
+     encoding: utf8
   /restindex
 
 How to write literate doctests with PyLit

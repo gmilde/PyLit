@@ -1,8 +1,9 @@
 .. -*- rst-mode -*-
 .. 
   restindex
-      crumb: Tutorial
-      page-title: PyLit - Tutorial
+     crumb: Tutorial
+     page-title: PyLit - Tutorial
+     encoding: utf8
   /restindex
 
 How to write program documents with PyLit

@@ -167,7 +167,7 @@ styles.
     programming, which is well-suited to programs with many, small (named)
     abstractions.
 
-    -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+    -- Kurt NÃ¸rmark: `Literate Programming - Issues and Problems`_
 
 Ordering code for optimal presentation to humans is still a problem in
 many "traditional" programming languages. Pythons dynamic name resolution
@@ -221,7 +221,7 @@ Some of the problems with WEB-like systems are:
     being based on a paper representation, we cannot use the computers dynamic
     potentials, such as outlining and searching.
 
-    -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
+    -- Kurt NÃ¸rmark: `Literate Programming - Issues and Problems`_
 
 
 .. _`Literate Programming - Issues and Problems`:

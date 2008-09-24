@@ -1,8 +1,9 @@
 .. -*- rst-mode -*-
 .. 
   restindex
-      crumb: Examples
-      page-title: Pylit - Examples
+     crumb: Examples
+     page-title: Pylit - Examples
+     encoding: utf8
   /restindex
 
 Examples
