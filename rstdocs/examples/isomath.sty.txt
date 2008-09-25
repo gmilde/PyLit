@@ -1,15 +1,22 @@
-isomath.sty: Math layout à la ISO 31
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+isomath.sty: Math for scientists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copyright © 2008 Günter Milde
+:Copyright: © 2008 Günter Milde,
+	    Released under the terms of the GNU General Public License 
+	    (v. 2 or later)
+
+:Abstract: The isomath package enables formatting Greek and Latin letters
+	   as symbols for vectors, matrices, and tensors in the typefaces
+	   recommended for scientific papers by the International
+	   Standard ISO 31.
 
 .. contents:: 
 
 Introduction
 ************
             
-Incentive
-=========
+Motivation
+==========
 
 Scientific organisations like IUPAP_, IUPAC_, NIST_, BIPM_, and others
 recommend typesetting math according to International Standard ISO 31
@@ -57,22 +64,21 @@ typesetting math with LaTeX:
   + Upright Greek letters are available through the ``\mathrm`` and
     ``\mathbf`` alphabets, if the corresponding fonts are OML encoded.
 
+* The `command aliases`_ ``\vectorsym``, ``\matrixsym``, and ``\tensorsym``
+  select an ISO-conforming typeface.
     
-* `New math alphabets`_ are defined:
+* For this, `new math alphabets`_ are defined:
 
-  :``\mathbold``: for *boldface italic* letters (vector and matrix
+  :``\mathbold``: for *boldface italic*  (vector and matrix
     symbols),
 
-  :``\mathsans``: for *sans-serif italic* letters,
+  :``\mathsans``: for *sans-serif italic* ,
 
-  :``\mathboldsans``: for *sans-serif bold italic* letters (tensor symbols).
+  :``\mathboldsans``: for *sans-serif bold italic*  (tensor symbols).
 
   The family for these fonts is by default taken from the document's
   ``\rmdefault`` and ``\sfdefault`` values.  The ``rmdefault=<family>`` and
   ``sfdefault=<family>`` options_ can be used to override the defaults.
-
-* The `command aliases`_ ``\vectorsym``, ``\matrixsym``, and ``\tensorsym``
-  select an ISO-conforming typeface.
 
 * `Font mappings`_ are defined for families which have an OML encoded
   counterpart but miss the substitution definition.
@@ -557,6 +563,16 @@ The ``\mathsans`` definition "increases symmetry". However, it adds a math
 alphabet that is rarely (or not at all) used. Giving the limit of 16 math
 alphabets, it might be better not to define it. Make it an option?
 
+About this file
+===============
+
+The package documentation is included in the source file. 
+
+The bidirectional text <-> code converter PyLit_ can be used to transform
+the LaTeX package ``isomath.sty`` to a `reStructured Text`_ document
+``isomath.sty.txt`` (and back again). To translate ``isomath.sty.txt`` to
+LaTeX or HTML, the Python docutils_ are required.
+
 
 References
 ==========
@@ -612,3 +628,7 @@ References
 .. _pxfonts: http://dante.ctan.org/CTAN/help/Catalogue/entries/pxfonts.html
 .. _tmmath: http://dante.ctan.org/CTAN/help/Catalogue/entries/tmmath.html
 .. _txfonts: http://dante.ctan.org/CTAN/help/Catalogue/entries/txfonts.html
+
+.. _pylit: http://pylit.berlios.de
+.. _reStructured Text: http://docutils.sourceforge.net/rst.html
+.. _docutils: http://docutils.sourceforge.net/rst.html
