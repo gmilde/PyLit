@@ -1,8 +1,0 @@
-.. 
-  restindex
-      crumb: Literate Programming
-      page-title: PyLit - Literate Programming: definition and frameworks
-      encoding: utf8
-  /restindex
-
-.. include:: literate-programming.txt

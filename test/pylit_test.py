@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-## Test the pylit.py literal python module
-## =======================================
+## pylit_test.py 
+## *************
+## Test pylit.py Python Module
+## +++++++++++++++++++++++++++
 ## 
 ## :Date:      $Date: 2007-05-17 $
 ## :Version:   SVN-Revision $Revision: 45 $
@@ -15,7 +17,7 @@
 ## 
 ## 
 ## A catalogue of errors
-## ----------------------
+## =====================
 ## 
 ## from file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html
 ## 
@@ -42,7 +44,7 @@ import nose
 ## ========================
 ## 
 ## Test strings
-## ------------
+## ============
 ## 
 ## Example of text, code and stripped code with typical features"::
 
@@ -234,7 +236,7 @@ def test_x2u_filter():
 
 
 ## TextCodeConverter
-## -----------------
+## =================
 ## 
 ## ::
 
@@ -312,7 +314,7 @@ class test_TextCodeConverter(object):
         assert reduce(operator.__add__, textblocks) == textdata
 
 ## Text2Code
-## ---------
+## =========
 ## 
 ## ::
 
@@ -525,10 +527,10 @@ class test_Text2Code(object):
         assert output == soll
 
 ## Special Cases
-## ~~~~~~~~~~~~~
+## -------------
 ## 
 ## Code follows text block without blank line
-## ''''''''''''''''''''''''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## 
 ## End of text block detected ('::') but no paragraph separator (blank line)
 ## follows
@@ -550,7 +552,7 @@ class test_Text2Code(object):
 # """)
 
 ## Text follows code block without blank line
-## ''''''''''''''''''''''''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## 
 ## End of code block detected (a line not more indented than the preceding text
 ## block)
@@ -576,7 +578,7 @@ class test_Text2Code(object):
 # """)
 
 ## A double colon on a line on its own
-## '''''''''''''''''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## 
 ## As a double colon is added by the Code2Text conversion after a text block
 ## (if not already present), it could be removed by the Text2Code conversion
@@ -600,7 +602,7 @@ class test_Text2Code(object):
 #     "foo = 'first'\n"]
 
 ## header samples
-## ''''''''''''''
+## ~~~~~~~~~~~~~~
 ## Convert a leading reStructured text comment  (variant: only if there is
 ## content on the first line) to a leading code block.  Return an empty list,
 ## if there is no header. ::
@@ -661,7 +663,7 @@ print 'hello world'
 textsamples["null string"] = ("", "", "")
 
 ## Code2Text
-## ---------
+## =========
 ## 
 ## ::
 
@@ -854,10 +856,10 @@ class test_Code2Text(object):
 
 
 ## Special cases
-## ~~~~~~~~~~~~~
+## -------------
 ## 
 ## blank comment line
-## ''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~
 ## 
 ## Normally, whitespace in the comment string is significant, i.e. with
 ## ``comment_string = "# "``, a line ``"#something\n"`` will count as code.
@@ -882,7 +884,7 @@ more text
 """)
 
 ## No blank line after text
-## ''''''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~~~~~~~
 ## 
 ## If a matching comment precedes or follows a code line (i.e. any line
 ## without matching comment) without a blank line in between, it counts as code
@@ -959,7 +961,7 @@ block1 = 'first block'
 """)
 
 ## missing literal block marker
-## ''''''''''''''''''''''''''''
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## 
 ## If text (with matching comment string) is followed by code (line(s) without
 ## matching comment string), but there is no double colon at the end, back
@@ -987,7 +989,7 @@ foo = 'first'
 """)
 
 ## header samples
-## ''''''''''''''
+## ~~~~~~~~~~~~~~
 ## 
 ## Convert a header (leading code block) to a reStructured text comment. ::
 
@@ -1046,7 +1048,7 @@ print 'hello world'
 
 
 ## Filter tests
-## ------------
+## ============
 ## 
 ## ::
 

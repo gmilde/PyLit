@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# ====================================================
-# pylit.py: Literate programming with reStructuredText
-# ====================================================
+# pylit.py
+# ********
+# Literate programming with reStructuredText
+# ++++++++++++++++++++++++++++++++++++++++++
 # 
 # :Date:      $Date$
 # :Version:   SVN-Revision $Revision$
@@ -12,7 +13,6 @@
 #             Released under the terms of the GNU General Public License 
 #             (v. 2 or later)
 # 
-# .. sectnum::
 # .. contents::
 # 
 # Frontmatter
@@ -1191,32 +1191,41 @@ class PylitOptions(object):
 
         """
         p = optparse.OptionParser(usage=main.__doc__, version=_version)
-        # add the options
+
+        # Conversion settings
+
         p.add_option("-c", "--code2txt", dest="txt2code", action="store_false",
                      help="convert code source to text source")
-        p.add_option("-m", "--code-block-marker", dest="code_block_marker",
-                     help="syntax token starting a code block. (default '::')")
-        p.add_option("--comment-string", dest="comment_string",
-                     help="documentation block marker in code source "
-                     "(default '# ')")
-        p.add_option("-d", "--diff", action="store_true", 
-                     help="test for differences to existing file")
-        p.add_option("--doctest", action="store_true",
-                     help="run doctest.testfile() on the text version")
-        p.add_option("-e", "--execute", action="store_true",
-                     help="execute code (Python only)")
+        p.add_option("-t", "--txt2code", action="store_true",
+                     help="convert text source to code source")
         p.add_option("--language", action="store", 
                      choices = defaults.languages.values(),
                      help="use LANGUAGE native comment style")
+        p.add_option("--comment-string", dest="comment_string",
+                     help="documentation block marker in code source "
+                     "(including trailing whitespace, default '# ')")
+        p.add_option("-m", "--code-block-marker", dest="code_block_marker",
+                     help="syntax token starting a code block. (default '::')")
+                     
+        # Output file handling
+
         p.add_option("--overwrite", action="store", 
                      choices = ["yes", "update", "no"],
                      help="overwrite output file (default 'update')")
         p.add_option("--replace", action="store_true",
                      help="move infile to a backup copy (appending '~')")
         p.add_option("-s", "--strip", action="store_true",
-                     help="export by stripping documentation or code")
-        p.add_option("-t", "--txt2code", action="store_true",
-                     help="convert text source to code source")
+                     help='"export" by stripping documentation or code')
+
+        # Special actions
+
+        p.add_option("-d", "--diff", action="store_true", 
+                     help="test for differences to existing file")
+        p.add_option("--doctest", action="store_true",
+                     help="run doctest.testfile() on the text version")
+        p.add_option("-e", "--execute", action="store_true",
+                     help="execute code (Python only)")
+
         self.parser = p
 
 

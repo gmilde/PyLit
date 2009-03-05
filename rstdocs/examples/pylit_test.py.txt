@@ -1,8 +1,10 @@
 ..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
   
-Test the pylit.py literal python module
-=======================================
+pylit_test.py 
+*************
+Test pylit.py Python Module
++++++++++++++++++++++++++++
 
 :Date:      $Date: 2007-05-17 $
 :Version:   SVN-Revision $Revision: 45 $
@@ -15,7 +17,7 @@ Test the pylit.py literal python module
 
 
 A catalogue of errors
-----------------------
+=====================
 
 from file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html
 
@@ -42,7 +44,7 @@ Text <-> Code conversion
 ========================
 
 Test strings
-------------
+============
 
 Example of text, code and stripped code with typical features"::
 
@@ -234,7 +236,7 @@ Pre and postprocessing filters (for testing the filter hooks)
   
   
 TextCodeConverter
------------------
+=================
 
 ::
 
@@ -312,7 +314,7 @@ TextCodeConverter
           assert reduce(operator.__add__, textblocks) == textdata
   
 Text2Code
----------
+=========
 
 ::
 
@@ -525,10 +527,10 @@ base tests on the "long" test data ::
           assert output == soll
   
 Special Cases
-~~~~~~~~~~~~~
+-------------
 
 Code follows text block without blank line
-''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 End of text block detected ('::') but no paragraph separator (blank line)
 follows
@@ -550,7 +552,7 @@ pylit could fix this and issue a warning::
   # """)
   
 Text follows code block without blank line
-''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 End of code block detected (a line not more indented than the preceding text
 block)
@@ -576,7 +578,7 @@ issues a warning::
   # """)
   
 A double colon on a line on its own
-'''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As a double colon is added by the Code2Text conversion after a text block
 (if not already present), it could be removed by the Text2Code conversion
@@ -585,7 +587,7 @@ to keep the source small and pretty.
 However, this would put the text and code source line numbers out of sync,
 which is bad for error reporting, failing doctests, and the JED editor
 support with the `pylit_buffer()` function in
-http://jedmodes.sf.net/mode/pylit.sl .
+http://jedmodes.sourceforge.net/mode/pylit.
 
 Maybe this could be left to a post-processing filter::
 
@@ -600,7 +602,7 @@ Maybe this could be left to a post-processing filter::
   #     "foo = 'first'\n"]
   
 header samples
-''''''''''''''
+~~~~~~~~~~~~~~
 Convert a leading reStructured text comment  (variant: only if there is
 content on the first line) to a leading code block.  Return an empty list,
 if there is no header. ::
@@ -661,7 +663,7 @@ if there is no header. ::
   textsamples["null string"] = ("", "", "")
   
 Code2Text
----------
+=========
 
 ::
 
@@ -854,10 +856,10 @@ base tests on the "long" test strings ::
   
   
 Special cases
-~~~~~~~~~~~~~
+-------------
 
 blank comment line
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 Normally, whitespace in the comment string is significant, i.e. with
 ``comment_string = "# "``, a line ``"#something\n"`` will count as code.
@@ -882,7 +884,7 @@ string should be ignored, i.e. ``#\n`` is recognised as a blank text line::
   """)
   
 No blank line after text
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 If a matching comment precedes or follows a code line (i.e. any line
 without matching comment) without a blank line in between, it counts as code
@@ -959,7 +961,7 @@ comment string (the whole block will be kept as commented code)
   """)
   
 missing literal block marker
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If text (with matching comment string) is followed by code (line(s) without
 matching comment string), but there is no double colon at the end, back
@@ -987,7 +989,7 @@ insertion will use the save form, feel free to correct this by hand.)::
   """)
   
 header samples
-''''''''''''''
+~~~~~~~~~~~~~~
 
 Convert a header (leading code block) to a reStructured text comment. ::
 
@@ -1046,7 +1048,7 @@ Convert a header (leading code block) to a reStructured text comment. ::
   
   
 Filter tests
-------------
+============
 
 ::
 

@@ -5,12 +5,10 @@
                (v. 2 or later)
 
 Literate Programming
-====================
-
-.. contents::
+********************
 
 The Philosophy of Literate Programming
-++++++++++++++++++++++++++++++++++++++
+======================================
 
 .. _definition:
 
@@ -55,14 +53,15 @@ John Max Skaller put the philosophy of literate programming in one sentence
     -- John Max Skaller in a `Charming Python interview`_.
 
 
-.. _`Literate Programming FAQ`: http://www.literateprogramming.com/lpfaq.pdf
+.. _`Literate Programming FAQ`: 
+   http://www.literateprogramming.com/lpfaq.pdf
 .. _Literate Programming: WEB_
 .. _Charming Python interview:
-     http://www-128.ibm.com/developerworks/library/l-pyth7.html
+   http://www.ibm.com/developerworks/library/l-pyth7.html
 
 
 Literate Programming Technique and Literate Programming Systems
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+===============================================================
 
 Donald Knuth not only conceived the *philosophy* of literate programming,
 he also wrote the first literate programming *system* `WEB`_ that
@@ -104,14 +103,14 @@ system:
      single article that explains the program and how it works. Indices and
      cross-references are generated automatically. 
 
-  POD only does task 1, but the other tasks are much more important. 
+  ..  POD only does task 1, but the other tasks are much more important. 
 
   -- Mark-Jason Dominus `POD is not Literate Programming`_
 
 
 
-Literate Programming with reStructured Text
-+++++++++++++++++++++++++++++++++++++++++++
+Literate Programming with reStructuredText
+==========================================
 
 PyLit fails the `statement of requirements`_ for a literate programming
 system, as it does not provide for code re-ordering, automatic indices and
@@ -133,20 +132,21 @@ However, it is argued that PyLit is an *educated choice* as tool for the
 * PyLit is inherently bilingual. The document containing the program is
   a combination of: 
   
-  (1) a document formatting language (`reStructured Text`_) and 
+  (1) a document formatting language (`reStructuredText`_) and 
   (2) a programming language. 
   
 * Program and documentation can be typeset in a single article as well as
   converted to a hyperlinked HTML document representing the program's
   "web-like" structure. For indexing and cross-references, PyLit relies
-  on the rich features of the `reStructured Text`_ document formatting
-  language.
+  on the rich features of the `reStructuredText`_ document formatting
+  language. Autogenerating of cross references and indices becomes are
+  possible if the reStructuredText sources are converted with Sphinx_
 
 Dispensing with code re-ordering enables the `dual-source`_ concept. Code
 re-ordering is considered less important when literate programming is not
-seen as an *alternative* to structured programming but a *variant* used
-in combination with structured, object oriented or functional programming
-styles.
+seen as an *alternative* to structured programming but a technique
+*orthogonal* to structured, object oriented or functional programming
+styles:
 
     The computer science and programming pioneers, like Wirth and Knuth,
     used another programming style than we recommend today. One notable
@@ -180,13 +180,13 @@ allows a great deal of flexibility in the order of code.
 .. _embedded documentation: 
      http://en.wikipedia.org/wiki/Literate_programming#Embedded_documentation
 .. _`Literate Programming - Issues and Problems`:
-     http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
+   http://www.cs.aau.dk/~normark/litpro/issues-and-problems.html
 .. _dual-source: /features/index.html#dual-source
-
+.. _Sphinx: http://sphinx.pocoo.org/
 
 
 Existing Frameworks
-+++++++++++++++++++
+===================
 
 There are many literate programming systems available, both sophisticated
 and lightweight. This non-comprehensive list compares them to PyLit.
@@ -233,7 +233,7 @@ How does PyLit differ from the web-like literate programming frameworks
 * PyLit is not a complete `literate programming system`_ but a simple tool.
   It does not support re-arranging of named code chunks. 
   
-* PyLit uses `reStructured Text`_ as document formatting language.
+* PyLit uses `reStructuredText`_ as document formatting language.
   The literate program source is legible in any text editor. 
 
   Even the code source is "in a fashion suited for reading by human beings",
@@ -261,7 +261,7 @@ How does PyLit differ from the web-like literate programming frameworks
 
 .. _WEB: http://www.literateprogramming.com/knuthweb.pdf
 .. _CWEB: http://www-cs-faculty.stanford.edu/~knuth/cweb.html
-.. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
+.. _noweb: http://www.cs.tufts.edu/~nr/noweb/
 .. _FunnelWeb: http://www.ross.net/funnelweb/
 
 
@@ -334,11 +334,11 @@ However, Ly introduces its own language with
 * a syntax for code chunks,
 * some special ways for entering HTML tags ("currently undocumented").
 
-whereas PyLit relies on the established `reStructured Text`_ for
+whereas PyLit relies on the established `reStructuredText`_ for
 documentation markup and linking.
 
 .. _Ly: http://lyterate.sourceforge.net/intro.html
-.. _reStructured Text: http://docutils.sourceforge.net/rst.html
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
 
 
 XMLTangle
@@ -348,7 +348,7 @@ XMLTangle_ is an generic tangle  program written in Python. It differs from
 PyLit mainly by its choice of XML as documenting language (making the source
 document harder to read for a human being).
 
-.. _XMLTangle: http://literatexml.sourceforge.net/xmltangle/
+.. _XMLTangle: http://literatexml.sourceforge.net/
 
 
 Lightweight literate programming

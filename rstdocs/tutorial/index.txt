@@ -1,21 +1,14 @@
 .. -*- rst-mode -*-
-.. 
-  restindex
-     crumb: Tutorial
-     page-title: PyLit - Tutorial
-     encoding: utf8
-  /restindex
 
-How to write program documents with PyLit
-=========================================
+Tutorial
+========
 
-.. sectnum::
-.. contents::
+How to Write Literate Programs with PyLit
 
-Hello world
+Hello World
 -----------
 
-We start with a classical example in Python_
+We start with a classic example in Python_
 
 .. include:: hello.py
      :literal:
@@ -86,7 +79,7 @@ Points to mention:
   first line that is not more indented than the preceding text block.)
 
 
-Text blocks and Comments
+Text Blocks and Comments
 ------------------------
 
 Comment lines are only transformed to a text block, if they
@@ -149,8 +142,8 @@ The comment in the 2nd line is removed, as it is inside a documentation block.
 .. [#] a line is considered blank, if it contains only whitespace
 
 
-Non-code literal block
-----------------------
+Inserting a Literal Block that is not Part of the Code
+------------------------------------------------------
 
 How can I include a literal block that should not be in the executable code
 (e.g. an example, an earlier version or variant)?
@@ -189,8 +182,6 @@ Workarounds:
   
   Drawback: such directives are not part of the core rst syntax (yet) but
   must be defined in an add-on (see `syntax highlight`_ for examples).
-    
-
 
 
 File Headers
@@ -289,7 +280,7 @@ Read more about doctests in the `literate doctests example`_.
        ``python -c "import doctest; doctest.testfile('hello_with_doctest.py.txt')"``
 
 
-Including files
+Including Files
 ---------------
 
 PyLit does not allow the specification of a separate output file for
@@ -337,27 +328,26 @@ looks like
 
 .. _parsed literal block:
      http://docutils.sourceforge.net/docs/ref/rst/directives.html#parsed-literal-block
-.. _noweb: http://www.eecs.harvard.edu/~nr/noweb/
+.. _noweb: http://www.cs.tufts.edu/~nr/noweb/
 
 .. _include directive:
      http://docutils.sourceforge.net/docs/ref/rst/directives.html#including-an-external-document-fragment
 
 .. _source code encoding:
-    http://docs.python.org/tut/node4.html#SECTION004230000000000000000
-
+    http://docs.python.org/tutorial/interpreter.html
 .. _doctest:
-.. _Python doctests: http://docs.python.org/lib/module-doctest.html
-.. _Advanced API: http://docs.python.org/lib/doctest-advanced-api.html
+.. _Python doctests: http://docs.python.org/library/doctest.html
+.. _Advanced API: http://docs.python.org/library/doctest.html#doctest-advanced-api
 .. _literate doctests example: ../examples/literate-doctests/index.html
 
 .. _parsed-literal block: 
-    http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
+    http://docutils.sourceforge.net/docs/ref/rst/directives.html#parsed-literal-block
 .. _doctest block: 
-    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
+    http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#doctest-blocks
 .. _line block:
 .. _line blocks:
-    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#line-blocks
+    http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#line-blocks
 .. _inline literal:
 .. _inline literals:
-    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#inline-literals
+    http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#inline-literals
 .. _syntax highlight: ../features/syntax-highlight.html

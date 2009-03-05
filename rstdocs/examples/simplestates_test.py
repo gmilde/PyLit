@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-# Test the simplestates.py generic state machine
-# ==============================================
+# simplestates_test.py: Test the simplestates.py generic state machine
+# ********************************************************************
 # 
 # :Status:    draft
 # :Date:      2006-12-01
@@ -11,7 +11,6 @@
 #             (v. 2 or later)
 # 
 # .. default-role:: literal
-# .. sectnum::
 # 
 # .. contents:: :depth: 2 
 # 

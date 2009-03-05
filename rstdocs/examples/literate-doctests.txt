@@ -1,19 +1,7 @@
 .. -*- rst-mode -*-
-.. 
-  restindex
-     crumb: Doctests
-     page-title: PyLit - Tutorial - Doctests
-     file: testmod_literate.py
-     file: testfile_literate.py
-     encoding: utf8
-  /restindex
 
 How to write literate doctests with PyLit
 =========================================
-
-.. sectnum::
-.. contents::
-
 
 Python Doctest Module
 ---------------------
@@ -79,10 +67,10 @@ This way, it is possible to separate basic examples in doc strings from
 additional test in the literate source.
 
 
-Checking Examples in Docstrings and Documentation text
-------------------------------------------------------
+Examples
+--------
 
-testmod_literate.py_ 
+`testmod_literate <testmod_literate.py.html>`_
   is a "literate version" of the example in the `doctest module`_ doc that
   does a self test when called as `__main__`.
   
@@ -91,39 +79,41 @@ testmod_literate.py_
   
   Test this file with::
   
-     sh> python testmod_literate.py
+     #> python testmod_literate.py
      0 failures in 14 tests
+     
+  Sources: `<testmod_literate.py>`_, `<testmod_literate.py.txt>`_ 
 
-
-Checking Examples in a Literate Source File
--------------------------------------------
-
-testfile_literate.py_
+`testfile_literate <testfile_literate.py.html>`_
   is a "literate version" of the example in the `doctest module`_ doc
   adapted for being tested with ``pylit --doctest``.
   
   Test this file with::
   
-     sh> pylit --doctest testfile_literate.py
+     #> pylit --doctest testfile_literate.py
      0 failures in 19 tests
-     
+
+   It imports itself in the usage example and has a non-testing (albeit
+   silly) default action if called from the command line.
+
+   Sources: `<testfile_literate.py>`_, `<testfile_literate.py.txt>`_ 
 
 .. References
    ==========
 
 .. _doctest module:
-.. _Python doctests: http://docs.python.org/lib/module-doctest.html
-.. _DocTestParser: http://docs.python.org/lib/doctest-DocTestParser.html
-.. _Advanced API: http://docs.python.org/lib/doctest-advanced-api.html
+.. _Python doctests: 
+   http://docs.python.org/library/doctest.html
+.. _DocTestParser: 
+   http://docs.python.org/library/doctest.html#doctestparser-objects
+.. _Advanced API: 
+   http://docs.python.org/library/doctest-advanced-api.html
 
 .. _tutorial: ../tutorial/index.html#doctests
-.. _testmod_literate.py: testmod_literate.py
-.. _testfile_literate.py: testfile_literate.py
-
 
 .. _parsed-literal block: 
-    http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
+   http://docutils.sourceforge.net/docs/ref/rst/directives.html#parsed-literal-block
 .. _doctest block: 
-    http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
+   http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#doctest-blocks
 
 

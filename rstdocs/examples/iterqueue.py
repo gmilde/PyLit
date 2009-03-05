@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf8 -*-
 
 # ************************************
 # Extending Iterators for use as Queue
@@ -8,7 +8,7 @@
 # :Version:   0.2
 # :Date:      2007-01-15
 # :Copyright: 2005, 2007 Guenter Milde.
-#             Released under the terms of the GNU General Public License 
+#             Released under the terms of the GNU General Public License
 #             (v. 2 or later)
 # :Changelog: 2005-06-29 Initial version
 #             2007-01-07 literate version, more examples
@@ -17,7 +17,6 @@
 #             compare them and provide a case for the inclusion of a "rich
 #             iterator wrapper" to the Python Standard Library
 # 
-# .. sectnum::
 # .. contents::
 # 
 # ::
@@ -28,7 +27,7 @@ Classes for "extended iterators" with methods to let iterators be used as
 queue
 
    `push` or
-   `appendleft`     -- push back values
+   `append left`     -- push back values
    `peek`           -- get a value without "using it up"
    `__nonzero__`    -- test for empty iterator
 
@@ -61,7 +60,7 @@ except ImportError:
 # 
 # Iterables:
 #   One method needs to be defined for container objects to provide iteration
-#   support: 
+#   support:
 # 
 #   :__iter__(): Return an iterator object. [...] If a container supports
 #                different types of iteration, additional methods can be
@@ -76,14 +75,14 @@ def is_iterable(object):
 
 # Iterators:
 #   The *iterator objects* themselves are required to support the following
-#   two methods, which together form the *iterator protocol*: 
+#   two methods, which together form the *iterator protocol*:
 # 
 #   :__iter__(): Return the iterator object itself. This is required to allow
 #                both containers and iterators to be used with the `for` and
 #                `in` statements...
 # 
 #   :next(): Return the next item from the container. If there are no further
-#            items, raise the `StopIteration` exception. 
+#            items, raise the `StopIteration` exception.
 # 
 #            [...] once an iterator's next() method raises `StopIteration`,
 #            it will continue to do so on subsequent calls. Implementations
@@ -122,7 +121,7 @@ def is_iterator(object):
 # |          <statements>
 # 
 # 
-# To add iterator behavior to your classes, define an `__iter__` method which
+# To add iterator behaviour to your classes, define an `__iter__` method which
 # returns an object with a `next` method.  If the class defines `next`, then
 # `__iter__` can just return `self`.  (`tutorial chapter on iterators`_)
 # 
@@ -131,29 +130,29 @@ def is_iterator(object):
 # with the ``yield`` keyword, new in 2.3) and *generator expressions* (new in
 # 2.4).
 # 
-# .. _`Iterator Types`: http://www.python.org/doc/lib/typeiter.html
-# 
-# .. _`tutorial chapter on iterators`: 
-#    http://www.python.org/doc/tut/node11.html#SECTION0011900000000000000000
+# .. _`Iterator Types`:
+#    http://docs.python.org/library/stdtypes.html#iterator-types
+# .. _`tutorial chapter on iterators`:
+#    http://docs.python.org/tutorial/classes.html#iterators
 # 
 # Limitations of iterator objects
 # ===============================
 # 
 # Most built-in Python iterator objects (including generator objects) are
 # non-mutable (except the call to the `next` method). They "produce the data
-# just in time", which is fast and memory efficient. 
+# just in time", which is fast and memory efficient.
 # 
 # However:
 # 
-# 1. In some occasions, it is important to 
+# 1. In some occasions, it is important to
 # 
-#    * find out whether an iterator is empty or 
-#    * to "peek" at a data value 
+#    * find out whether an iterator is empty or
+#    * to "peek" at a data value
 # 
 #    without advancing the iterator.
 # 
 # 2. In a state machine, an iterator holding the input values can be passed
-#    around to the state handling functions. If a state handler realizes that
+#    around to the state handling functions. If a state handler realises that
 #    a value should be processed by another state handler, it needs to
 #    "push it back".
 # 
@@ -181,16 +180,17 @@ def is_iterator(object):
 # 
 # There are many ways to live with the limits of iterators. Most often it
 # helps to get a true understanding of their nature and try to count for it in
-# the code.  However, the "neverending" discussion and varying reciepes for
+# the code.  However, the "never ending" discussion and varying recipes for
 # enhanced iterators show the ongoing public demand. This is why I argue for
 # the inclusion of a 'rich iterator' wrapper class into the standard library
-# based on the _`standardization argument` in the `itertools module`__
+# based on the _`standardisation argument` in the itertools_ module.
 # 
-#   Standardization helps avoid the readability and reliability problems which
+#   Standardisation helps avoid the readability and reliability problems which
 #   arise when many different individuals create their own slightly varying
 #   implementations, each with their own quirks and naming conventions.
 # 
-# __ http:www.python.org/doc/lib/module-itertools.html
+# 
+# .. _itertools: http://docs.python.org/library/itertools.html
 # 
 # Recode to work with iterators as they are
 # -----------------------------------------
@@ -198,7 +198,7 @@ def is_iterator(object):
 # The most straightforward way is to translate code like
 # 
 #   >>> def print_first(l):
-#   ...     if not l: 
+#   ...     if not l:
 #   ...         print "list empty"
 #   ...     else:
 #   ...         print l[0]
@@ -211,7 +211,7 @@ def is_iterator(object):
 # into something in the line of
 # 
 #   >>> def print_next(it):
-#   ...     try: 
+#   ...     try:
 #   ...         value = it.next()
 #   ...     except StopIteration:
 #   ...         print "list empty"
@@ -223,7 +223,7 @@ def is_iterator(object):
 #   >>> print_next(iter([]))
 #   list empty
 # 
-# In a `for` statement, the `else` keyword can be utilized to call an
+# In a `for` statement, the `else` keyword can be utilised to call an
 # expression (or a block) if the end of the iterator is reached:
 # 
 #   >>> def find_five(iterable):
@@ -245,7 +245,7 @@ def is_iterator(object):
 #   5 not found
 # 
 # However, there might be cases where this is not applicable and a test for
-# the emptieness or a peek at the first value without advancing the iterator
+# the emptiness or a peek at the first value without advancing the iterator
 # would enable much cleaner code.
 # 
 # Use a container object
@@ -280,21 +280,21 @@ def is_iterator(object):
 # If the argument of a `for` statement is an iterator (whose `__iter__`
 # method returns `self`), it is available unchanged inside the loop. A *rich
 # iterator* provides additional methods besides the ones required for the
-# iterator protocoll.
+# iterator protocol.
 # 
 # State Reporting Iterator
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 # 
 # An iterator that returns an indicator "full or empty" (values waiting or
-# not) when converted to boolean will be called *state reporting iterator*::
-  
+# not) when converted to Boolean will be called *state reporting iterator*::
+
 def is_state_reporting(object):
     return hasattr(object, "__nonzero__") or hasattr(object, "__len__")
 
 # Peekable Iterator
 # ~~~~~~~~~~~~~~~~~
 # 
-# An iterator that provides a `peek` method will be called a 
+# An iterator that provides a `peek` method will be called a
 # *peekable iterator*::
 
 def is_peekable(object):
@@ -304,22 +304,22 @@ def is_peekable(object):
 # Push Iterator
 # ~~~~~~~~~~~~~
 # 
-# An iterator that provides for pushback will be called *push-iterator*::
+# An iterator that provides for push-back will be called *push-iterator*::
 
 def is_pushable(object):
     return hasattr(object, "appendleft") or hasattr(object, "push")
 
-# Push iterators can be easily extended with `peek` and test of emptieness
+# Push iterators can be easily extended with `peek` and test of emptiness
 # (see `PushIterator`_).
 # 
 # Iterator Queue
 # ~~~~~~~~~~~~~~
 # An iterator that also provides methods for appending and extending will be
-# called *iterator_queue*. 
+# called *iterator_queue*.
 # 
-# Methods that need access from the "right" side or knowledge of the lenth of
+# Methods that need access from the "right" side or knowledge of the length of
 # the iterator are not included in the iterator_queue specification as they
-# clash with the "just in time" aquisation of the values that give iterators
+# clash with the "just in time" acquisition of the values that give iterators
 # time and memory advantage over sequences. ::
 
 def is_iterator_queue(object):
@@ -354,7 +354,7 @@ def is_iterator_wrapper(obj):
 # Xiterwrapper
 # ------------
 # 
-# Tom Andersson suggested in the Python list an `xiterable protocoll`__ for
+# Tom Andersson suggested in the Python list an `xiterable protocol`__ for
 # extended iterables and a wrapper to convert a "traditional" iterator to an
 # extended version
 # 
@@ -396,7 +396,7 @@ class xiterwrapper(object):
         return self
     def __iter__(self):
         return self
-    
+
 # Usage
 # ~~~~~
 # 
@@ -409,9 +409,9 @@ class xiterwrapper(object):
 #   >>> iterqueue.is_pushable(it)
 #   False
 # 
-# We add the __nonzero__ methos for a non-destructive test of waiting values
+# We add the __nonzero__ method for a non-destructive test of waiting values
 # to add the state reporting feature::
-    
+
     __nonzero__ = hasNext
 
 # >>> iterqueue.is_state_reporting(it)
@@ -423,7 +423,7 @@ class xiterwrapper(object):
 # -------------------
 # 
 # In a `post on python-3000`__ Guido van Rossum argued against inclusion of an
-# "emptiness" test in the iterator protocoll, as  "that's just not something
+# "emptiness" test in the iterator protocol, as  "that's just not something
 # that generators can be expected to support" and hence would exclude
 # generators from the definition of an iterator.
 # 
@@ -474,7 +474,7 @@ class IteratorWrapperBFL(object):
         self.buffered = True
         return True
 
-# This example provides an "emptiness" test but no peek or pushback:
+# This example provides an "emptiness" test but no peek or push-back:
 # 
 # >>> it = iterqueue.IteratorWrapperBFL(xrange(3))
 # >>> iterqueue.is_state_reporting(it)
@@ -486,7 +486,7 @@ class IteratorWrapperBFL(object):
         self.buffer = self.next()
         self.buffered = True
         return self.buffer
-        
+
 # >>> iterqueue.is_peekable(it)
 # True
 # 
@@ -522,10 +522,10 @@ class IteratorWrapperDD:
 # ------------
 # 
 # In the slides to the `Effective Python Programming`_ OSCON 2005 tutorial by
-# Anthony Baxter, I found a genially simple example for an iterator with a
-# `push` method. 
+# AnthonyÂ Baxter, I found a genially simple example for an iterator with a
+# `push` method.
 # 
-# .. _`Effective Python Programming`: 
+# .. _`Effective Python Programming`:
 #    http://www.interlink.com.au/anthony/tech/talks/OSCON2005/effective_r27.pdf
 # 
 # ::
@@ -535,7 +535,7 @@ class PushIterator:
         """Store iterator as data argument and set up cache"""
         self.it = iter(iterable)
         self.cache = []
-        
+
     def __iter__(self):
         return self
 
@@ -544,7 +544,7 @@ class PushIterator:
         if self.cache:
             return self.cache.pop()
         return self.it.next()
-    
+
     def push(self, value):
         """Push back one value (will become the `next` value)"""
         self.cache.append(value)
@@ -581,7 +581,7 @@ class PushIterator:
 
     appendleft = push
 
-# Optimization of `peek` and `__nonzero__` is is left out in favour of
+# Optimisation of `peek` and `__nonzero__` is is left out in favour of
 # improved clarity.
 # 
 # Usage
@@ -631,7 +631,7 @@ class PushIterator:
 # of the PushIterator for the case that `peek` or `push` is called far
 # less frequently than `next` ('normal' iterating with occasional peek or
 # backtrack).  ::
- 
+
 class PushIt(PushIterator):
     def __init__(self, iterable):
         self.it = iter(iterable)
@@ -644,7 +644,7 @@ class PushIt(PushIterator):
             return self.cache.pop()
         self.next = self.it.next
         return self.next()
-    
+
     def push(self, value):
         """Push back one value to the iterator"""
         self.cache.append(value)
@@ -688,7 +688,7 @@ class IterQueue(deque):
 # 
 #   >>> it = iterqueue.IterQueue(xrange(3))
 # 
-# which is an iterator according to the iterator protocoll with "queue"
+# which is an iterator according to the iterator protocol with "queue"
 # methods
 # 
 #   >>> iterqueue.is_iterator_queue(it)
@@ -734,7 +734,7 @@ class IterQueue(deque):
 # values in the memory, loosing the memory saving advantages of generator
 # objects with "just in time" production of the data.
 # 
-# Printing (and probabely other uses as well) "use up" the iterator
+# Printing (and probably other uses as well) "use up" the iterator
 # 
 #   >>> it = iterqueue.IterQueue(range(3))
 #   >>> print it
@@ -753,11 +753,11 @@ class IterQueue(deque):
 # * mostly compatible to `collections.deque` (offering all methods of a
 #   `deque` for appends)
 # 
-# It does not offer 
+# It does not offer
 # 
 # * random access to the values, nor
 # 
-# * pop from the right end, 
+# * pop from the right end,
 # 
 # as this would require to convert the iterator to a sequence loosing the
 # memory-saving advantage.
@@ -766,7 +766,7 @@ class IterQueue(deque):
 # (a function call is needed for every step). Implementing in C would help
 # to improve speed.
 # 
-# But, 
+# But,
 # 
 #     itertools.queue() was rejected because it didn't fit naturally into
 #     applications -- you had to completely twist your logic around just to
@@ -775,32 +775,32 @@ class IterQueue(deque):
 # 
 #     -- Raymond Hettinger 03-13-05 http://www.codecomments.com/message423138.html
 # 
-# However, both, the speed increase as well as the `standardization argument`_
+# However, both, the speed increase as well as the `standardisation argument`_
 # given for the `itertools` hold also in this case
 # Maybe IQueue should become a collections candidate?
 # 
 # ::
 
 class IQueue:
-    """Iterator with "online extensibility"
-    
+    """Iterator with "on-line extensibility"
+
     An iterator with methods to append or extend it from left or right
     (even while the iterator is in use).
-    
+
     Can be conceived as a mixture of `itertools.chain` and
     `collections.deque`.
-    
+
     As `next` is redefined, there is a performance loss when iterating
-    over large iterators. 
+    over large iterators.
     """
-    
+
     def __init__(self, *iterables):
         """Convert `iterables` to a queue object"""
         self.iterators = deque(iterables)
     #
     def __iter__(self):
         return self
-    
+
     def next(self):
         while True:
             try:
@@ -814,25 +814,25 @@ class IQueue:
     #
     def append(self, value):
         """append `value` to self
-        
+
         The value is wrapped in an iterable and
         appended to the queue of iterables
         """
         self.iterators.append(iter((value,)))
     #
     def appendleft(self, value):
-        """Prepend one (skalar) value to the iterator.
-        
+        """Prepend one (scalar) value to the iterator.
+
         The value is wrapped in an iterable and
         inserted at the first position in the list of iterables
         """
         self.iterators.appendleft(iter((value,)))
-    #   
+    #
     def clear(self):
         """Remove all elements from the iterator.
         """
         self.iterators.clear()
-    #        
+    #
     def extend(self, iterable):
         """append `iterable` to self"""
         self.iterators.append(iter(iterable))
@@ -843,10 +843,10 @@ class IQueue:
     #
     def peek(self):
         """Return the next value without advancing the iterator
-        
-        Yield next value but push back a copy of the result. 
+
+        Yield next value but push back a copy of the result.
         This way you may "peak" at an iterator without loss.
-        
+
         Raises `StopIteration` if the iterator is empty.
         """
         value = self.next()
@@ -855,15 +855,15 @@ class IQueue:
     #
     def rotate(self, n=1):
         """append the next `n` values to the end of the iterator
-        
-        Similar to `container.deque.rotate`, but 
+
+        Similar to `container.deque.rotate`, but
          * negative `n` leads to error
          * a list of the `n` rotated values is returned
         """
         result = list(itertools.islice(self, n))
         self.iterators.append(result)
         return result
-        
+
     #
     def __repr__(self):
         """Return a string representation"""
@@ -882,7 +882,7 @@ class IQueue:
 # XIter
 # -----
 # 
-# The `XIter` class is an optimized version of the `IQueue` for the
+# The `XIter` class is an optimised version of the `IQueue` for the
 # case when appending of a value is a done less frequently than calling `next`.
 # It does so by aliasing next to the underlying iterators `next` method in
 # case there is only one iterator in the `iterables` chain.
@@ -897,18 +897,18 @@ class XIter:
             self.next = self.iterators[0].next
         else:
             self.next = self._next     # iterate over argument
-    # 
+    #
     def __iter__(self): return self        # "I am an iterator!"
     #
     def _next(self):
         """get next in turn if there are more than one iterators"""
         try:
             return self.iterators[0].next()
-        except StopIteration:        
+        except StopIteration:
             del(self.iterators[0])             # switch to next iterator
             assert len(self.iterators) >= 1
             if len(self.iterators) is 1:
-                self.next = self.iterators[0].next 
+                self.next = self.iterators[0].next
             return self.next()
     #
     def append(self, element):
@@ -934,10 +934,10 @@ class XIter:
     #
     def peek(self):
         """Return the next value without advancing the iterator
-        
-        Yield next value but push back a copy of the result. 
+
+        Yield next value but push back a copy of the result.
         This way you may "peak" at an iterator without loss.
-        
+
         Raises `StopIteration` if the iterator is empty.
         """
         value = self.next()
@@ -946,15 +946,15 @@ class XIter:
     #
     def rotate(self, n=1):
         """append the next `n` values to the end of the iterator
-        
-        Similar to `container.deque.rotate`, but 
+
+        Similar to `container.deque.rotate`, but
          * negative `n` leads to error
          * a list of the `n` rotated values is returned
         """
         result = list(itertools.islice(self, n))
         self.iterators.append(result)
         return result
-        
+
     #
     def __repr__(self):
         return "XIter(%s)" % repr(self.iterators)
@@ -970,17 +970,17 @@ class XIter:
         return True
 
 
-# Some optimization could be done adapting a `roundrobin example`__ posted by
+# Some optimisation could be done adapting a `round-robin example`__ posted by
 # R. Hettinger on 2004-04-30 15:58 in comp.lang.python
 # 
 # __ http://sourceforge.net/tracker/index.php?func=detail&aid=756253&group_id=5470&atid=305470
 # 
 # ::
- 
-## 
+
+##
 # For the record, here a simple and efficient roundrobin task
 # server based on collections.deque:
-# 
+#
 # def roundrobin(*iterables):
 #     pending = deque(iter(i).next for i in iterables)
 #     gettask, scheduletask = pending.popleft, pending.append
@@ -991,7 +991,7 @@ class XIter:
 #         except StopIteration:
 #             continue
 #         scheduletask(task)
-# 
+#
 # for value in roundrobin('abc', 'd', 'efgh'):
 #     print value
 
@@ -1001,4 +1001,3 @@ class XIter:
 def test():
     import doctest
     doctest.testmod()
-

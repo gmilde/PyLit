@@ -1,33 +1,25 @@
 .. -*- rst-mode -*-
 
-.. 
-  restindex
-      crumb: Extensions
-      page-title: PyLit - Usage - Filename Extensions
-      encoding: utf8
-  /restindex
-
-Extensions for PyLit files
---------------------------
+Filename Extensions for Literate Sources
+****************************************
 
 Finding an easy to remember, unused file name extension is not easy.
 
 .py.txt
-  a double extension (similar to .tar.gz, say) seems most appropriate
-  (at least on UNIX). However, it fails on FAT16 file systems.
-  The same scheme can be used for c.txt, p.txt and the like.
+  a double extension (similar to .tar.gz, say) seems most appropriate (at
+  least on UNIX). The same scheme can be used for c.txt, p.txt and the like.
+  However, it fails on FAT16 file systems.
 
 .pytxt
   is recognised as extension by os.path.splitext but also fails on FAT16
 
 .pyt 
   (PYthon Text) is used by the Python test interpreter
-  `pytest <http:www.zetadev.com/software/pytest/>`__
+  `pytest <http//:www.zetadev.com/software/pytest/>`__
 
 .pyl
-  was even mentioned as extension for "literate Python" files in an
-  email exchange (http://www.python.org/tim_one/000115.html) but 
-  subsequently used for Python libraries.
+  was once mentioned as extension for "literate Python" files in an email
+  exchange but subsequently used for Python libraries.
 
 .lpy 
   seems to be free (as by a Google search, "lpy" is the name of a python
@@ -41,5 +33,3 @@ extensions would have to be repeated for every language supported by PyLit.
 
 After considering the alternatives, the additional extension ``.txt`` was
 chosen for the text source (for Python this becomes ``py.txt``).
-
-

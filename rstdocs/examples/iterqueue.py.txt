@@ -8,7 +8,7 @@ Extending Iterators for use as Queue
 :Version:   0.2
 :Date:      2007-01-15
 :Copyright: 2005, 2007 Guenter Milde.
-            Released under the terms of the GNU General Public License 
+            Released under the terms of the GNU General Public License
             (v. 2 or later)
 :Changelog: 2005-06-29 Initial version
             2007-01-07 literate version, more examples
@@ -17,7 +17,6 @@ Extending Iterators for use as Queue
             compare them and provide a case for the inclusion of a "rich
             iterator wrapper" to the Python Standard Library
 
-.. sectnum::
 .. contents::
 
 ::
@@ -61,7 +60,7 @@ the section on `Iterator Types`_ in the Python Library Reference`:
 
 Iterables:
   One method needs to be defined for container objects to provide iteration
-  support: 
+  support:
 
   :__iter__(): Return an iterator object. [...] If a container supports
                different types of iteration, additional methods can be
@@ -76,14 +75,14 @@ Iterables:
 
 Iterators:
   The *iterator objects* themselves are required to support the following
-  two methods, which together form the *iterator protocol*: 
+  two methods, which together form the *iterator protocol*:
 
   :__iter__(): Return the iterator object itself. This is required to allow
                both containers and iterators to be used with the `for` and
                `in` statements...
 
   :next(): Return the next item from the container. If there are no further
-           items, raise the `StopIteration` exception. 
+           items, raise the `StopIteration` exception.
 
            [...] once an iterator's next() method raises `StopIteration`,
            it will continue to do so on subsequent calls. Implementations
@@ -131,24 +130,24 @@ protocol. Generator objects are returned by *generator functions* (functions
 with the ``yield`` keyword, new in 2.3) and *generator expressions* (new in
 2.4).
 
-.. _`Iterator Types`: http://www.python.org/doc/lib/typeiter.html
-
-.. _`tutorial chapter on iterators`: 
-   http://www.python.org/doc/tut/node11.html#SECTION0011900000000000000000
+.. _`Iterator Types`:
+   http://docs.python.org/library/stdtypes.html#iterator-types
+.. _`tutorial chapter on iterators`:
+   http://docs.python.org/tutorial/classes.html#iterators
 
 Limitations of iterator objects
 ===============================
 
 Most built-in Python iterator objects (including generator objects) are
 non-mutable (except the call to the `next` method). They "produce the data
-just in time", which is fast and memory efficient. 
+just in time", which is fast and memory efficient.
 
 However:
 
-1. In some occasions, it is important to 
+1. In some occasions, it is important to
 
-   * find out whether an iterator is empty or 
-   * to "peek" at a data value 
+   * find out whether an iterator is empty or
+   * to "peek" at a data value
 
    without advancing the iterator.
 
@@ -184,13 +183,14 @@ helps to get a true understanding of their nature and try to count for it in
 the code.  However, the "never ending" discussion and varying recipes for
 enhanced iterators show the ongoing public demand. This is why I argue for
 the inclusion of a 'rich iterator' wrapper class into the standard library
-based on the _`standardisation argument` in the `itertools module`__
+based on the _`standardisation argument` in the itertools_ module.
 
   Standardisation helps avoid the readability and reliability problems which
   arise when many different individuals create their own slightly varying
   implementations, each with their own quirks and naming conventions.
 
-__ http:www.python.org/doc/lib/module-itertools.html
+
+.. _itertools: http://docs.python.org/library/itertools.html
 
 Recode to work with iterators as they are
 -----------------------------------------
@@ -198,7 +198,7 @@ Recode to work with iterators as they are
 The most straightforward way is to translate code like
 
   >>> def print_first(l):
-  ...     if not l: 
+  ...     if not l:
   ...         print "list empty"
   ...     else:
   ...         print l[0]
@@ -211,7 +211,7 @@ The most straightforward way is to translate code like
 into something in the line of
 
   >>> def print_next(it):
-  ...     try: 
+  ...     try:
   ...         value = it.next()
   ...     except StopIteration:
   ...         print "list empty"
@@ -287,14 +287,14 @@ State Reporting Iterator
 
 An iterator that returns an indicator "full or empty" (values waiting or
 not) when converted to Boolean will be called *state reporting iterator*::
-  
+
   def is_state_reporting(object):
       return hasattr(object, "__nonzero__") or hasattr(object, "__len__")
 
 Peekable Iterator
 ~~~~~~~~~~~~~~~~~
 
-An iterator that provides a `peek` method will be called a 
+An iterator that provides a `peek` method will be called a
 *peekable iterator*::
 
   def is_peekable(object):
@@ -315,7 +315,7 @@ Push iterators can be easily extended with `peek` and test of emptiness
 Iterator Queue
 ~~~~~~~~~~~~~~
 An iterator that also provides methods for appending and extending will be
-called *iterator_queue*. 
+called *iterator_queue*.
 
 Methods that need access from the "right" side or knowledge of the length of
 the iterator are not included in the iterator_queue specification as they
@@ -396,7 +396,7 @@ __ http://mail.python.org/pipermail/python-list/2006-January/360162.html
           return self
       def __iter__(self):
           return self
-      
+
 Usage
 ~~~~~
 
@@ -411,7 +411,7 @@ Usage
 
 We add the __nonzero__ method for a non-destructive test of waiting values
 to add the state reporting feature::
-    
+
       __nonzero__ = hasNext
 
 >>> iterqueue.is_state_reporting(it)
@@ -486,7 +486,7 @@ Peeking could be easily added, though::
           self.buffer = self.next()
           self.buffered = True
           return self.buffer
-          
+
 >>> iterqueue.is_peekable(it)
 True
 
@@ -523,9 +523,9 @@ PushIterator
 
 In the slides to the `Effective Python Programming`_ OSCON 2005 tutorial by
 Anthony Baxter, I found a genially simple example for an iterator with a
-`push` method. 
+`push` method.
 
-.. _`Effective Python Programming`: 
+.. _`Effective Python Programming`:
    http://www.interlink.com.au/anthony/tech/talks/OSCON2005/effective_r27.pdf
 
 ::
@@ -535,7 +535,7 @@ Anthony Baxter, I found a genially simple example for an iterator with a
           """Store iterator as data argument and set up cache"""
           self.it = iter(iterable)
           self.cache = []
-          
+
       def __iter__(self):
           return self
 
@@ -544,7 +544,7 @@ Anthony Baxter, I found a genially simple example for an iterator with a
           if self.cache:
               return self.cache.pop()
           return self.it.next()
-      
+
       def push(self, value):
           """Push back one value (will become the `next` value)"""
           self.cache.append(value)
@@ -631,7 +631,7 @@ Remapping of self.next leads to a more more efficient implementation
 of the PushIterator for the case that `peek` or `push` is called far
 less frequently than `next` ('normal' iterating with occasional peek or
 backtrack).  ::
- 
+
   class PushIt(PushIterator):
       def __init__(self, iterable):
           self.it = iter(iterable)
@@ -644,7 +644,7 @@ backtrack).  ::
               return self.cache.pop()
           self.next = self.it.next
           return self.next()
-      
+
       def push(self, value):
           """Push back one value to the iterator"""
           self.cache.append(value)
@@ -753,11 +753,11 @@ The following class implements an iterator queue that is
 * mostly compatible to `collections.deque` (offering all methods of a
   `deque` for appends)
 
-It does not offer 
+It does not offer
 
 * random access to the values, nor
 
-* pop from the right end, 
+* pop from the right end,
 
 as this would require to convert the iterator to a sequence loosing the
 memory-saving advantage.
@@ -766,7 +766,7 @@ Iterating over instances is less fast, as the next() method is redefined
 (a function call is needed for every step). Implementing in C would help
 to improve speed.
 
-But, 
+But,
 
     itertools.queue() was rejected because it didn't fit naturally into
     applications -- you had to completely twist your logic around just to
@@ -783,24 +783,24 @@ Maybe IQueue should become a collections candidate?
 
   class IQueue:
       """Iterator with "on-line extensibility"
-      
+
       An iterator with methods to append or extend it from left or right
       (even while the iterator is in use).
-      
+
       Can be conceived as a mixture of `itertools.chain` and
       `collections.deque`.
-      
+
       As `next` is redefined, there is a performance loss when iterating
-      over large iterators. 
+      over large iterators.
       """
-      
+
       def __init__(self, *iterables):
           """Convert `iterables` to a queue object"""
           self.iterators = deque(iterables)
       #
       def __iter__(self):
           return self
-      
+
       def next(self):
           while True:
               try:
@@ -814,7 +814,7 @@ Maybe IQueue should become a collections candidate?
       #
       def append(self, value):
           """append `value` to self
-          
+
           The value is wrapped in an iterable and
           appended to the queue of iterables
           """
@@ -822,17 +822,17 @@ Maybe IQueue should become a collections candidate?
       #
       def appendleft(self, value):
           """Prepend one (scalar) value to the iterator.
-          
+
           The value is wrapped in an iterable and
           inserted at the first position in the list of iterables
           """
           self.iterators.appendleft(iter((value,)))
-      #   
+      #
       def clear(self):
           """Remove all elements from the iterator.
           """
           self.iterators.clear()
-      #        
+      #
       def extend(self, iterable):
           """append `iterable` to self"""
           self.iterators.append(iter(iterable))
@@ -843,10 +843,10 @@ Maybe IQueue should become a collections candidate?
       #
       def peek(self):
           """Return the next value without advancing the iterator
-          
-          Yield next value but push back a copy of the result. 
+
+          Yield next value but push back a copy of the result.
           This way you may "peak" at an iterator without loss.
-          
+
           Raises `StopIteration` if the iterator is empty.
           """
           value = self.next()
@@ -855,15 +855,15 @@ Maybe IQueue should become a collections candidate?
       #
       def rotate(self, n=1):
           """append the next `n` values to the end of the iterator
-          
-          Similar to `container.deque.rotate`, but 
+
+          Similar to `container.deque.rotate`, but
            * negative `n` leads to error
            * a list of the `n` rotated values is returned
           """
           result = list(itertools.islice(self, n))
           self.iterators.append(result)
           return result
-          
+
       #
       def __repr__(self):
           """Return a string representation"""
@@ -897,18 +897,18 @@ case there is only one iterator in the `iterables` chain.
               self.next = self.iterators[0].next
           else:
               self.next = self._next     # iterate over argument
-      # 
+      #
       def __iter__(self): return self        # "I am an iterator!"
       #
       def _next(self):
           """get next in turn if there are more than one iterators"""
           try:
               return self.iterators[0].next()
-          except StopIteration:        
+          except StopIteration:
               del(self.iterators[0])             # switch to next iterator
               assert len(self.iterators) >= 1
               if len(self.iterators) is 1:
-                  self.next = self.iterators[0].next 
+                  self.next = self.iterators[0].next
               return self.next()
       #
       def append(self, element):
@@ -934,10 +934,10 @@ case there is only one iterator in the `iterables` chain.
       #
       def peek(self):
           """Return the next value without advancing the iterator
-          
-          Yield next value but push back a copy of the result. 
+
+          Yield next value but push back a copy of the result.
           This way you may "peak" at an iterator without loss.
-          
+
           Raises `StopIteration` if the iterator is empty.
           """
           value = self.next()
@@ -946,15 +946,15 @@ case there is only one iterator in the `iterables` chain.
       #
       def rotate(self, n=1):
           """append the next `n` values to the end of the iterator
-          
-          Similar to `container.deque.rotate`, but 
+
+          Similar to `container.deque.rotate`, but
            * negative `n` leads to error
            * a list of the `n` rotated values is returned
           """
           result = list(itertools.islice(self, n))
           self.iterators.append(result)
           return result
-          
+
       #
       def __repr__(self):
           return "XIter(%s)" % repr(self.iterators)
@@ -976,11 +976,11 @@ R. Hettinger on 2004-04-30 15:58 in comp.lang.python
 __ http://sourceforge.net/tracker/index.php?func=detail&aid=756253&group_id=5470&atid=305470
 
 ::
- 
-  ## 
+
+  ##
   # For the record, here a simple and efficient roundrobin task
   # server based on collections.deque:
-  # 
+  #
   # def roundrobin(*iterables):
   #     pending = deque(iter(i).next for i in iterables)
   #     gettask, scheduletask = pending.popleft, pending.append
@@ -991,7 +991,7 @@ __ http://sourceforge.net/tracker/index.php?func=detail&aid=756253&group_id=5470
   #         except StopIteration:
   #             continue
   #         scheduletask(task)
-  # 
+  #
   # for value in roundrobin('abc', 'd', 'efgh'):
   #     print value
 
@@ -1001,4 +1001,3 @@ Do a doctest if the module is run in nosetests::
   def test():
       import doctest
       doctest.testmod()
-

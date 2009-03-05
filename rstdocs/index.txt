@@ -1,121 +1,111 @@
 .. -*- rst-mode -*-
-   restindex
-     crumb: Home
-     page-title: PyLit
-     file: favicon.ico
-     file: pylit-framed-32.png
-     file: html4css1.css
-     file: pylit.css
-     encoding: utf8
-   /restindex
 
 ============================================================
-PyLit: Literate programming with reStructuredText
+ PyLit - Literate Programming with reStructuredText
 ============================================================
-
-Welcome at the PyLit home page. Here you will find information and
-material for the following topics:
-
-`Literate Programming <literate-programming/>`__
-  Philosophy, technique, and literate programming systems.
 
     The idea is that you do not document programs (after the fact), but
     write documents that *contain* the programs.
 
     -- John Max Skaller in a `Charming Python interview`_.
 
-`Features <features/>`__ 
-  `PyLit` (Python-Literate) is a `pure Python module`_ providing a
-  bidirectional text <--> code converter. 
-  
-  A literate program source can be either in "text" or "code" format.
-    
-  * The "code" source can be debugged, compiled or executed with standard
-    tools.
-  
-  * The "text" source can be converted to HTML or LaTeX documents with the
-    Python Docutils_.
-  
-Download_, Installation_, Usage_
-  PyLit requires functioning Python_ installation and the `pylit.py`_  module.
-  Installation_ and usage_ are straightforward.
+.. _literate programming: literate-programming.html
+.. _Charming Python interview:
+    http://www.ibm.com/developerworks/library/l-pyth7.html
 
-  Docutils_ can be used for conversion of the text source to HTML, LaTeX, or
-  PDF formats.
+PyLit (Python Literate) provides a plain but efficient tool for
+`literate programming`_: a bidirectional text ⟺ code converter.
 
-.. _download:  download/index.html#download
-.. _installation: download/index.html#installation
-.. _usage: download/index.html#usage
-  
-`Tutorial <tutorial/>`__ 
-  How to write literate programs with PyLit.
-  
-`Examples <examples/>`__ 
-  Use cases for literate programming with PyLit.
 
-`Project page`_
-  The PyLit project is hosted at `BerliOS Developer`_. The `project page`_
-  provides project statistics and info as well as links to the
-  Bugtracker_, `Feature Requests`_, pylit-users `Mail List`_, and
-  the `SVN repository`_.
-  
+Documentation
+-------------
+
+.. toctree::
+   :maxdepth: 2
+
+   features
+   literate-programming
+   tutorial/index
+   examples/index
+
+Download
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   download/download
+   download/usage
+
+Project page
+------------
+
+The PyLit project is hosted at `BerliOS`_. The `project page`_
+provides project statistics and info as well as links to the Bugtracker_,
+`Feature Requests`_, pylit-users `Mail List`_, and the `SVN repository`_.
+
 .. _`project page`: http://developer.berlios.de/projects/pylit/
-.. _BerliOS Developer: http://www.berlios.de   
+.. _BerliOS: http://www.berlios.de
 .. _Bugtracker: http://developer.berlios.de/bugs/?group_id=7974
 .. _`Feature requests`: http://developer.berlios.de/feature/?group_id=7974
 .. _`Mail List`: http://developer.berlios.de/mail/?group_id=7974
 .. _`SVN repository`: http://svn.berlios.de/wsvn/pylit
 
 
-Changes_
-  PyLit `versions`_ and `SVN log`_.
-  
-  Usage, behaviour, and API are not fixed yet. 
-  Ideas and feedback welcome.
+Changes
+-------
 
-.. _changes:  
+PyLit `versions`_ and `SVN log`_.
+
+Usage, behaviour, and API are not fixed yet.  Ideas and feedback welcome.
+
+The `PyLit source`__ has a chapter on `open questions`__ and ideas.
+
 .. _versions: examples/pylit.py.html#changelog
 .. _SVN log: http://svn.berlios.de/wsvn/pylit/?op=log
 
-No Warranty
+.. _PyLit source: examples/pylit.py.html
+.. _open questions: examples/pylit.py.html#open-questions
+
+Copyright
+---------
+
+Copyright
+  © 2005, 2009 Günter Milde.
+
+License
+  PyLit is `free software`_, released under the `GNU General Public License`_
+  (GPL)
+
   PyLit is distributed in the hope that it will be useful, but WITHOUT ANY
   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
   FOR A PARTICULAR PURPOSE.  See the `GNU General Public License`_ for more
   details.
-  
-  I am using PyLit in my daily work for more than two years now without 
-  major problems.
-  It works for me, but your mileage might vary.
-  
-  Remember to back up your data. I recomend to use a version control system 
-  for code and text development.
 
-Copyright
-  © 2005, 2006, 2007 Günter Milde.
-  
-  PyLit is `free software`_, released under the `GNU General Public License`_
-  (GPL) 
+I am using PyLit in my daily work for more than two years now without major
+problems. It works for me, but your mileage might vary.
 
-About this site
-  The PyLit home page is located at http://pylit.berlios.de/
-  
-  This site is created from `reStructuredText`_ sources with Docutils_ and
-  the rest2web_ site builder.
-  
-  `BerliOS Developer`_ is a free (and ad-free!) service to Open Source
-  developers by the Fraunhofer-Institut für Offene Kommunikationssysteme 
-  (FOKUS) in Berlin.
-  
-.. _Charming Python interview:
-     http://www-128.ibm.com/developerworks/library/l-pyth7.html
-.. _reStructuredText: http://docutils.sourceforge.net/rst.html
-.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
-
-.. _pylit.py: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
-.. _Python: http:www.python.org
-.. _Docutils: http://docutils.sourceforge.net/
-.. _pure Python module: 
-    http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
+Remember to back up your data. A version control system is recommended.
 
 .. _`free software`: http://www.gnu.org/philosophy/free-sw.html
 .. _`GNU General Public License`: http://www.gnu.org/copyleft/gpl.html
+
+
+About this site
+---------------
+
+The PyLit site is created from
+`reStructuredText`_ sources with Sphinx_ (earlier versions used the
+rest2web_ site builder).
+
+It is located at http://pylit.berlios.de/ on `BerliOS`_, a free
+(and ad-free!) service to Open Source developers by the Fraunhofer-Institut
+für Offene Kommunikationssysteme (FOKUS) in Berlin.
+
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
+.. _Sphinx: http://sphinx.pocoo.org/
+
+
+.. _Python: http://www.python.org
+.. _Docutils: http://docutils.sourceforge.net/

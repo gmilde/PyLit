@@ -5,38 +5,68 @@ Download
 
 PyLit
 -----
+`pylit.py`_
+  There are no file releases yet. You get the most up to date version from
+  the `SVN repository`_.
 
-There are no file releases yet. Get the most up to date version of
-`pylit.py`_ from the `SVN repository`_.
+pylit_
+  A simple starter and configuration wrapper (see installation_).
 
-Pylit needs a functioning Python_ installation. If it is missing on your
-machine, you can get it from http://www.python.org/download/
-
-.. _`SVN repository`: http://developer.berlios.de/svn/?group_id=7974
-.. _`pylit.py`: http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
-.. _Python: http:www.python.org
-
+`pylit_test.py`_
+  unit tests for the `pylit` module
 
 Tools
 -----
 
-* Docutils_: conversion of the text source to HTML or PDF formats (not
-  strictly required by PyLit but needed for "pretty printing")
-            
+* Docutils_ or Sphinx_ for conversion of reStructuredText to HTML or PDF
+  (not strictly required by PyLit but needed for "pretty printing" the text
+  source)
+
 * `Editor Support for reStructuredText`_
 
 * `pylit functions`_ for the `JED editor`_
 
+.. _pure Python module:
+   http://python.org/doc/2.2.3/dist/simple-example.html#SECTION000220000000000000000
+.. _`SVN repository`:
+   http://developer.berlios.de/svn/?group_id=7974
+.. _`pylit.py`:
+   http://svn.berlios.de/svnroot/repos/pylit/trunk/src/pylit.py
+.. _pylit_test.py:
+   http://svn.berlios.de/svnroot/repos/pylit/trunk/test/pylit_test.py
+
 .. _Docutils: http://docutils.sourceforge.net/
-.. _`Editor Support for reStructuredText`: 
-     http://docutils.sourceforge.net/tools/editors/README.html
-.. _`pylit functions`: http://jedmodes.sourceforge.net/mode/pylit/     
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _`Editor Support for reStructuredText`:
+   http://docutils.sourceforge.net/tools/editors/README.html
+.. _`pylit functions`: http://jedmodes.sourceforge.net/mode/pylit/
 .. _`JED editor`: http://www.jedsoft.org/jed/
 
 
-Unit Tests
-----------
+Installation
+============
 
-* `pylit_test.py`__: unit tests for the ``pylit.py`` converter 
+* PyLit requires a functioning Python_ installation.  If it is missing on
+  your machine, you can get it from http://www.python.org/download/
 
-__ http://svn.berlios.de/svnroot/repos/pylit/trunk/test/pylit_test.py
+* As `PyLit` is a `pure Python module`_, installation_ is straightforward:
+
+  Put `pylit.py`_ in any location you prefer. (Recommended is a place in
+  Python's `Module Search Path`_.)
+
+* Easier invocation is possible with a small executable wrapper in the PATH.
+  On Unix you can use a script like pylit_:
+
+  .. include:: pylit
+     :literal:
+
+  This has two advantages:
+
+  #. Python can compile ``pylit.py`` to byte-code for faster execution with
+     subsequent calls.
+  #. Default settings can be configured without changing the module file.
+
+.. _Python: http://www.python.org
+.. _module search path:
+    http://docs.python.org/tut/node8.html#SECTION008110000000000000000
+.. _pylit: pylit

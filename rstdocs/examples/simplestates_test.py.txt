@@ -1,6 +1,8 @@
 ..  #!/usr/bin/env python
-  # -*- coding: iso-8859-1 -*-
+  # -*- coding: utf8 -*-
   
+simplestates_test.py: 
+*********************
 Test the simplestates.py generic state machine
 ==============================================
 
@@ -11,13 +13,12 @@ Test the simplestates.py generic state machine
             (v. 2 or later)
 
 .. default-role:: literal
-.. sectnum::
 
 .. contents:: :depth: 2 
 
 
 Abstract State Machine Class
-============================
+----------------------------
 
 First version of an abstract state machine
 ::
@@ -78,7 +79,7 @@ Our small example state machine subclasses the `SimpleStates1` class::
 It will be completed by two state methods and a `__str__` method.
 
 State Methods
--------------
+"""""""""""""
 
 State methods are functions that are called to iterate over the data. They
 will typically
@@ -115,7 +116,7 @@ that is returned by a call to the instance with spaces::
           return " ".join(self())
   
 Test
-----
+""""
 
 Testing is done with the nose_ test framework. This will collect and
 execute all test functions and methods (basically everything that starts or
@@ -146,7 +147,7 @@ and define a test function::
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
   
 Discussion
-----------
+""""""""""
 
 The sorting works as expected. However, as the state handlers get the data
 token by token, acting on subsequent tokens or tests that combine the
@@ -158,7 +159,7 @@ returns the result if it exceeds a threshold.
 
 
 Varied State Machine Class Template
-===================================
+-----------------------------------
 
 The second version of an abstract state machine converts the test data to an
 iterator which is shared by the state methods.
@@ -204,7 +205,7 @@ and adds 2 methods as state handlers. ::
       """
   
 State methods
--------------
+"""""""""""""
 
 This time, the state methods will get the data tokens not as argument but
 take them from the `data_iterator`. Note that *backtracking* is impossible
@@ -225,7 +226,7 @@ sorting algorithm. ::
           return "h(%d)"%token
   
 Test
-----
+""""
 
 Define a second test function::
 
@@ -243,7 +244,7 @@ the "old" state::
                                'h(3)', 'l(2)', 'l(1)'] # low numbers
   
 Discussion
-----------
+""""""""""
 
 Missing backtracks break our number sorting machine. The remedy
 is the use of an iterator with an appendleft() method (known from the
@@ -258,7 +259,7 @@ using state handler generators.
 
 
 State Machine class using state_handler generators
-==================================================
+--------------------------------------------------
 
 The variations in `StateMachine2` complicate the StateMachine design. They
 makes sense, however, if we use generated iterators to handle the states.
@@ -271,7 +272,7 @@ Example 3: A two-state machine with state handler generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 State Generators
-----------------
+""""""""""""""""
 
 State Generators generate and return an iterator that will handle the next
 data token(s) if its .next() method is called. This is easily achieved with a 
@@ -324,7 +325,7 @@ iteration loop::
               yield self.state_handler()
   
 Test
--------
+""""
 
 Again define a test function that gets an instance of the Example3 class ::
 
@@ -338,7 +339,7 @@ processed values as list::
       assert statemachine() == ['s=10','h(5)','h(4)','h(3)', 'p=3']
   
 Backtracking
-============
+------------
 
 the iterqueue module provides an "extensible" iterator with, e.g.,
 an `appendleft` method to push back values::
@@ -418,7 +419,7 @@ The `__str__` converter should ignore the switch-indicator::
           return " ".join(tokens)
   
 Test
--------
+""""
 
 Again define a test function. This time with an instance of the Example4
 class ::
@@ -441,7 +442,7 @@ Converting to a string should skip the `None` values::
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
   
 Discussion
-----------
+""""""""""
 
 The `XIter` class allows backtracking also in a state machine with state
 handlers acting on a common iterator object. The "high" and "low" handlers
@@ -459,7 +460,7 @@ generator is clear) easier. Further advantages of the generator concept are
 
 
 Converting all state method generators with a generic function
-==============================================================
+--------------------------------------------------------------
 
 In `Example4`, we had to redefine the `__iter__` method to convert the
 method state generators into iterators. It would be nice if this could be
@@ -518,7 +519,7 @@ class.::
       pass
   
 Test
-----
+""""
 
 A function that has the generator-suffix but is prefixed with an underscore,
 should be skipped by the `_initialize_state_generators` method::
@@ -550,7 +551,7 @@ Converting to a string should skip the `None` values::
       assert str(statemachine) == "l(1) l(2) l(3) h(4) h(5) h(4) l(3) l(2) l(1)"
   
 Putting it together
-===================
+-------------------
 
 The file `simplestates.py` contains the full definition of the `SimpleStates5`
 class in a self-contained version.
@@ -598,7 +599,7 @@ subclasses SimpleStates and adds state method generators for "high" and
                   yield "l(%d)"%token
   
 Test
-----
+""""
 
 In order not to make it dependent on the iterqueue module, the final
 `SimpleStates` does not wrap the data in an XIter instance. This step should
@@ -619,7 +620,7 @@ processed values as list::
                                'l(3)', 'l(2)', 'l(1)']
   
 Index
-=====
+-----
 
 
 :_`generator`: A function with a `yield` keyword. Calling this function will
@@ -631,7 +632,7 @@ Index
               exception is raised.
 
 Command line usage
-==================
+------------------
 
 running this script should explore it in the "nose" test framework::
 

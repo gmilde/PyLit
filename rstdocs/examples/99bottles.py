@@ -6,8 +6,11 @@
 
 # 99bottles.py
 # ============
+# Introductory Example to Literate Programming    
+# ++++++++++++++++++++++++++++++++++++++++++++
 # 
 # Print the famous `99 bottles of beer` song lyrics
+# 
 # 
 # This is used as an introductory example to literate programming
 # in the `LiteratePrograms.org Wiki`_.

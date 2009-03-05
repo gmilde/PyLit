@@ -6,16 +6,19 @@
   
 99bottles.py
 ============
+Introductory Example to Literate Programming	
+++++++++++++++++++++++++++++++++++++++++++++
 
 Print the famous `99 bottles of beer` song lyrics
 
-This is used as an introductory example to literate programming
-in the `LiteratePrograms.org Wiki`_.
+
+This was used as an introductory example to literate programming
+in the (no longer available) `LiteratePrograms.org Wiki`.
 
 The lyrics
 ----------
 
-We take the lyrics from the Wikipedia_, which says in the 
+We take the lyrics from the Wikipedia, which says in the 
 `99 bottles of beer`_ entry:
 
 The verse format is very formulaic, and can be expressed as follows:
@@ -105,7 +108,6 @@ Print the lyrics if this script is called from the command line::
       print final_verse
   
   
-.. _Wikipedia: http://en.wikipedia.org
 .. _99 bottles of beer: http://en.wikipedia.org/wiki/99_Bottles_of_Beer
-.. _LiteratePrograms.org Wiki: 
-     http://en.literateprograms.org/LiteratePrograms:Welcome
+.. .. _LiteratePrograms.org Wiki: 
+       http://en.literateprograms.org/LiteratePrograms:Welcome

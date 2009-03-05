@@ -1,18 +1,9 @@
 .. -*- rst-mode -*-
-   restindex
-      crumb: Download
-      page-title: PyLit - Download, Installation, and Usage 
-      file: pylit
-      encoding: utf8
-   /restindex
 
 Download, Installation, Usage
 *****************************
 
-.. contents::
+.. toctree::
 
-.. include:: download.txt
-
-.. include:: installation.txt
-
-.. include:: usage.txt
+   download
+   usage
