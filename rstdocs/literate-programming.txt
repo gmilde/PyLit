@@ -223,10 +223,6 @@ Some of the problems with WEB-like systems are:
 
     -- Kurt Nørmark: `Literate Programming - Issues and Problems`_
 
-
-.. _`Literate Programming - Issues and Problems`:
-     http://www.cs.auc.dk/~normark/litpro/issues-and-problems.html
-
 How does PyLit differ from the web-like literate programming frameworks
 (For a full discussion of PyLit's concepts see the Features_ page.):
 

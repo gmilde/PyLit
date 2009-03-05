@@ -59,7 +59,7 @@ PyLit `versions`_ and `SVN log`_.
 
 Usage, behaviour, and API are not fixed yet.  Ideas and feedback welcome.
 
-The `PyLit source`__ has a chapter on `open questions`__ and ideas.
+The `PyLit source`_ has a chapter on `open questions`_ and ideas.
 
 .. _versions: examples/pylit.py.html#changelog
 .. _SVN log: http://svn.berlios.de/wsvn/pylit/?op=log
