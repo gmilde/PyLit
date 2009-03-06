@@ -24,7 +24,7 @@ Example: Run the converter script on itself::
 
 Find more examples in the tutorial_.
 
-.. _tutorial: ../tutorial/index.html
+.. _tutorial: tutorial/index.html
 
 Options
 ~~~~~~~
@@ -68,13 +68,13 @@ If pylit.py is in the Python Module Path, it can be imported and used from
 other Python programs. The simplest example is the executable wrapper script
 pylit_. The `literate source`_ explains more details.
 
-.. _pylit: pylit
-.. _literate source: ../examples/pylit.py.html
+.. _pylit: download/pylit
+.. _literate source: examples/pylit.py.html
 
-Customization
+Customisation
 -------------
 
-Customization is possible by overwriting `default values`_  in a wrapper
+Customisation is possible by overwriting `default values`_  in a wrapper
 script like pylit_, e.g. ::
 
   #!/usr/bin/env python
@@ -89,4 +89,4 @@ script like pylit_, e.g. ::
   pylit.main()
 
 
-.. _default values: ../examples/pylit.py.html#defaults
+.. _default values: examples/pylit.py.html#defaults

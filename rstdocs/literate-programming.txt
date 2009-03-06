@@ -60,8 +60,8 @@ John Max Skaller put the philosophy of literate programming in one sentence
    http://www.ibm.com/developerworks/library/l-pyth7.html
 
 
-Literate Programming Technique and Literate Programming Systems
-===============================================================
+Literate Programming Technique and Systems
+==========================================
 
 Donald Knuth not only conceived the *philosophy* of literate programming,
 he also wrote the first literate programming *system* `WEB`_ that
@@ -139,7 +139,7 @@ However, it is argued that PyLit is an *educated choice* as tool for the
   converted to a hyperlinked HTML document representing the program's
   "web-like" structure. For indexing and cross-references, PyLit relies
   on the rich features of the `reStructuredText`_ document formatting
-  language. Autogenerating of cross references and indices becomes are
+  language. Auto-generating of cross references and indices becomes are
   possible if the reStructuredText sources are converted with Sphinx_
 
 Dispensing with code re-ordering enables the `dual-source`_ concept. Code
