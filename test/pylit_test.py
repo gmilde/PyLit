@@ -1,36 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
-## pylit_test.py 
+## pylit_test.py
 ## *************
 ## Test pylit.py Python Module
 ## +++++++++++++++++++++++++++
-## 
+##
 ## :Date:      $Date: 2007-05-17 $
 ## :Version:   SVN-Revision $Revision: 45 $
 ## :URL:       $URL: svn+ssh://svn.berlios.de/svnroot/repos/pylit/trunk/test/pylit_test.py $
 ## :Copyright: 2006 Guenter Milde.
 ##             Released under the terms of the GNU General Public License
 ##             (v. 2 or later)
-## 
+##
 ## .. contents::
-## 
-## 
+##
 ## A catalogue of errors
 ## =====================
-## 
+##
 ## from file:///home/milde/Texte/Doc/Programmierung/Software-Carpentry/lec/unit.html
-## 
+##
 ## * Numbers: zero, largest, smallest magnitude, most negative
 ## * Structures: empty, exactly one element, maximum number of elements
 ##   - Duplicate elements (e.g., letter "J" appears three times in a string)
 ##   - Aliased elements (e.g., a list contains two references to another list)
 ##   - Circular structures (e.g., a list that contains a reference to itself)
-## * Searching: no match found, one match found, multiple matches found, 
+## * Searching: no match found, one match found, multiple matches found,
 ##   everything matches
 ##   - Code like x = find_all(structure)[0] is almost always wrong
 ##   - Should also check aliased matches (same thing found multiple times)
-## 
 ## ::
 
 """pylit_test.py: test the "literal python" module"""
@@ -42,26 +40,26 @@ import nose
 
 ## Text <-> Code conversion
 ## ========================
-## 
+##
 ## Test strings
 ## ============
-## 
+##
 ## Example of text, code and stripped code with typical features"::
 
 text = """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-  
+
 Leading text
 
 in several paragraphs followed by a literal block::
 
   block1 = 'first block'
-  
+
 Some more text and the next block. ::
 
   block2 = 'second block'
   print block1, block2
-  
+
 Trailing text.
 """
 # print text
@@ -86,20 +84,20 @@ Trailing text.
 """
 
 ## The code corresponding to the text test string.
-## 
+##
 ## Using a triple-quoted string for the code (and stripped_code) can create
 ## problems with the conversion of this test by pylit (as the text parts
-## would be converted to text).  
+## would be converted to text).
 ## A workaround is using a different comment string for the text blocks and
 ## converting with e.g. ``pylit --comment-string='## ' pylit_test.py``.
-## 
+##
 ## ::
 
 code = """#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
 # Leading text
-# 
+#
 # in several paragraphs followed by a literal block::
 
 block1 = 'first block'
@@ -129,9 +127,9 @@ print block1, block2
 
 ## pprint(textdata)
 ## pprint(stripped_code.splitlines(True))
-## 
+##
 ## Containers for special case examples:
-## 
+##
 ## 1. Text2Code samples
 ## ``textsamples["what"] = (<text data>, <output>, <output (with `strip`)``
 ## ::
@@ -177,9 +175,8 @@ def test_Code2Text_samples():
                    Code2Text(sample[0].splitlines(True), strip=True),
                    sample[2])
 
-
 ## Pre and postprocessing filters (for testing the filter hooks)
-## 
+##
 ## ::
 
 def r2l_filter(data):
@@ -237,13 +234,13 @@ def test_x2u_filter():
 
 ## TextCodeConverter
 ## =================
-## 
+##
 ## ::
 
 class test_TextCodeConverter(object):
     """Test the TextCodeConverter parent class
     """
-    
+
 ## ::
 
     def check_marker_regexp_true(self, sample, converter):
@@ -257,7 +254,7 @@ class test_TextCodeConverter(object):
     def check_marker_regexp_false(self, sample, converter):
         print 'marker: %r; sample %r' %(converter.code_block_marker, sample)
         assert converter.marker_regexp.search(sample) is None
-        
+
 ## ::
 
     def test_marker_regexp(self):
@@ -288,22 +285,22 @@ class test_TextCodeConverter(object):
         for sample in directives+misses:
             yield (self.check_marker_regexp_false, sample, self.converter)
         # code-block directive as marker
-        self.converter = TextCodeConverter(textdata, 
+        self.converter = TextCodeConverter(textdata,
                                            code_block_marker='.. code-block::')
         assert self.converter.code_block_marker == '.. code-block::'
         for sample in directives:
             yield (self.check_marker_regexp_true, sample, self.converter)
         for sample in literal+misses:
             yield (self.check_marker_regexp_false, sample, self.converter)
-        
+
 ## ::
 
     def test_get_indent(self):
-        converter = TextCodeConverter(textdata)        
+        converter = TextCodeConverter(textdata)
         assert converter.get_indent("foo") == 0
         assert converter.get_indent(" foo") == 1
         assert converter.get_indent("  foo") == 2
-    
+
 ## ::
 
     def test_collect_blocks(self):
@@ -315,7 +312,7 @@ class test_TextCodeConverter(object):
 
 ## Text2Code
 ## =========
-## 
+##
 ## ::
 
 class test_Text2Code(object):
@@ -355,7 +352,7 @@ class test_Text2Code(object):
         self.converter.state = "code_block"
         self.converter.set_state(["  documentation", "block"])
         assert self.converter.state == "documentation"
-        
+
         self.converter.state = "code_block"
         self.converter.set_state(["  code", "  block"])
         print self.converter.state
@@ -372,30 +369,30 @@ class test_Text2Code(object):
     def test_documentation_handler(self):
         """should add comment string to documentation"""
         sample = ["doc", "block", ""]
-        lines = [line for line 
+        lines = [line for line
                   in self.converter.documentation_handler(sample)]
         print lines
         assert lines == ["# doc", "# block", "# "]
-    
+
     def test_documentation_handler_set_state(self):
         """should add comment string to documentation"""
         sample = ["doc", "block::", ""]
-        lines = [line for line 
+        lines = [line for line
                   in self.converter.documentation_handler(sample)]
         print lines
         assert lines == ["# doc", "# block::", ""]
         assert self.converter.state == "code_block"
-        
+
     def test_code_block_handler(self):
         """should un-indent code-blocks"""
         self.converter._codeindent = 0 # normally set in `convert`
         sample = ["  code", "  block", ""]
-        lines = [line for line 
+        lines = [line for line
                   in self.converter.code_block_handler(sample)]
         print lines
         assert lines == ["code", "block", ""]
-    
-    
+
+
 ## base tests on the "long" test data ::
 
     def test_call(self):
@@ -404,7 +401,7 @@ class test_Text2Code(object):
         print repr(codedata)
         print repr(output)
         assert codedata == output
-        
+
     def test_call_strip(self):
         """strip=True should strip text parts"""
         self.converter.strip = True
@@ -412,7 +409,7 @@ class test_Text2Code(object):
         print repr(stripped_code.splitlines(True))
         print repr(output)
         assert stripped_code.splitlines(True) == output
-        
+
     def test_str(self):
         outstr = str(self.converter)
         print repr(code)
@@ -421,17 +418,17 @@ class test_Text2Code(object):
 
     def test_str_strip1(self):
         """strip=True should strip text parts.
-        
+
         Version 1 with `strip` given as optional argument"""
         outstr = str(Text2Code(textdata, strip=True))
         print "ist ", repr(outstr)
         print "soll", repr(stripped_code)
         # pprint(outstr)
         assert stripped_code == outstr
-    
+
     def test_str_strip2(self):
-        """strip=True should strip text parts 
-        
+        """strip=True should strip text parts
+
         Version 2 with `strip` set after instantiation"""
         self.converter.strip = True
         outstr = str(self.converter)
@@ -439,7 +436,7 @@ class test_Text2Code(object):
         print "soll", repr(stripped_code)
         # pprint(outstr)
         assert stripped_code == outstr
-    
+
     def test_malindented_code_line(self):
         """raise error if code line is less indented than code-indent"""
         data1 = ["..    #!/usr/bin/env python\n", # indent == 4 * " "
@@ -454,7 +451,7 @@ class test_Text2Code(object):
                 assert False, "wrong indent did not raise ValueError"
             except ValueError:
                 pass
-    
+
     def test_str_different_comment_string(self):
         """Convert only comments with the specified comment string to text
         """
@@ -477,9 +474,9 @@ class test_Text2Code(object):
         print "soll:", repr(soll)
         print "ist: ", repr(outstr)
         assert outstr == soll
-        
+
     # Filters: test pre- and postprocessing of data
-    
+
     def test_get_filter_preprocessor(self):
         """should return filter from filter_set for language"""
         preprocessor = self.converter.get_filter("preprocessors", "rl")
@@ -497,7 +494,7 @@ class test_Text2Code(object):
         postprocessor = self.converter.get_filter("postprocessors", "css")
         print postprocessor
         assert postprocessor == dumb_c_postprocessor
-        
+
     def test_get_filter_nonexisting_language_filter(self):
         """should return identity_filter if language has no filter in set"""
         preprocessor = self.converter.get_filter("preprocessors", "foo")
@@ -509,7 +506,7 @@ class test_Text2Code(object):
         processor = self.converter.get_filter("foo_filters", "foo")
         print processor
         assert processor == identity_filter
-        
+
     def test_preprocessor(self):
         """Preprocess data with registered preprocessor for language"""
         output = Text2Code(textdata, language="x", comment_string="# ")()
@@ -528,16 +525,16 @@ class test_Text2Code(object):
 
 ## Special Cases
 ## -------------
-## 
+##
 ## Code follows text block without blank line
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## 
+##
 ## End of text block detected ('::') but no paragraph separator (blank line)
 ## follows
-## 
+##
 ## It is an reStructuredText syntax error, if a "literal block
 ## marker" is not followed by a blank line.
-## 
+##
 ## Assuming that no double colon at end of line occurs accidentally,
 ## pylit could fix this and issue a warning::
 
@@ -547,48 +544,48 @@ class test_Text2Code(object):
 #   block1 = 'first block'
 # """,
 # """# text followed by a literal block::
-# 
+#
 # block1 = 'first block'
 # """)
 
 ## Text follows code block without blank line
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## 
+##
 ## End of code block detected (a line not more indented than the preceding text
 ## block)
-## 
+##
 ## reStructuredText syntax demands a paragraph separator (blank line) before
 ## it.
-## 
-## Assuming that the unindent is not accidental, pylit could fix this and 
+##
+## Assuming that the unindent is not accidental, pylit could fix this and
 ## issues a warning::
 
 # Do we need this feature? (Complicates code)
 # textsamples["ensure blank line after code"] = (
 # """::
-# 
+#
 #   block1 = 'first block'
 # more text
 # """,
 # """# ::
-# 
+#
 # block1 = 'first block'
-# 
+#
 # more text
 # """)
 
 ## A double colon on a line on its own
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## 
+##
 ## As a double colon is added by the Code2Text conversion after a text block
 ## (if not already present), it could be removed by the Text2Code conversion
 ## to keep the source small and pretty.
-## 
+##
 ## However, this would put the text and code source line numbers out of sync,
 ## which is bad for error reporting, failing doctests, and the JED editor
 ## support with the `pylit_buffer()` function in
 ## http://jedmodes.sf.net/mode/pylit.sl .
-## 
+##
 ## Maybe this could be left to a post-processing filter::
 
 # textsamples["remove single double colon"] = (
@@ -627,7 +624,7 @@ a classical example without header::
 
   print 'hello world'
 """,
-"""# 
+"""#
 # a classical example without header::
 
 print 'hello world'
@@ -664,20 +661,20 @@ textsamples["null string"] = ("", "", "")
 
 ## Code2Text
 ## =========
-## 
+##
 ## ::
 
 class test_Code2Text(object):
-    
+
     def setUp(self):
         self.converter = Code2Text(codedata)
-    
+
 ## Code2Text.strip_literal_marker
-## 
+##
 ## * strip `::`-line as well as preceding blank line if on a line on its own
-## * strip `::` if it is preceded by whitespace. 
+## * strip `::` if it is preceded by whitespace.
 ## * convert `::` to a single colon if preceded by text
-## 
+##
 ## ::
     def check_strip_code_block_marker(self, sample):
         """test Code2Text.strip_code_block_marker"""
@@ -725,7 +722,7 @@ class test_Code2Text(object):
             self.converter.state = old_state
             self.converter.set_state(lines)
             print repr(lines), "old state", old_state
-            print "soll", repr(soll), 
+            print "soll", repr(soll),
             print "result", repr(self.converter.state)
             assert soll == self.converter.state
 
@@ -750,17 +747,17 @@ class test_Code2Text(object):
         print "soll:", repr(text)
         print "ist: ", repr(outstr)
         assert text == outstr
-    
+
     def test_str_strip(self):
         """Test Code2Text class converting code->rst with strip=True
-    
+
         Should strip code blocks
         """
         outstr = str(Code2Text(codedata, strip=True))
         print repr(stripped_text)
         print repr(outstr)
         assert stripped_text == outstr
-    
+
     def test_str_different_comment_string(self):
         """Convert only comments with the specified comment string to text
         """
@@ -796,7 +793,7 @@ class test_Code2Text(object):
                 "  block1 = 'first block'\n",
                 '  \n',
                 ' more text\n']   # keep space (not part of comment string)
-                
+
         converter = Code2Text(data, code_block_marker='.. code-block::')
         output = converter()
         print "soll:", repr(soll)
@@ -804,7 +801,7 @@ class test_Code2Text(object):
         assert output == soll
 
     # Filters: test pre- and postprocessing of Code2Text data conversion
-    
+
     def test_get_filter_preprocessor(self):
         """should return Code2Text preprocessor for language"""
         preprocessor = self.converter.get_filter("preprocessors", "rl")
@@ -816,7 +813,7 @@ class test_Code2Text(object):
         preprocessor = self.converter.get_filter("preprocessors", "css")
         print preprocessor
         assert preprocessor == dumb_c_preprocessor
-        
+
     def test_get_filter_postprocessor(self):
         """should return Code2Text postprocessor for language"""
         postprocessor = self.converter.get_filter("postprocessors", "x")
@@ -834,7 +831,7 @@ class test_Code2Text(object):
         processor = self.converter.get_filter("foo_filters", "foo")
         print processor
         assert processor == identity_filter
-        
+
     def test_preprocessor(self):
         """Preprocess data with registered preprocessor for language"""
         converter = Code2Text(codedata, language="rl", comment_string="# ")
@@ -857,13 +854,13 @@ class test_Code2Text(object):
 
 ## Special cases
 ## -------------
-## 
+##
 ## blank comment line
 ## ~~~~~~~~~~~~~~~~~~
-## 
+##
 ## Normally, whitespace in the comment string is significant, i.e. with
 ## ``comment_string = "# "``, a line ``"#something\n"`` will count as code.
-## 
+##
 ## However, if a comment line is blank, trailing whitespace in the comment
 ## string should be ignored, i.e. ``#\n`` is recognised as a blank text line::
 
@@ -878,18 +875,18 @@ block1 = 'first block'
 """::
 
   block1 = 'first block'
-  
+
 
 more text
 """)
 
 ## No blank line after text
 ## ~~~~~~~~~~~~~~~~~~~~~~~~
-## 
+##
 ## If a matching comment precedes or follows a code line (i.e. any line
 ## without matching comment) without a blank line in between, it counts as code
 ## line.
-## 
+##
 ## This will keep small inline comments close to the code they comment on. It
 ## will also keep blocks together where one commented line does not match the
 ## comment string (the whole block will be kept as commented code)
@@ -935,7 +932,7 @@ block1 = 'first block'
 
   block1 = 'first block'
   # commented code
-  
+
 text again
 """,
 """
@@ -962,11 +959,11 @@ block1 = 'first block'
 
 ## missing literal block marker
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-## 
+##
 ## If text (with matching comment string) is followed by code (line(s) without
 ## matching comment string), but there is no double colon at the end, back
 ## conversion would not recognise the end of text!
-## 
+##
 ## Therefore, pylit adds a paragraph containing only ``::`` -- the literal
 ## block marker in expanded form. (While it would in many cases be nicer to
 ## add the double colon to the last text line, this is not always valid rst
@@ -990,7 +987,7 @@ foo = 'first'
 
 ## header samples
 ## ~~~~~~~~~~~~~~
-## 
+##
 ## Convert a header (leading code block) to a reStructured text comment. ::
 
 codesamples["no matching comment, just code"] = (
@@ -999,7 +996,7 @@ codesamples["no matching comment, just code"] = (
 print 'ende'
 """,
 """..  print 'hello world'
-  
+
   print 'ende'
 """)
 
@@ -1026,7 +1023,7 @@ print 'hello world'
 """,
 """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-  
+
 a classical example with header::
 
   print 'hello world'
@@ -1041,15 +1038,14 @@ codesamples["standard header, followed by code"] = (
 print 'hello world'
 """,
 """..  #!/usr/bin/env python
-  
+
   print 'hello world'
 """,
 "")
 
-
 ## Filter tests
 ## ============
-## 
+##
 ## ::
 
 css_code = ['/* import the default Docutils style sheet */\n',
@@ -1059,7 +1055,7 @@ css_code = ['/* import the default Docutils style sheet */\n',
             '\n',
             '/*comment*/\n',
             '@import url("html4css1.css"); /* style */\n']
-            
+
 ## ::
 
 css_filtered_code = ['// import the default Docutils style sheet\n',
@@ -1067,7 +1063,7 @@ css_filtered_code = ['// import the default Docutils style sheet\n',
                      '\n',
                      '// ::\n',
                      '\n',
-                     '/*comment*/\n', 
+                     '/*comment*/\n',
                      '@import url("html4css1.css"); /* style */\n']
 
 ## ::
