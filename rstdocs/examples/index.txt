@@ -153,12 +153,13 @@ doctest blocks can also test examples from literal code blocks.
     GiNaC_ and the Python programming language using the swiginac_ wrapper
     package. (incomplete.)
   
-  + Sources are in the `documentation folder`_ of the swiginac SVN
-    repository. 
+  + The most current version and sources are in the `documentation folder`_
+    of the swiginac SVN repository. 
 
 .. _swiginac_tutorial:
-    http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/swiginac_tutorial.py.html
-.. _documentation folder: http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
+   http://swiginac.berlios.de/ginac-tutorial.py.html
+.. _documentation folder: 
+   http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
 .. _GiNaC tutorial: http://www.ginac.de/tutorial/
 .. _GiNaC: http://www.ginac.de
 .. _swiginac: http://swiginac.berlios.de
