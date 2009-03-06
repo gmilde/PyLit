@@ -7,7 +7,7 @@
 # ++++++++++++++++++++++++++++++++++++++++++
 # 
 # :Date:      $Date$
-# :Version:   SVN-Revision $Revision$
+# :Revision:  $Revision$
 # :URL:       $URL$
 # :Copyright: 2005, 2007 Guenter Milde.
 #             Released under the terms of the GNU General Public License 
@@ -120,11 +120,8 @@ _version = "0.5"
 import __builtin__, os, sys
 import re, optparse
 
-# Customisation
-# =============
-# 
-# defaults
-# --------
+# Defaults
+# ========
 # 
 # The `defaults` object provides a central repository for default
 # values and their customisation. ::
@@ -149,7 +146,7 @@ defaults = optparse.Values()
 # The following default values are defined in pylit.py:
 # 
 # defaults.languages
-# ~~~~~~~~~~~~~~~~~~
+# ------------------
 # 
 # Mapping of code file extension to code language.
 # Used by `OptionValues.complete`_ to set the `defaults.language`. 
@@ -168,7 +165,7 @@ defaults.languages  = {".c":   "c",
 
 
 # defaults.fallback_language
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# --------------------------
 # 
 # Language to use, if there is no matching extension (e.g. if pylit is used as
 # filter) and no `language` is specified::
@@ -176,7 +173,7 @@ defaults.languages  = {".c":   "c",
 defaults.fallback_language = "python"
 
 # defaults.text_extensions
-# ~~~~~~~~~~~~~~~~~~~~~~~~
+# ------------------------
 # 
 # List of known extensions of (reStructured) text files.
 # Used by `OptionValues._get_outfile` to auto-determine the output filename. 
@@ -186,7 +183,7 @@ defaults.text_extensions = [".txt"]
 
  
 # defaults.comment_strings
-# ~~~~~~~~~~~~~~~~~~~~~~~~
+# ------------------------
 # 
 # Dictionary of comment strings for known languages. Comment strings include
 # trailing whitespace. ::
@@ -204,7 +201,7 @@ defaults.comment_strings = {"css":    '// ',
 # text blocks as comments.
 # 
 # defaults.header_string
-# ~~~~~~~~~~~~~~~~~~~~~~
+# ----------------------
 # 
 # Marker string for a header code block in the text source. No trailing
 # whitespace needed as indented code follows. 
@@ -216,7 +213,7 @@ defaults.comment_strings = {"css":    '// ',
 defaults.header_string = '..'
 
 # defaults.code_block_marker
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# --------------------------
 # 
 # Marker string for a code block in the text source.
 # 
@@ -246,14 +243,14 @@ defaults.code_block_marker = '::'
    
 
 # defaults.strip
-# ~~~~~~~~~~~~~~
+# --------------
 # 
 # Export to the output format stripping documentation or code blocks::
 
 defaults.strip = False
 
 # defaults.strip_marker
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ---------------------
 # 
 # Strip literal marker from the end of documentation blocks when
 # converting  to code format. Makes the code more concise but looses the
@@ -264,7 +261,7 @@ defaults.strip = False
 defaults.strip_marker = False
 
 # defaults.preprocessors
-# ~~~~~~~~~~~~~~~~~~~~~~
+# ----------------------
 # 
 # Preprocess the data with language-specific filters_
 # Set below in Filters_::
@@ -272,14 +269,14 @@ defaults.strip_marker = False
 defaults.preprocessors = {}
 
 # defaults.postprocessors
-# ~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------
 # 
 # Postprocess the data with language-specific filters_::
 
 defaults.postprocessors = {}
 
 # defaults.codeindent
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # 
 # Number of spaces to indent code blocks in `Code2Text.code_block_handler`_::
 
@@ -290,7 +287,7 @@ defaults.codeindent =  2
 # of the text source).
 #  
 # defaults.overwrite
-# ~~~~~~~~~~~~~~~~~~
+# ------------------
 # 
 # What to do if the outfile already exists? (ignored if `outfile` == '-')::
 
@@ -304,7 +301,7 @@ defaults.overwrite = 'update'
 #  
 # 
 # Extensions
-# ----------
+# ==========
 # 
 # Try to import optional extensions::
 

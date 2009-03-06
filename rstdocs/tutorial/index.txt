@@ -52,7 +52,7 @@ Now we can add some more documentation and a link (of course, knowledge of
 
 Pretty-printed with Docutils, it looks like
 
-.. admonition:: hello_2
+.. topic:: Example Output
 
    .. include:: hello_2.py.txt
 

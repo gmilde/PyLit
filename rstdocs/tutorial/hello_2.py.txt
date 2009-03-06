@@ -1,6 +1,6 @@
-The classical programming example in Python_
+The classical programming example in Python
 
-::
+Let Python_ print a string literal::
 
   print "Hello world."
 

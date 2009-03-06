@@ -1,30 +1,44 @@
 .. -*- rst-mode -*-
 
-============================================================
- PyLit - Literate Programming with reStructuredText
-============================================================
-
-    The idea is that you do not document programs (after the fact), but
-    write documents that *contain* the programs.
-
-    -- John Max Skaller in a `Charming Python interview`_.
-
-.. _literate programming: literate-programming.html
-.. _Charming Python interview:
-    http://www.ibm.com/developerworks/library/l-pyth7.html
+******************************************
+                 PyLit
+******************************************
+Literate Programming with reStructuredText
+==========================================
 
 PyLit (Python Literate) provides a plain but efficient tool for
-`literate programming`_: a bidirectional text ⟺ code converter.
+literate programming: a `bidirectional text/code converter`_.
 
+.. _literate programming: literate-programming.html
+.. _bidirectional text/code converter: features.html#dual-source
 
 Documentation
 -------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   features
    literate-programming
+
+..
+
+   The idea is that you do not document programs (after the fact), but
+   write documents that *contain* the programs.
+
+   -- John Max Skaller in a `Charming Python interview`_.
+
+.. _Charming Python interview:
+    http://www.ibm.com/developerworks/library/l-pyth7.html
+
+.. toctree::
+   :maxdepth: 2
+   
+   features
+   usage/index
+   
+.. toctree::
+   :maxdepth: 1
+   
    tutorial/index
    examples/index
 
@@ -34,15 +48,18 @@ Download
 .. toctree::
    :maxdepth: 1
 
-   download/download
-   download/usage
+   download/index
 
 Project page
 ------------
 
 The PyLit project is hosted at `BerliOS`_. The `project page`_
-provides project statistics and info as well as links to the Bugtracker_,
-`Feature Requests`_, pylit-users `Mail List`_, and the `SVN repository`_.
+provides project statistics and info as well as links to the 
+
+* Bugtracker_,
+* `Feature Requests`_, 
+* pylit-users `Mail List`_, and 
+* the `SVN repository`_.
 
 .. _`project page`: http://developer.berlios.de/projects/pylit/
 .. _BerliOS: http://www.berlios.de
@@ -94,9 +111,8 @@ Remember to back up your data. A version control system is recommended.
 About this site
 ---------------
 
-The PyLit site is created from
-`reStructuredText`_ sources with Sphinx_ (earlier versions used the
-rest2web_ site builder).
+The PyLit site is created from `reStructuredText`_ sources with Sphinx_.
+(Earlier versions used the rest2web_ site builder.)
 
 It is located at http://pylit.berlios.de/ on `BerliOS`_, a free
 (and ad-free!) service to Open Source developers by the Fraunhofer-Institut

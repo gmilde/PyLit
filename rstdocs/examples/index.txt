@@ -6,6 +6,14 @@ Examples
 The following examples illustrate use cases for "literate programming with
 PyLit".
 
+Generally, the literate source will not substitute a user guide, but can
+serve as base documentation as well as reference.
+
+The text parts can be used to structure the document, for additional
+explanations, documentation of variants and discussion why a specific
+approach was chosen.
+
+
 .. Currently, the "code" format examples are not copied to the build tree.
 
    This has to be done "by hand" :-(
@@ -30,28 +38,19 @@ PyLit".
 
 
 
-User Scripts
-------------
-
-Generally, the literate source will not substitute a user guide, but can
-serve as base documentation as well as reference.
-
-The text parts can be used to structure the script, for additional
-explanations, documentation of variants and discussion why a specific
-approach was chosen.
+pylit.py
+--------
 
 .. toctree::
   :maxdepth: 2
 
   pylit.py
-  99bottles.py
 
+Sources:
 
-.. Sources:
-  `<pylit.py>`_, `<pylit.py.txt>`_,
-  `<99bottles.py>`_, `<99bottles.py.txt>`_
+* `<pylit.py>`_, `<pylit.py.txt>`_.
 
-Python Module
+Python Modules
 --------------
 
 Typically, most of a Python module's documentation is in docstrings.
@@ -64,26 +63,13 @@ maintain or extend it (including the original author).
 .. toctree::
   :maxdepth: 2
 
+  99bottles.py
   simplestates.py
 
-.. Sources:
-  `<simplestates.py>`_, `<simplestates.py.txt>`_
+Sources:
 
-
-Article
---------
-
-This survey over the various options and attempts to extend an iterator with
-methods for `peek`, `pushback` or `test of emptiness` is also a Python
-module defining several examples of such rich iterators.
-
-.. toctree::
-  :maxdepth: 1
-
-  iterqueue.py
-  
-.. Sources: 
-  `<iterqueue.py>`_, `<iterqueue.py.txt>`_.
+* `<99bottles.py>`_, `<99bottles.py.txt>`_.
+* `<simplestates.py>`_, `<simplestates.py.txt>`_,
 
 
 Doctests
@@ -127,15 +113,29 @@ test discovery & execution framework. (They should be compatible to
   iterqueue_test.py
   iterqueue_speed_test.py
 
-.. Sources: 
-  `<pylit_test.py>`_, `<pylit_test.py.txt>`_.
-  `<simplestates_test.py>`_, `<simplestates_test.py.txt>`_.
-  `<iterqueue_test.py>`_, `<iterqueue_test.py.txt>`_.
-  `<iterqueue_speed_test.py>`_, `<iterqueue_speed_test.py.txt>`_
+Sources: 
+
+* `<pylit_test.py>`_, `<pylit_test.py.txt>`_,
+* `<simplestates_test.py>`_, `<simplestates_test.py.txt>`_,
+* `<iterqueue_test.py>`_, `<iterqueue_test.py.txt>`_,
+* `<iterqueue_speed_test.py>`_, `<iterqueue_speed_test.py.txt>`_.
 
 
-Tutorials
----------
+Articles and Tutorials
+----------------------
+
+This survey over the various options and attempts to extend an iterator with
+methods for `peek`, `pushback` or `test of emptiness` is also a Python
+module defining several examples of such rich iterators.
+
+.. toctree::
+  :maxdepth: 1
+
+  iterqueue.py
+  
+Sources: 
+
+* `<iterqueue.py>`_, `<iterqueue.py.txt>`_.
 
 A tutorial is clearly more of a text document than a program. But usually, a
 lot of example code gets included. Converting the text source to commented
@@ -153,7 +153,7 @@ doctest blocks can also test examples from literal code blocks.
     GiNaC_ and the Python programming language using the swiginac_ wrapper
     package. (incomplete.)
   
-  + Sources are in the `documentation folder`__ of the swiginac SVN
+  + Sources are in the `documentation folder`_ of the swiginac SVN
     repository. 
 
 .. _swiginac_tutorial:
@@ -177,19 +177,16 @@ markup.
   listings-tex-options.sty
   palatino-helvetica-courier.sty
 
-.. Sources: 
-  `<listings-python-options.sty>`_, `<listings-python-options.sty.txt>`_
-  `<listings-tex-options.sty>`_, `<listings-tex-options.sty.txt>`_
-  
-
 * isomath_: Math for scientists
 
   + LaTeX package for typesetting math according to International
     Standard ISO 31 `Quantities and units`.
-  
-  + Sources: isomath.sty_, isomath.sty.txt_
 
-  + PDF: isomath.sty.pdf_
+Sources: 
+
+* `<listings-python-options.sty>`_, `<listings-python-options.sty.txt>`_,
+* `<listings-tex-options.sty>`_, `<listings-tex-options.sty.txt>`_
+* isomath.sty_, isomath.sty.txt_. PDF: isomath.sty.pdf_.
 
 .. _isomath:
    http://dante.ctan.org/CTAN/macros/latex/contrib/isomath/isomath.sty.html
@@ -210,10 +207,17 @@ Also cascading style sheets can gain from being made literate documents.
 
   pygments-default.css
 
-.. Sources: `<pygments-default.css>`_, `<pygments-default.css.txt>`_
+Sources: 
+
+* `<pygments-default.css>`_, `<pygments-default.css.txt>`_
 
 Configuration Files
 -------------------
 
 Generating a template as well as user documentation from the same
-config-file source helps to keep them synchronised.
+source helps to keep them synchronised:
+
+.. toctree::
+  :maxdepth: 1
+
+  ../conf.py

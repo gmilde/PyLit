@@ -1,7 +1,7 @@
 .. -*- rst-mode -*-
 
 Features
-========
+==============
 
 `PyLit` (Python-Literate) provides a plain but efficient tool for literate
 programming: a bidirectional converter between 
@@ -93,10 +93,10 @@ __ http://python.org/doc/2.2.3/dist/simple-example.html#SECTION00022000000000000
 .. _semi-literate programming: ../literate-programming/index.html#semi-literate
 
 
-Documentation Markup with reStructuredText
+Markup with reStructuredText
 ------------------------------------------
 
-PyLit uses `reStructuredText`_ from Python Docutils_ for hyperlinks and
+PyLit uses `reStructuredText`_ from the Python Docutils_ for documentation
 text markup. [#]_
 
 * reStructuredText is an "ASCII-markup" language. Its syntax is very similar
@@ -115,13 +115,13 @@ text markup. [#]_
   
   The Python Documentation Generator Sphinx_, adds support for more complex
   projects including extensive cross-references, automatic indices and
-  automatic highlighting of source code..
+  automatic highlighting of source code.
 
 Most of the time, a programmer will see the source in a "text editor". With
 reStructuredText as documenting language, not only the pretty printed
 documentation, but also the source (be it in "text" or "code" format) is a
-"combination of documentation and source together in a fashion suited for
-reading by human beings", i.e. a *literate program* according to the
+*"combination of documentation and source together in a fashion suited for
+reading by human beings"*, i.e. a *literate program* according to the
 "inclusive" definition in the `Literate Programming FAQ`_.
 
 The tutorial_ and the examples_ show what code and text source may look like.
