@@ -14,30 +14,6 @@ explanations, documentation of variants and discussion why a specific
 approach was chosen.
 
 
-.. Currently, the "code" format examples are not copied to the build tree.
-
-   This has to be done "by hand" :-(
-
-   This will be possible with the next version of Sphinx (0.6).
-
-   zopyxfil...@googlemail.com schrieb:
-
-   > I have a PDF file within my source directory that is referenced from
-   > within a reST document.
-   > How can I configure Sphinx in order  "make html" copying over the PDF
-   > to the build directory?
-
-   The best way is to use Sphinx 0.6 (which is not yet released, but you can
-   use it from Mercurial, like described in
-   http://bitbucket.org/birkenfeld/sphinx/wiki/Home, or wait for the release
-   which will be in a few days).  There, you have a :download: role which
-   references a file in the source directory and automatically copies it to
-   the build directory, linking to the correct path.
-
-   Georg
-
-
-
 pylit.py
 --------
 
@@ -46,9 +22,6 @@ pylit.py
 
   pylit.py
 
-Sources:
-
-* `<pylit.py>`_, `<pylit.py.txt>`_.
 
 Python Modules
 --------------
@@ -65,11 +38,6 @@ maintain or extend it (including the original author).
 
   99bottles.py
   simplestates.py
-
-Sources:
-
-* `<99bottles.py>`_, `<99bottles.py.txt>`_.
-* `<simplestates.py>`_, `<simplestates.py.txt>`_,
 
 
 Doctests
@@ -88,6 +56,8 @@ time (as they will be stripped from the byte-compiled module).
    :maxdepth: 1
 
    literate-doctests
+   testfile_literate.py
+   testmod_literate.py
 
 .. _doctest: http://docs.python.org/library/doctest.html
 
@@ -113,13 +83,6 @@ test discovery & execution framework. (They should be compatible to
   iterqueue_test.py
   iterqueue_speed_test.py
 
-Sources: 
-
-* `<pylit_test.py>`_, `<pylit_test.py.txt>`_,
-* `<simplestates_test.py>`_, `<simplestates_test.py.txt>`_,
-* `<iterqueue_test.py>`_, `<iterqueue_test.py.txt>`_,
-* `<iterqueue_speed_test.py>`_, `<iterqueue_speed_test.py.txt>`_.
-
 
 Articles and Tutorials
 ----------------------
@@ -132,10 +95,7 @@ module defining several examples of such rich iterators.
   :maxdepth: 1
 
   iterqueue.py
-  
-Sources: 
 
-* `<iterqueue.py>`_, `<iterqueue.py.txt>`_.
 
 A tutorial is clearly more of a text document than a program. But usually, a
 lot of example code gets included. Converting the text source to commented
@@ -152,17 +112,18 @@ doctest blocks can also test examples from literal code blocks.
   + An adaption of the `GiNaC tutorial`_ for doing Computer algebra with
     GiNaC_ and the Python programming language using the swiginac_ wrapper
     package. (incomplete.)
-  
+
   + The most current version and sources are in the `documentation folder`_
-    of the swiginac SVN repository. 
+    of the swiginac SVN repository.
 
 .. _swiginac_tutorial:
    http://swiginac.berlios.de/ginac-tutorial.py.html
-.. _documentation folder: 
+.. _documentation folder:
    http://svn.berlios.de/svnroot/repos/swiginac/trunk/doc/
 .. _GiNaC tutorial: http://www.ginac.de/tutorial/
 .. _GiNaC: http://www.ginac.de
 .. _swiginac: http://swiginac.berlios.de
+
 
 LaTeX Packages
 --------------
@@ -178,21 +139,27 @@ markup.
   listings-tex-options.sty
   palatino-helvetica-courier.sty
 
-* isomath_: Math for scientists
+* isomath_ (PDF__): Math for scientists
 
   + LaTeX package for typesetting math according to International
     Standard ISO 31 `Quantities and units`.
 
-Sources: 
+__ ftp://dante.ctan.org/tex-archive/macros/latex/contrib/isomath/isomath.sty.pdf
 
-* `<listings-python-options.sty>`_, `<listings-python-options.sty.txt>`_,
-* `<listings-tex-options.sty>`_, `<listings-tex-options.sty.txt>`_
-* isomath.sty_, isomath.sty.txt_. PDF: isomath.sty.pdf_.
+Sources:
 
+* listings-python-options.sty_, listings-tex-options.sty_,
+  palatino-helvetica-courier.sty_
+* isomath.sty_, isomath.sty.txt_.
+
+.. _listings-python-options.sty:
+   http://docutils.sf.net/sandbox/stylesheets/listings-python-options.sty
+.. _listings-tex-options.sty:
+   http://docutils.sf.net/sandbox/stylesheets/listings-tex-options.sty
+.. _palatino-helvetica-courier.sty:
+   http://docutils.sf.net/sandbox/stylesheets/palatino-helvetica-courier.sty
 .. _isomath:
    http://dante.ctan.org/CTAN/macros/latex/contrib/isomath/isomath.sty.html
-.. _isomath.sty.pdf:
-   ftp://dante.ctan.org/tex-archive/macros/latex/contrib/isomath/isomath.sty.pdf
 .. _isomath.sty:
    ftp://dante.ctan.org/tex-archive/macros/latex/contrib/isomath/isomath.sty
 .. _isomath.sty.txt:
@@ -208,9 +175,6 @@ Also cascading style sheets can gain from being made literate documents.
 
   pygments-default.css
 
-Sources: 
-
-* `<pygments-default.css>`_, `<pygments-default.css.txt>`_
 
 Configuration Files
 -------------------
