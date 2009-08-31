@@ -48,18 +48,18 @@ import nose
 
 text = """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 Leading text
 
 in several paragraphs followed by a literal block::
 
   block1 = 'first block'
-
+  
 Some more text and the next block. ::
 
   block2 = 'second block'
   print block1, block2
-
+  
 Trailing text.
 """
 # print text
@@ -97,7 +97,7 @@ code = """#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 
 # Leading text
-#
+# 
 # in several paragraphs followed by a literal block::
 
 block1 = 'first block'
@@ -460,7 +460,7 @@ class test_Text2Code(object):
                 '::\n',  # leading code block as header
                 '\n',
                 "  block1 = 'first block'\n",
-                '  \n',
+                '\n',
                 'more text']
         soll = "\n".join(["#!/usr/bin/env python",
                           "",
@@ -624,7 +624,7 @@ a classical example without header::
 
   print 'hello world'
 """,
-"""#
+"""# 
 # a classical example without header::
 
 print 'hello world'
@@ -869,13 +869,13 @@ codesamples["ignore trailing whitespace in comment string for blank line"] = (
 
 block1 = 'first block'
 
-#
+# 
 # more text
 """,
 """::
 
   block1 = 'first block'
-
+  
 
 more text
 """)
@@ -932,7 +932,7 @@ block1 = 'first block'
 
   block1 = 'first block'
   # commented code
-
+  
 text again
 """,
 """
@@ -996,7 +996,7 @@ codesamples["no matching comment, just code"] = (
 print 'ende'
 """,
 """..  print 'hello world'
-
+  
   print 'ende'
 """)
 
@@ -1023,7 +1023,7 @@ print 'hello world'
 """,
 """..  #!/usr/bin/env python
   # -*- coding: iso-8859-1 -*-
-
+  
 a classical example with header::
 
   print 'hello world'
@@ -1038,7 +1038,7 @@ codesamples["standard header, followed by code"] = (
 print 'hello world'
 """,
 """..  #!/usr/bin/env python
-
+  
   print 'hello world'
 """,
 "")
