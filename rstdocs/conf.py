@@ -3,31 +3,33 @@
 # conf.py -- Sphinx configuration for PyLit
 # =========================================
 # 
-# Documentation build configuration file, created by
-# sphinx-quickstart on Wed Feb 25 14:22:57 2009.
+# Documentation build configuration file
 # 
-# This file is execfile()d with the current directory set to its containing dir.
+# This file is execfile()d with the current directory set to its containing
+# dir.
 # 
 # The contents of this file are pickled, so don't put values in the namespace
-# that aren't pickleable (module imports are okay, they're removed automatically).
+# that aren't pickleable (module imports are okay, they're removed
+# automatically).
 # 
 # All configuration values have a default value; values that are commented out
 # serve to show the default value. 
-# ::
+# 
+# You can use the following modules in your definitions (or add more)::
 
 import sys, os
 
 # If your extensions are in another directory, add it here. If the directory
-# is relative to the documentation root, use os.path.abspath to make it
-# absolute, like shown here.
+# is relative to the documentation root, use ``os.path.abspath`` to make it
+# absolute, like shown here::
+
 #sys.path.append(os.path.abspath('some/directory'))
 
 # General configuration
 # ---------------------
 # 
 # Add any Sphinx extension module names here, as strings. They can be extensions
-# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-# ::
+# coming with Sphinx (named 'sphinx.ext.*') or your custom ones. ::
 
 extensions = []
 
@@ -76,7 +78,7 @@ today_fmt = '%B %d, %Y'
 #exclude_dirs = []
 exclude_dirnames = [".svn"]
 
-# The reST default role (used for this markup: `text`) to use for all
+# The reST default role (used for this markup: ```text```) to use for all
 # documents::
 
 #default_role = None
@@ -96,17 +98,22 @@ add_function_parentheses = True
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-# Can be any registered pygments-style:
+# Can be any registered pygments-style or 'sphinx'.
 # 
 # >>> from pygments.styles import STYLE_MAP
 # >>> STYLE_MAP.keys()
 # ['manni', 'perldoc', 'borland', 'colorful', 'default', 'murphy', 'trac', 
 #  'fruity', 'autumn', 'bw', 'emacs', 'pastie', 'friendly', 'native']
 # 
-# default: pygments_style = 'sphinx' 
+# You can try the styles with the  `pygments demo
+# <http://pygments.org/demo/>`_ pages that offer a drop-down list to select
+# the style, e.g. http://pygments.org/demo/1444/
+# 
+# 
 # ::
 
-pygments_style = 'manni'
+#pygments_style = 'sphinx' 
+pygments_style = 'friendly'
 
 # Options for HTML output
 # -----------------------
