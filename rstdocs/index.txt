@@ -1,16 +1,29 @@
 .. -*- rst-mode -*-
 
-******************************************
-                 PyLit
-******************************************
-Literate Programming with reStructuredText
-==========================================
+PyLit
+*****
+
+`Literate Programming`_ with reStructuredText_
+
+.. epigraph::
+
+   The idea is that you do not document programs (after the fact), but
+   write documents that *contain* the programs. [1]_
+
+Features
+--------
 
 PyLit (Python Literate) provides a plain but efficient tool for
 literate programming: a `bidirectional text/code converter`_.
 
-.. _literate programming: literate-programming.html
+.. toctree::
+   :maxdepth: 2
+
+   features
+
 .. _bidirectional text/code converter: features.html#dual-source
+.. _literate programming: literate-programming.html
+
 
 Documentation
 -------------
@@ -18,29 +31,12 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
-   literate-programming
-
-..
-
-   The idea is that you do not document programs (after the fact), but
-   write documents that *contain* the programs.
-
-   -- John Max Skaller in a `Charming Python interview`_.
-
-.. _Charming Python interview:
-    http://www.ibm.com/developerworks/library/l-pyth7.html
-
-.. toctree::
-   :maxdepth: 2
-   
-   features
    usage
-   
-.. toctree::
-   :maxdepth: 1
-   
    tutorial/index
    examples/index
+
+   literate-programming
+
 
 Download
 --------
@@ -54,11 +50,11 @@ Project page
 ------------
 
 The PyLit project is hosted at `BerliOS`_. The `project page`_
-provides project statistics and info as well as links to the 
+provides project statistics and info as well as links to the
 
 * Bugtracker_,
-* `Feature Requests`_, 
-* pylit-users `Mail List`_, and 
+* `Feature Requests`_,
+* pylit-users `Mail List`_, and
 * the `SVN repository`_.
 
 .. _`project page`: http://developer.berlios.de/projects/pylit/
@@ -118,6 +114,8 @@ It is located at http://pylit.berlios.de/ on `BerliOS`_, a free
 (and ad-free!) service to Open Source developers by the Fraunhofer-Institut
 für Offene Kommunikationssysteme (FOKUS) in Berlin.
 
+.. [1]  John Max Skaller in a `Charming Python interview`_
+
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _rest2web: http://www.voidspace.org.uk/python/rest2web/
 .. _Sphinx: http://sphinx.pocoo.org/
@@ -125,3 +123,6 @@ für Offene Kommunikationssysteme (FOKUS) in Berlin.
 
 .. _Python: http://www.python.org
 .. _Docutils: http://docutils.sourceforge.net/
+
+.. _Charming Python interview:
+    http://www.ibm.com/developerworks/library/l-pyth7.html

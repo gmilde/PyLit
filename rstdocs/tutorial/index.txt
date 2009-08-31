@@ -31,7 +31,7 @@ Points to mention:
 
 * One can start literate programming with an existing code file (and without
   knowledge of reStructured Text syntax).
-  
+
 * *Documentation* is uncommented (if it is separated from code by a
   blank line and has a recognised comment string at the start of each line).
 
@@ -69,12 +69,12 @@ we get
 Points to mention:
 
 * The double colon that was added in the first conversion is not stripped in
-  the re-conversion. 
-  
+  the re-conversion.
+
   (Generally, a round-trip should not introduce changes after the first
   cycle. This way it is ensured that the line-numbers are the same in text
   and code source.)
-  
+
 * The code block ends at the first non indented line (Precisely, at the
   first line that is not more indented than the preceding text block.)
 
@@ -93,7 +93,7 @@ Otherwise, they are kept as commented code.
 An example will illustrate this. The code::
 
   # 99bottles.py -- print the famous "99 bottles of beer" song lyrics
-  
+
   # Introductory example to literate programming
   #
   # count down from 99 to 1
@@ -103,7 +103,7 @@ An example will illustrate this. The code::
 is mapped to text as::
 
   99bottles.py -- print the famous "99 bottles of beer" song lyrics
-  
+
   ::
 
     # Introductory example to literate programming
@@ -120,7 +120,7 @@ However, ::
   # 99bottles.py -- print the famous "99 bottles of beer" song lyrics
   #
   # Introductory example to literate programming
-  
+
   # count down from 99 to 1
   for bottles in range(99,0,-1):
       ....
@@ -130,9 +130,9 @@ is mapped to text as::
   99bottles.py -- print the famous "99 bottles of beer" song lyrics
 
   Introductory example to literate programming
-  
+
   ::
-  
+
     # count down from 99 to 1
     for bottles in range(99,0,-1):
         ....
@@ -142,47 +142,44 @@ The comment in the 2nd line is removed, as it is inside a documentation block.
 .. [#] a line is considered blank, if it contains only whitespace
 
 
-Inserting a Literal Block that is not Part of the Code
-------------------------------------------------------
+Ordinary Literal Blocks
+-----------------------
 
 How can I include a literal block that should not be in the executable code
 (e.g. an example, an earlier version or variant)?
 
 Workarounds:
-  
-- Use a `parsed-literal block`_ directive and mark lines containing
-  "accidental" markup as `inline literals`_. E.g. ::
-  
-    This will be printed as literal block but not become part of the source
-    code:
-    
-    .. parsed-literal::
-    
-      print "code example that should not run"
-      ``result = 5 *not_bold* 2``
-    
-  will be typeset as
 
-  
-    This will be printed as literal block but not become part of the source
-    code:
-    
-    .. parsed-literal::
-    
-      print "code example that should not run"
-      ``result = 5 *not_bold* 2``
-
-
-- Python session examples and doctests can use `doctest block`_ syntax:
-
-  No double colon! Start first line of block with ``>>>``.
+- Python session examples and doctests can use `doctest block`_ syntax.
+  See the `doctests`_ section.
 
 - Use a "code-block" directive and set the `code_block_marker` option
   or use a distinct directive for ordinary literal blocks.
-  
+
   Drawback: such directives are not part of the core rst syntax (yet) but
   must be defined in an add-on (see `syntax highlight`_ for examples).
 
+- Use a `parsed-literal block`_ directive and mark lines containing
+  "accidental" markup as `inline literals`_. E.g. the text ::
+
+    This will be printed as literal block
+    but not become part of the source code:
+
+    .. parsed-literal::
+
+      print "code example that should not run"
+      ``result = 5 *n* 2``
+
+  will be typeset as
+
+
+    This will be printed as literal block
+    but not become part of the source code:
+
+    .. parsed-literal::
+
+      print "code example that should not run"
+      ``result = 5 *n* 2``
 
 File Headers
 ------------
@@ -195,7 +192,7 @@ the `source code encoding`_ must occur on line one or two:
 .. include:: hello_with_header.py
      :literal:
 
-Headers are converted to a comment in the text source: 
+Headers are converted to a comment in the text source:
 
 .. include:: hello_with_header.py.txt
      :literal:
@@ -232,7 +229,7 @@ the first text block, e.g. using a `parsed literal block`_:
 Doctests
 --------
 
-Pylit supports `Python doctests`_ in a literate script. 
+Pylit supports `Python doctests`_ in a literate script.
 
 We add a `doctest block`_ [#]_ to our example:
 
@@ -242,18 +239,17 @@ We add a `doctest block`_ [#]_ to our example:
 Now try it with ::
 
   #>  python -c "import doctest; doctest.testfile('hello_with_doctest.py')"
-  
+
 There is no output. So everything is OK? Unfortunately not:
 ``doctest.testfile`` does not find the test, as it is "hidden" in a comment.
-[#]_ 
+[#]_
 
-Pylit converts the source to the text version (stripping the comments),
-feeds it to the doctest_ module's `Advanced API`_ (introduced in Python
-2.4), and we get ::
+Pylit converts the source to the text version, feeds it to the doctest_
+module's `Advanced API`_ (introduced in Python 2.4), and we get ::
 
-  #> pylit --doctest hello_with_doctest.py  
+  #> pylit --doctest hello_with_doctest.py
   **********************************************************************
-  File "hello_with_doctest.py", line 3, in 
+  File "hello_with_doctest.py", line 3, in
   Failed example:
       execfile("hello_with_doctest.py")
   Expected:
@@ -263,7 +259,7 @@ feeds it to the doctest_ module's `Advanced API`_ (introduced in Python
 
 Ah yes, we forgot the full-stop in our test. Adding it and testing again::
 
-  #> pylit --doctest hello_with_doctest_2.py  
+  #> pylit --doctest hello_with_doctest_2.py
   0 failures in 1 tests
 
 The printed summary will ensure us that the test actually passed.
@@ -276,7 +272,7 @@ Read more about doctests in the `literate doctests example`_.
        instead.
 
 .. [#] The tests will be found, if ``doctest.testfile`` is run on the text
-       source, i.e.  
+       source, i.e.
        ``python -c "import doctest; doctest.testfile('hello_with_doctest.py.txt')"``
 
 
@@ -309,21 +305,21 @@ looks like
 
 * you have to convert both, ``greeting.py`` and ``hello_multifile.py``.
   (Currently, pylit cannot do 'batch processing' of multiple input files.)
-  
+
 
 .. References:
 
-.. _reStructured Text: 
+.. _reStructured Text:
      http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
 .. _Installation: ../download/index.html#installation
 
 .. _shebang: http://en.wikipedia.org/wiki/Shebang_(Unix)
 
-.. _reStructured Text syntax: 
+.. _reStructured Text syntax:
      http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
 
-.. _literal block: 
+.. _literal block:
      http://docutils.sourceforge.net/docs/user/rst/quickref.html#literal-blocks
 
 .. _parsed literal block:
@@ -340,9 +336,9 @@ looks like
 .. _Advanced API: http://docs.python.org/library/doctest.html#doctest-advanced-api
 .. _literate doctests example: ../examples/literate-doctests/index.html
 
-.. _parsed-literal block: 
+.. _parsed-literal block:
     http://docutils.sourceforge.net/docs/ref/rst/directives.html#parsed-literal-block
-.. _doctest block: 
+.. _doctest block:
     http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#doctest-blocks
 .. _line block:
 .. _line blocks:

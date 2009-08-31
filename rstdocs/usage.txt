@@ -8,21 +8,16 @@ Command line use
 
 ::
 
-   #> python pylit.py -h
-   
-   usage: pylit [options] INFILE [OUTFILE]
-    
-        Convert between (reStructured) text source with embedded code,
-        and code source with embedded documentation (comment blocks)
-        
-        The special file name '-' stands for standard in and output.
+   #> python pylit.py [options] INFILE [OUTFILE]
 
-Example: Run the converter script on itself::
+..
 
-   #> python pylit.py pylit.py
-   extract written to pylit.py.txt
+  Convert between (reStructured) text source with embedded code, and code
+  source with embedded documentation (comment blocks)
 
-Find more examples in the tutorial_.
+  The special file name '-' stands for standard in and output.
+
+Find more details in the tutorial_.
 
 .. _tutorial: tutorial/index.html
 
@@ -33,7 +28,7 @@ Options
   -h, --help            show this help message and exit
   -c, --code2txt        convert code source to text source
   --comment-string=COMMENT_STRING
-                        text block marker (default '# ' (for python))
+                        text block marker (default ``'# '``)
   -d, --diff            test for differences to existing file
   --doctest             run doctest.testfile() on the text version
   -e, --execute         execute code (Python only)
@@ -55,21 +50,23 @@ conversion to executable code. I.e. for a Python module `foo`:
 * the text source is called ``foo.py.txt``
 * the HTML rendering is called ``foo.py.html``
 
-See also
-
-.. toctree:: 
-
-  filename-extensions
+See also `filename extensions <filename-extensions.html>`_
 
 Programmatic use
 ----------------
 
 If pylit.py is in the Python Module Path, it can be imported and used from
 other Python programs. The simplest example is the executable wrapper script
-pylit_. The `literate source`_ explains more details.
+pylit that can also be used for customisation_:
 
-.. _pylit: download/pylit
+.. include:: download/pylit
+   :literal:
+
+For more details see e.g. the `helper functions`_ in the `literate source`_.
+
+.. _helper functions: examples/pylit.py.html#helper-functions
 .. _literate source: examples/pylit.py.html
+.. _pylit: download/pylit
 
 Customisation
 -------------
@@ -78,9 +75,9 @@ Customisation is possible by overwriting `default values`_  in a wrapper
 script like pylit_, e.g. ::
 
   #!/usr/bin/env python
-  
+
   import pylit
-  
+
   pylit.defaults.code_block_marker = '.. code-block:: python'
   pylit.defaults.comment_string = "## "
   pylit.defaults.codeindent = 4
@@ -88,5 +85,15 @@ script like pylit_, e.g. ::
 
   pylit.main()
 
+To overwrite the "intelligent guesses" by PylitOptions_ and command line
+options, pass the option as argument to `pylit.main()`_, e.g.::
+
+  #!/usr/bin/env python
+
+  import pylit
+  pylit.main(comment_string = "## ")
+
 
 .. _default values: examples/pylit.py.html#defaults
+.. _PylitOptions:  examples/pylit.py.html#PylitOptions
+.. _pylit.main():  examples/pylit.py.html#main
