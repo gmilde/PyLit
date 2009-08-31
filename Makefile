@@ -34,8 +34,8 @@ html:
 	cp $(INDIR)/download/pylit $(HTMLDIR)/download/
 	cp $(INDIR)/examples/*.txt $(HTMLDIR)/examples/
 	cp $(INDIR)/examples/*.py  $(HTMLDIR)/examples/
-	cp $(INDIR)/examples/*.sty $(HTMLDIR)/examples/
-	cp $(INDIR)/examples/*.css $(HTMLDIR)/examples/
+	# cp $(INDIR)/examples/*.sty $(HTMLDIR)/examples/
+	# cp $(INDIR)/examples/*.css $(HTMLDIR)/examples/
 	cp $(INDIR)/tutorial/*.py  $(HTMLDIR)/tutorial/
 	cp $(INDIR)/tutorial/*.py.txt $(HTMLDIR)/tutorial/
 	
