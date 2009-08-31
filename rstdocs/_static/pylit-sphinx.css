@@ -54,13 +54,13 @@ div.clearer {
 }
 
 /* last line with Berlios logo */
-p.thanks { 
-  text-align: right; 
+p.thanks {
+  text-align: right;
   background-color: #36648b; /* SteelBlue4 */
 /*   color: #FFBC29; */
   color: white;
   margin: 0
-  }    
+  }
 
 div.footer {
     color: #fff;
@@ -540,10 +540,11 @@ div.body h6 {
 /*     padding: 3px 0 3px 10px; */
 }
 
-div.body h1 { 
-    font-size: 200%; 
-    margin-top: 0; 
-    color: #36648b; /* SteelBlue4 */
+div.body h1 {
+    font-size: 200%;
+    margin-top: 0;
+    background-color: silver;
+/*     color: #36648b; */ /* SteelBlue4 */
 }
 div.body h2 { font-size: 160%; }
 div.body h3 { font-size: 140%; }
@@ -707,8 +708,8 @@ dl {
 }
 
 /* definition terms */
-dt { 
-  font-weight: bold; 
+dt {
+  font-weight: bold;
 }
 
 dd p {
@@ -774,10 +775,11 @@ td.linenos pre {
 }
 
 tt.literal {
-    background-color: #F5F5F5;
+    background-color: #FEFBE0; /* hellgelb */
+/*     background-color: #F5F5F5; /* grau */ */
 /*     background-color: inherit; */
 }
-    
+
 
 table.highlighttable {
     margin-left: 0.5em;
