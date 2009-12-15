@@ -50,7 +50,7 @@ conversion to executable code. I.e. for a Python module `foo`:
 * the text source is called ``foo.py.txt``
 * the HTML rendering is called ``foo.py.html``
 
-See also `filename extensions <filename-extensions.html>`_
+See also `filename extensions <filename-extensions.html>`_.
 
 Programmatic use
 ----------------

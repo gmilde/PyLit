@@ -6,8 +6,8 @@ import pylit
 
 # Configure default settings, e.g. ::
 
-#defaults.code_block_marker = '.. code-block:: python'
+## pylit.defaults.code_block_marker['c++'] = '.. code-block:: c++'
 
-# call the pylit.py text <--> code converter::
+# call the text <--> code converter::
 
 pylit.main()

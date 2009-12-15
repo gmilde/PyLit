@@ -11,6 +11,10 @@
 {%- block relbaritems %}
   <li>{{ title }}</li>
   <!-- <li>{{ pagename }}</li> -->
+<!-- Does not work: places the up link on the next line    -->
+  <!-- {% if parents %}								        -->
+  <!--   <li class="right"><a href="{{ parents[-1].link }}">up</a> {{ reldelim2 }}</li> -->
+  <!-- {% endif %}								        -->
 {% endblock %}
 
 <!-- use URL path separator as delimiter -->
@@ -28,7 +32,10 @@
 {%- block sidebartoc %}
   {%- if display_toc %}
     <h3>Contents</h3>
+    <!-- Contents of current page -->
     {{ toc }}
+    <!-- Site Contents -->
+    <!-- {{ toctree() }} -->
     <hr />
   {%- endif %}
 {%- endblock %}

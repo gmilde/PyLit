@@ -9,18 +9,18 @@
 # :Date:      $Date$
 # :Revision:  $Revision$
 # :URL:       $URL$
-# :Copyright: 2005, 2007 Guenter Milde.
-#             Released under the terms of the GNU General Public License
-#             (v. 2 or later)
+# :Copyright: © 2005, 2007 Günter Milde.
+#             Released without warranty under the terms of the 
+#             GNU General Public License (v. 2 or later)
 # 
 # ::
 
-"""pylit: bidirectional text <-> code converter 
+"""pylit: bidirectional text <-> code converter
 
 Covert between a *text source* with embedded computer code and a *code source*
-with embedded documentation. 
+with embedded documentation.
 """
- 
+
 # .. contents::
 # 
 # Frontmatter
@@ -70,7 +70,7 @@ with embedded documentation.
 #                    generators. Iterating over a converter instance now
 #                    yields lines instead of blocks.
 #                    Provide "hooks" for pre- and postprocessing filters.
-#                    Rename states to avoid confusion with formats:
+#                    Rename states to reduce confusion with formats:
 #                    "text" -> "documentation", "code" -> "code_block".
 # :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganisation,
 #                    rename parent class Converter -> TextCodeConverter.
@@ -95,12 +95,16 @@ with embedded documentation.
 # :2008-04-07: 0.7.3 Use value of code_block_marker for insertion of missing
 #                    transition marker in Code2Text.code_block_handler
 #                    Add "shell" to defaults.languages
-# :2008-06-23: 0.7.4 Add "latex" to defaults.languages
+# :2008-06-23: 0.7.4 Add "latex" to defaults.languages 
 # :2009-05-14: 0.7.5 Bugfix: ignore blank lines in test for end of code block
+# :2009-12-15: 0.7.6 language-dependent code-block markers (after a
+#                    `feature request and patch by jrioux`_),
+#		     use DefaultDict for languae-dependent defaults,
+#                    new defaults setting `add_missing_marker`_.
 # 
 # ::
 
-_version = "0.7.5"
+_version = "0.7.6"
 
 __docformat__ = 'restructuredtext'
 
@@ -125,6 +129,24 @@ __docformat__ = 'restructuredtext'
 import __builtin__, os, sys
 import re, optparse
 
+
+# DefaultDict
+# ~~~~~~~~~~~
+# As `collections.defaultdict` is only introduced in Python 2.5, we
+# define a simplified version of the dictionary with default from
+# http://code.activestate.com/recipes/389639/
+# ::
+
+class DefaultDict(dict):
+    """Minimalistic Dictionary with default value."""
+    def __init__(self, default=None, *args, **kwargs):
+        self.update(dict(*args, **kwargs))
+        self.default = default
+
+    def __getitem__(self, key):
+        return self.get(key, self.default)
+
+
 # Defaults
 # ========
 # 
@@ -140,71 +162,74 @@ defaults = optparse.Values()
 # 
 # * completion of command line options in `PylitOptions.complete_values`_.
 # 
-# This allows the easy creation of custom back-ends that customise the
-# defaults and then call main_ e.g.:
+# This allows the easy creation of back-ends that customise the
+# defaults and then call `main`_ e.g.:
 # 
-#   >>> import pylit
-#   >>> pylit.defaults.comment_string = "## "
-#   >>> pylit.defaults.codeindent = 4
-#   >>> #pylit.main()
+# >>> import pylit
+# >>> pylit.defaults.comment_string = "## "
+# >>> pylit.defaults.codeindent = 4
+# >>> pylit.main()
 # 
 # The following default values are defined in pylit.py:
 # 
 # languages
 # ---------
 # 
-# Mapping of code file extension to code language.
-# Used by `OptionValues.complete`_ to set `defaults.language`.
-# The ``--language`` command line option or setting ``defaults.language`` in
-# programmatic use override this auto-setting feature. ::
+# Mapping of code file extensions to code language::
 
-defaults.languages  = {".c":   "c",
-                       ".cc":  "c++",
-                       ".css": "css",
-                       ".py":  "python",
-                       ".sh":  "shell",
-                       ".sl":  "slang",
-                       ".sty": "latex",
-                       ".tex": "latex"
-                      }
+defaults.languages  = DefaultDict("python", # fallback language
+                                  {".c":   "c",
+                                   ".cc":  "c++",
+                                   ".css": "css",
+                                   ".py":  "python",
+                                   ".sh":  "shell",
+                                   ".sl":  "slang",
+                                   ".sty": "latex",
+                                   ".tex": "latex"
+                                  })
 
-
-# fallback_language
-# -----------------
+# Will be overridden by the ``--language`` command line option.
 # 
-# Language to use, if there is no matching extension (e.g. if pylit is used as
-# filter) and no `language` is specified::
-
-defaults.fallback_language = "python"
-
+# The first argument is the fallback language, used if there is no
+# matching extension (e.g. if pylit is used as filter) and no
+# ``--language`` is specified. It can be changed programmatically by
+# assignment to the ``.default`` attribute, e.g.
+# 
+# >>> defaults.languages.default='c++'
+# 
+# 
+# .. _text_extension:
+# 
 # text_extensions
 # ---------------
 # 
-# List of known extensions of (reStructured) text files.
-# Used by `OptionValues._get_outfile` to auto-determine the output filename.
-# ::
+# List of known extensions of (reStructured) text files. The first
+# extension in this list is used by the `_get_outfile_name`_ method to
+# generate a text output filename::
 
-defaults.text_extensions = [".txt"]
+defaults.text_extensions = [".txt", ".rst"]
 
 
 # comment_strings
 # ---------------
 # 
-# Dictionary of comment strings for known languages. Comment strings include
-# trailing whitespace. ::
-
-defaults.comment_strings = {"css":    '// ',
-                            "c":      '// ',
-                            "c++":    '// ',
-                            "latex":  '% ',
-                            "python": '# ',
-                            "shell":  '# ',
-                            "slang":  '% '
-                           }
-
-# Used in Code2Text_ to recognise text blocks and in Text2Code_ to format
-# text blocks as comments.
+# Comment strings for known languages. Used in Code2Text_ to recognise
+# text blocks and in Text2Code_ to format text blocks as comments.
+# Defaults to ``'# '``.
 # 
+# **Comment strings include trailing whitespace.** ::
+
+defaults.comment_strings = DefaultDict('# ',
+                                       {"css":    '// ',
+                                        "c":      '// ',
+                                        "c++":    '// ',
+                                        "latex":  '% ',
+                                        "python": '# ',
+                                        "shell":  '# ',
+                                        "slang":  '% '
+                                       })
+
+ 
 # header_string
 # -------------
 # 
@@ -217,36 +242,40 @@ defaults.comment_strings = {"css":    '// ',
 
 defaults.header_string = '..'
 
-# code_block_marker
-# -----------------
-# 
-# Marker string for a code block in the text source.
-# 
-# Default is a literal-block marker ``::``
-# 
-# In a document where code examples are only one of several uses of literal
-# blocks, it is more appropriate to single out the source code with a dedicated
-# "code-block" directive.
-# 
-# Some highlight plug-ins require a special "sourcecode" or "code-block"
-# directive instead of the ``::`` literal block marker. Actually,
-# syntax-highlight is possible without changes to Docutils with the Pygments_
-# package using a "code-block" directive. See the `syntax highlight`_ section
-# in the features documentation.
-# 
-# The `code_block_marker` string is used in a regular expression. Examples for
-# alternative forms are ``.. code-block::`` or ``.. code-block:: .* python``.
-# The second example can differentiate between Python code blocks and
-# code-blocks in other languages.
-# 
-# Another use would be to mark some code-blocks inactive allowing a literate
-# source to contain code-blocks that should become active only in some cases.
-# ::
 
-defaults.code_block_marker = '::'
-#defaults.code_block_marker = '.. code-block:: python'
+# .. _code_block_marker:
+# 
+# code_block_markers
+# ------------------
+# 
+# Markup at the end of a documentation block.
+# Default is Docutils' marker for a `literal block`_::
 
+defaults.code_block_markers = DefaultDict('::')
 
+# The `code_block_marker` string is `inserted into a regular expression`_.
+# Language-specific markers can be defined programmatically, e.g. in a
+# wrapper script.
+# 
+# In a document where code examples are only one of several uses of
+# literal blocks, it is more appropriate to single out the source code
+# ,e.g. with the double colon at a separate line ("expanded form")
+# 
+#   ``defaults.code_block_marker.default = ':: *'``
+# 
+# or a dedicated ``.. code-block::`` directive [#]_
+# 
+#   ``defaults.code_block_marker['c++'] = '.. code-block:: *c++'``
+# 
+# The latter form also allows code in different languages kept together
+# in one literate source file.
+# 
+# .. [#] The ``.. code-block::`` directive is not (yet) supported by
+#    standard Docutils.  It is provided by several add-ons, including
+#    the `code-block directive`_ project in the Docutils Sandbox and
+#    Sphinx_.
+# 
+# 
 # strip
 # -----
 # 
@@ -265,6 +294,17 @@ defaults.strip = False
 
 defaults.strip_marker = False
 
+# add_missing_marker
+# ------------------
+# 
+# When converting from code format to text format, add a `code_block_marker`
+# at the end of documentation blocks if it is missing::
+
+defaults.add_missing_marker = True
+
+# Keep this at ``True``, if you want to re-convert to code format later!  
+# 
+# 
 # .. _defaults.preprocessors:
 # 
 # preprocessors
@@ -355,15 +395,16 @@ class TextCodeConverter(object):
 # functions pass on unused keyword args to the instantiation of a converter
 # class. ::
 
-    language = defaults.fallback_language
+    language = defaults.languages.default
     comment_strings = defaults.comment_strings
     comment_string = "" # set in __init__ (if empty)
     codeindent =  defaults.codeindent
     header_string = defaults.header_string
-    code_block_marker = defaults.code_block_marker
-    add_missing_code_block_marker = True # you want this (except for doctest)
+    code_block_markers = defaults.code_block_markers
+    code_block_marker = "" # set in __init__ (if empty)
     strip = defaults.strip
     strip_marker = defaults.strip_marker
+    add_missing_marker = defaults.add_missing_marker
     state = "" # type of current block, see `TextCodeConverter.convert`_
 
 # Interface methods
@@ -375,13 +416,17 @@ class TextCodeConverter(object):
 # """"""""
 # 
 # Initialising sets the `data` attribute, an iterable object yielding lines of
-# the source to convert. [1]_
+# the source to convert. [#]_
 # 
-# Additional keyword arguments are stored as instance variables, overwriting
-# the class defaults. If still empty, `comment_string` is set according to the
-# `language`
+# .. [#] The most common choice of data is a `file` object with the text
+#        or code source.
 # 
-# ::
+#        To convert a string into a suitable object, use its splitlines method
+#        like ``"2 lines\nof source".splitlines(True)``.
+# 
+# 
+# Additional keyword arguments are stored as instance variables,
+# overwriting the class defaults::
 
     def __init__(self, data, **keyw):
         """data   --  iterable data object
@@ -391,10 +436,15 @@ class TextCodeConverter(object):
         """
         self.data = data
         self.__dict__.update(keyw)
+
+# If empty, `code_block_marker` and `comment_string` are set according
+# to the `language`::
+
+        if not self.code_block_marker:
+            self.code_block_marker = self.code_block_markers[self.language]
         if not self.comment_string:
             self.comment_string = self.comment_strings[self.language]
         self.stripped_comment_string = self.comment_string.rstrip()
-
 
 # Pre- and postprocessing filters are set (with
 # `TextCodeConverter.get_filter`_)::
@@ -402,26 +452,20 @@ class TextCodeConverter(object):
         self.preprocessor = self.get_filter("preprocessors", self.language)
         self.postprocessor = self.get_filter("postprocessors", self.language)
 
-# Finally,  the regular_expression for the `code_block_marker` is compiled to
-# find valid cases of code_block_marker in a given line and return the groups:
+# .. _inserted into a regular expression:
 # 
-# \1 prefix, \2 code_block_marker, \3 remainder
-# ::
+# Finally, a regular_expression for the `code_block_marker` is compiled
+# to find valid cases of `code_block_marker` in a given line and return
+# the groups: ``\1 prefix, \2 code_block_marker, \3 remainder`` ::
 
         marker = self.code_block_marker
         if marker == '::':
+            # the default marker may occur at the end of a text line
             self.marker_regexp = re.compile('^( *(?!\.\.).*)(::)([ \n]*)$')
         else:
-            # assume code_block_marker is a directive like '.. code-block::'
+            # marker must be on a separate line
             self.marker_regexp = re.compile('^( *)(%s)(.*\n?)$' % marker)
 
-# .. [1] The most common choice of data is a `file` object with the text
-#        or code source.
-# 
-#        To convert a string into a suitable object, use its splitlines method
-#        like ``"2 lines\nof source".splitlines(True)``.
-# 
-# 
 # .. _TextCodeConverter.__iter__:
 # 
 # __iter__
@@ -525,19 +569,19 @@ class TextCodeConverter(object):
 
         self._textindent = 0
 
-# `code_block_marker_missing`
+# `_add_code_block_marker`
 #   If the last paragraph of a documentation block does not end with a
-#   "code_block_marker" (the literal-block marker ``::``), it must
-#   be added (otherwise, the back-conversion fails.).
+#   code_block_marker_, it should be added (otherwise, the back-conversion
+#   fails.).
 # 
-#   `code_block_marker_missing` is set by `Code2Text.documentation_handler`_
+#   `_add_code_block_marker` is set by `Code2Text.documentation_handler`_
 #   and evaluated by `Code2Text.code_block_handler`_, because the
-#   documentation_handler does not know whether the next bloc will be
+#   documentation_handler does not know whether the next block will be
 #   documentation (with no need for a code_block_marker) or a code block.
 # 
 # ::
 
-        self.code_block_marker_missing = False
+        self._add_code_block_marker = False
 
 
 
@@ -872,19 +916,19 @@ class Code2Text(TextCodeConverter):
 
         lines = [self.uncomment_line(line) for line in block]
 
-# If the code block is stripped, the literal marker would lead to an error
-# when the text is converted with Docutils. Strip it as well. Otherwise, check
-# for the `code_block_marker` (default ``::``) at the end of the documentation
-# block::
+# If the code block is stripped, the literal marker would lead to an
+# error when the text is converted with Docutils. Strip it as well.
+# Otherwise, check for the `code_block_marker`_ at the end of the
+# documentation block::
 
         if self.strip or self.strip_marker:
             self.strip_code_block_marker(lines)
-        elif self.add_missing_code_block_marker:
+        elif self.add_missing_marker:
             try:
-                self.code_block_marker_missing = \
+                self._add_code_block_marker = \
                     not self.marker_regexp.search(lines[-2])
             except IndexError:  # len(lines < 2), e.g. last line of document
-                self.code_block_marker_missing = True
+                self._add_code_block_marker = True
 
 # Yield lines::
 
@@ -919,11 +963,11 @@ class Code2Text(TextCodeConverter):
         if self.strip == True:
             return
         # eventually insert transition marker
-        if self.code_block_marker_missing:
+        if self._add_code_block_marker:
             self.state = "documentation"
-            yield self.code_block_marker+"\n"
+            yield self.code_block_marker + "\n"
             yield "\n"
-            self.code_block_marker_missing = False
+            self._add_code_block_marker = False
             self.state = "code_block"
         for line in lines:
             yield " "*self.codeindent + line
@@ -939,7 +983,7 @@ class Code2Text(TextCodeConverter):
 # * strip `::` if it is preceded by whitespace.
 # * convert `::` to a single colon if preceded by text
 # 
-# `lines` should be a list of documentation lines (with a trailing blank line).
+# `lines` is a list of documentation lines (with a trailing blank line).
 # It is modified in-place::
 
     def strip_code_block_marker(self, lines):
@@ -1155,8 +1199,8 @@ defaults.postprocessors['text2css'] = dumb_c_postprocessor
 # OptionValues
 # ------------
 # 
-# The following class adds `as_dict` and `__getattr__` methods to
-# `optparse.Values`::
+# The following class adds `as_dict`_, `complete`_ and `__getattr__`_
+# methods to `optparse.Values`::
 
 class OptionValues(optparse.Values):
 
@@ -1343,9 +1387,7 @@ class PylitOptions(object):
             code_extension = os.path.splitext(values.outfile)[1]
         elif values.txt2code is False:
             code_extension = os.path.splitext(values.infile)[1]
-        values.ensure_value("language",
-                            values.languages.get(code_extension,
-                                                 values.fallback_language))
+        values.ensure_value("language", values.languages[code_extension])
 
         return values
 
@@ -1356,8 +1398,8 @@ class PylitOptions(object):
 # constructed from `infile` by the following rules:
 # 
 # * '-' (stdin) results in '-' (stdout)
-# * strip the `txt_extension` (txt2code) or
-# * add a `txt_ extension` (code2txt)
+# * strip the `text_extension`_ (txt2code) or
+# * add the `text_extension`_ (code2txt)
 # * fallback: if no guess can be made, add ".out"
 # 
 #   .. TODO: use values.outfile_extension if it exists?
@@ -1509,7 +1551,7 @@ def run_doctest(infile="-", txt2code=True,
 
     (data, out_stream) = open_streams(infile, "-")
     if txt2code is False:
-        converter = Code2Text(data, add_missing_code_block_marker=False, **keyw)
+        converter = Code2Text(data, add_missing_marker=False, **keyw)
         docstring = str(converter)
     else:
         docstring = data.read()
@@ -1770,18 +1812,25 @@ if __name__ == '__main__':
 # 
 # .. References
 # 
-# .. _docutils:
-#     http://docutils.sourceforge.net/
+# .. _Docutils: http://docutils.sourceforge.net/
+# .. _Sphinx: http://sphinx.pocoo.org
+# .. _Pygments: http://pygments.org/
+# .. _code-block directive:
+#     http://docutils.sourceforge.net/sandbox/code-block-directive/
+# .. _literal block:
+# .. _literal blocks:
+#     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#literal-blocks
 # .. _indented literal block:
 # .. _indented literal blocks:
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#indented-literal-blocks
 # .. _quoted literal block:
 # .. _quoted literal blocks:
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#quoted-literal-blocks
+# .. _parsed-literal blocks:
+#     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
 # .. _doctest block:
 # .. _doctest blocks:
 #     http://docutils.sf.net/docs/ref/rst/restructuredtext.html#doctest-blocks
-# .. _pygments: http://pygments.org/
-# .. _syntax highlight: ../features/syntax-highlight.html
-# .. _parsed-literal blocks:
-#     http://docutils.sf.net/docs/ref/rst/directives.html#parsed-literal-block
+# 
+# .. _feature request and patch by jrioux:
+#     http://developer.berlios.de/feature/?func=detailfeature&feature_id=4890&group_id=7974

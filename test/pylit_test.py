@@ -38,6 +38,41 @@ import operator
 from pylit import *
 import nose
 
+## Test DefaultDict
+## ================
+
+class test_DefaultDict(object):
+    """Test the DefaultDict dictionary with custom default"""
+    def setUp(self):
+        self.defdict = DefaultDict('#')
+
+    def test_get_default(self):
+        assert self.defdict['nonexisting'] == '#'
+
+    def test_set_get(self):
+        self.defdict['mykey'] = 3
+        assert self.defdict['mykey'] == 3
+
+    def test_change_default(self):
+        self.defdict.default = '%'
+        assert self.defdict['nonexisting'] == '%'
+
+    def test_init_args(self):
+        di = DefaultDict('#', {'mykey': 3})
+        assert di['mykey'] == 3
+        assert di['nonexisting'] == '#'
+
+    def test_init_args2(self):
+        di = DefaultDict('#', mykey = 3)
+        assert di['mykey'] == 3
+        assert di['nonexisting'] == '#'
+
+    def test_init_args3(self):
+        di = DefaultDict('#', [('mykey', 3)])
+        assert di['mykey'] == 3
+        assert di['nonexisting'] == '#'
+
+
 ## Text <-> Code conversion
 ## ========================
 ##

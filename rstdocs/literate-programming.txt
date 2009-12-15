@@ -144,7 +144,7 @@ However, it is argued that PyLit is an *educated choice* as tool for the
   converted to a hyperlinked HTML document representing the program's
   "web-like" structure. For indexing and cross-references, PyLit relies
   on the rich features of the `reStructuredText`_ document formatting
-  language. Auto-generating of cross references and indices becomes are
+  language. Auto-generating of cross references and indices is
   possible if the reStructuredText sources are converted with Sphinx_
 
 Dispensing with code re-ordering enables the `dual-source`_ concept. Code

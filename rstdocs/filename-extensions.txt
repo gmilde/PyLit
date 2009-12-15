@@ -1,7 +1,7 @@
 .. -*- rst-mode -*-
 
-Filename Extensions for Literate Sources
-****************************************
+Finding a Filename Extension for Literate Sources
+*************************************************
 
 Finding an easy to remember, unused file name extension is not easy.
 

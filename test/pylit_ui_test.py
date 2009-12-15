@@ -218,8 +218,8 @@ class test_PylitOptions:
         values = OptionValues()
         values = self.options.complete_values(values)
         pprint(values)
-        print "fallback language:", defaults.fallback_language
-        assert values.language == defaults.fallback_language
+        print "fallback language:", defaults.languages.default
+        assert values.language == defaults.languages.default
 
     def test_call(self):
         values = self.options(["--txt2code", "foo.sl"], txt2code=False)
