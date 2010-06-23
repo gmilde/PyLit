@@ -29,83 +29,87 @@ with embedded documentation.
 # Changelog
 # ---------
 # 
-# :2005-06-29: Initial version.
-# :2005-06-30: First literate version.
-# :2005-07-01: Object orientated script using generators.
-# :2005-07-10: Two state machine (later added 'header' state).
-# :2006-12-04: Start of work on version 0.2 (code restructuring).
-# :2007-01-23: 0.2   Published at http://pylit.berlios.de.
-# :2007-01-25: 0.2.1 Outsourced non-core documentation to the PyLit pages.
-# :2007-01-26: 0.2.2 New behaviour of `diff` function.
-# :2007-01-29: 0.2.3 New `header` methods after suggestion by Riccardo Murri.
-# :2007-01-31: 0.2.4 Raise Error if code indent is too small.
-# :2007-02-05: 0.2.5 New command line option --comment-string.
-# :2007-02-09: 0.2.6 Add section with open questions,
-#                    Code2Text: let only blank lines (no comment str)
-#                    separate text and code,
-#                    fix `Code2Text.header`.
-# :2007-02-19: 0.2.7 Simplify `Code2Text.header`,
-#                    new `iter_strip` method replacing a lot of ``if``-s.
-# :2007-02-22: 0.2.8 Set `mtime` of outfile to the one of infile.
-# :2007-02-27: 0.3   New `Code2Text` converter after an idea by Riccardo Murri,
-#                    explicit `option_defaults` dict for easier customisation.
-# :2007-03-02: 0.3.1 Expand hard-tabs to prevent errors in indentation,
-#                    `Text2Code` now also works on blocks,
-#                    removed dependency on SimpleStates module.
-# :2007-03-06: 0.3.2 Bug fix: do not set `language` in `option_defaults`
-#                    renamed `code_languages` to `languages`.
-# :2007-03-16: 0.3.3 New language css,
-#                    option_defaults -> defaults = optparse.Values(),
-#                    simpler PylitOptions: don't store parsed values,
-#                    don't parse at initialisation,
-#                    OptionValues: return `None` for non-existing attributes,
-#                    removed -infile and -outfile, use positional arguments.
-# :2007-03-19: 0.3.4 Documentation update,
-#                    separate `execute` function.
-# :2007-03-21:       Code cleanup in `Text2Code.__iter__`.
-# :2007-03-23: 0.3.5 Removed "css" from known languages after learning that
-#                    there is no C++ style "// " comment string in CSS2.
-# :2007-04-24: 0.3.6 Documentation update.
-# :2007-05-18: 0.4   Implement Converter.__iter__ as stack of iterator
-#                    generators. Iterating over a converter instance now
-#                    yields lines instead of blocks.
-#                    Provide "hooks" for pre- and postprocessing filters.
-#                    Rename states to reduce confusion with formats:
-#                    "text" -> "documentation", "code" -> "code_block".
-# :2007-05-22: 0.4.1 Converter.__iter__: cleanup and reorganisation,
-#                    rename parent class Converter -> TextCodeConverter.
-# :2007-05-23: 0.4.2 Merged Text2Code.converter and Code2Text.converter into
-#                    TextCodeConverter.converter.
-# :2007-05-30: 0.4.3 Replaced use of defaults.code_extensions with
-#                    values.languages.keys().
-#                    Removed spurious `print` statement in code_block_handler.
-#                    Added basic support for 'c' and 'css' languages
-#                    with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
-# :2007-06-06: 0.5   Moved `collect_blocks`_ out of `TextCodeConverter`_,
-#                    bug fix: collect all trailing blank lines into a block.
-#                    Expand tabs with `expandtabs_filter`_.
-# :2007-06-20: 0.6   Configurable code-block marker (default ``::``)
-# :2007-06-28: 0.6.1 Bug fix: reset self.code_block_marker_missing.
-# :2007-12-12: 0.7   prepending an empty string to sys.path in run_doctest()
-#                    to allow imports from the current working dir.
-# :2008-01-07: 0.7.1 If outfile does not exist, do a round-trip conversion
-#                    and report differences (as with outfile=='-').
-# :2008-01-28: 0.7.2 Do not add missing code-block separators with
-#                    `doctest_run` on the code source. Keeps lines consistent.
-# :2008-04-07: 0.7.3 Use value of code_block_marker for insertion of missing
-#                    transition marker in Code2Text.code_block_handler
-#                    Add "shell" to defaults.languages
-# :2008-06-23: 0.7.4 Add "latex" to defaults.languages 
-# :2009-05-14: 0.7.5 Bugfix: ignore blank lines in test for end of code block
-# :2009-12-15: 0.7.6 language-dependent code-block markers (after a
-#                    `feature request and patch by jrioux`_),
-#                    use DefaultDict for languae-dependent defaults,
-#                    new defaults setting `add_missing_marker`_.
-# :2010-06-23: 0.7.7 New command line option --codeindent.
+# .. class:: borderless
+# 
+# ======  ==========  ===========================================================
+# 0.1     2005-06-29  Initial version.
+# 0.1.1   2005-06-30  First literate version.
+# 0.1.2   2005-07-01  Object orientated script using generators.
+# 0.1.3   2005-07-10  Two state machine (later added 'header' state).
+# 0.2b    2006-12-04  Start of work on version 0.2 (code restructuring).
+# 0.2     2007-01-23  Published at http://pylit.berlios.de.
+# 0.2.1   2007-01-25  Outsourced non-core documentation to the PyLit pages.
+# 0.2.2   2007-01-26  New behaviour of `diff` function.
+# 0.2.3   2007-01-29  New `header` methods after suggestion by Riccardo Murri.
+# 0.2.4   2007-01-31  Raise Error if code indent is too small.
+# 0.2.5   2007-02-05  New command line option --comment-string.
+# 0.2.6   2007-02-09  Add section with open questions,
+#                     Code2Text: let only blank lines (no comment str)
+#                     separate text and code,
+#                     fix `Code2Text.header`.
+# 0.2.7   2007-02-19  Simplify `Code2Text.header`,
+#                     new `iter_strip` method replacing a lot of ``if``-s.
+# 0.2.8   2007-02-22  Set `mtime` of outfile to the one of infile.
+# 0.3     2007-02-27  New `Code2Text` converter after an idea by Riccardo Murri,
+#                     explicit `option_defaults` dict for easier customisation.
+# 0.3.1   2007-03-02  Expand hard-tabs to prevent errors in indentation,
+#                     `Text2Code` now also works on blocks,
+#                     removed dependency on SimpleStates module.
+# 0.3.2   2007-03-06  Bug fix: do not set `language` in `option_defaults`
+#                     renamed `code_languages` to `languages`.
+# 0.3.3   2007-03-16  New language css,
+#                     option_defaults -> defaults = optparse.Values(),
+#                     simpler PylitOptions: don't store parsed values,
+#                     don't parse at initialisation,
+#                     OptionValues: return `None` for non-existing attributes,
+#                     removed -infile and -outfile, use positional arguments.
+# 0.3.4   2007-03-19  Documentation update,
+#                     separate `execute` function.
+#         2007-03-21  Code cleanup in `Text2Code.__iter__`.
+# 0.3.5   2007-03-23  Removed "css" from known languages after learning that
+#                     there is no C++ style "// " comment string in CSS2.
+# 0.3.6   2007-04-24  Documentation update.
+# 0.4     2007-05-18  Implement Converter.__iter__ as stack of iterator
+#                     generators. Iterating over a converter instance now
+#                     yields lines instead of blocks.
+#                     Provide "hooks" for pre- and postprocessing filters.
+#                     Rename states to reduce confusion with formats:
+#                     "text" -> "documentation", "code" -> "code_block".
+# 0.4.1   2007-05-22  Converter.__iter__: cleanup and reorganisation,
+#                     rename parent class Converter -> TextCodeConverter.
+# 0.4.2   2007-05-23  Merged Text2Code.converter and Code2Text.converter into
+#                     TextCodeConverter.converter.
+# 0.4.3   2007-05-30  Replaced use of defaults.code_extensions with
+#                     values.languages.keys().
+#                     Removed spurious `print` statement in code_block_handler.
+#                     Added basic support for 'c' and 'css' languages
+#                     with `dumb_c_preprocessor`_ and `dumb_c_postprocessor`_.
+# 0.5     2007-06-06  Moved `collect_blocks`_ out of `TextCodeConverter`_,
+#                     bug fix: collect all trailing blank lines into a block.
+#                     Expand tabs with `expandtabs_filter`_.
+# 0.6     2007-06-20  Configurable code-block marker (default ``::``)
+# 0.6.1   2007-06-28  Bug fix: reset self.code_block_marker_missing.
+# 0.7     2007-12-12  prepending an empty string to sys.path in run_doctest()
+#                     to allow imports from the current working dir.
+# 0.7.1   2008-01-07  If outfile does not exist, do a round-trip conversion
+#                     and report differences (as with outfile=='-').
+# 0.7.2   2008-01-28  Do not add missing code-block separators with
+#                     `doctest_run` on the code source. Keeps lines consistent.
+# 0.7.3   2008-04-07  Use value of code_block_marker for insertion of missing
+#                     transition marker in Code2Text.code_block_handler
+#                     Add "shell" to defaults.languages
+# 0.7.4   2008-06-23  Add "latex" to defaults.languages 
+# 0.7.5   2009-05-14  Bugfix: ignore blank lines in test for end of code block
+# 0.7.6   2009-12-15  language-dependent code-block markers (after a
+#                     `feature request and patch by jrioux`_),
+#                     use DefaultDict for language-dependent defaults,
+#                     new defaults setting `add_missing_marker`_.
+# 0.7.7   2010-06-23  New command line option --codeindent.
+# ======  ==========  ===========================================================
 # 
 # ::
 
-_version = "0.7.6"
+_version = "0.7.7"
 
 __docformat__ = 'restructuredtext'
 
