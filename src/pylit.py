@@ -99,8 +99,9 @@ with embedded documentation.
 # :2009-05-14: 0.7.5 Bugfix: ignore blank lines in test for end of code block
 # :2009-12-15: 0.7.6 language-dependent code-block markers (after a
 #                    `feature request and patch by jrioux`_),
-#		     use DefaultDict for languae-dependent defaults,
+#                    use DefaultDict for languae-dependent defaults,
 #                    new defaults setting `add_missing_marker`_.
+# :2010-06-23: 0.7.7 New command line option --codeindent.
 # 
 # ::
 
@@ -1279,14 +1280,18 @@ class PylitOptions(object):
                      help="convert code source to text source")
         p.add_option("-t", "--txt2code", action="store_true",
                      help="convert text source to code source")
-        p.add_option("--language", action="store",
+        p.add_option("--language",
                      choices = defaults.languages.values(),
                      help="use LANGUAGE native comment style")
         p.add_option("--comment-string", dest="comment_string",
                      help="documentation block marker in code source "
-                     "(including trailing whitespace, default '# ')")
+                     "(including trailing whitespace, "
+                     "default: language dependent)")
         p.add_option("-m", "--code-block-marker", dest="code_block_marker",
                      help="syntax token starting a code block. (default '::')")
+        p.add_option("--codeindent", type="int",
+                     help="Number of spaces to indent code blocks with "
+                     "text2code (default %d)" % defaults.codeindent)
 
         # Output file handling
 
