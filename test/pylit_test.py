@@ -609,6 +609,37 @@ class test_Text2Code(object):
 # more text
 # """)
 
+## Options follow code-block directive
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+textsamples["code-block directive options"] = (
+"""\
+::
+  :option: argument
+
+  this = 'code'
+""",
+"""\
+# ::
+#   :option: argument
+
+this = 'code'
+""")
+
+textsamples["no code-block directive options"] = (
+"""\
+::
+  text following :: without blank line
+
+  more documentation
+""",
+"""\
+# ::
+#   text following :: without blank line
+# 
+#   more documentation
+""")
+
 ## A double colon on a line on its own
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##
@@ -928,27 +959,32 @@ more text
 ## ::
 
 codesamples["comment before code (without blank line)"] = (
-"""# this is text::
+"""\
+# this is text::
 
 # this is a comment
 foo = 'first'
 """,
-"""this is text::
+"""\
+this is text::
 
   # this is a comment
   foo = 'first'
 """,
-"""this is text:
+"""\
+this is text:
 
 """)
 
 codesamples["comment block before code (without blank line)"] = (
-"""# no text (watch the comment sign in the next line)::
+"""\
+# no text (watch the comment sign in the next line)::
 #
 # this is a comment
 foo = 'first'
 """,
-"""..  # no text (watch the comment sign in the next line)::
+"""\
+..  # no text (watch the comment sign in the next line)::
   #
   # this is a comment
   foo = 'first'
@@ -956,14 +992,16 @@ foo = 'first'
 "")
 
 codesamples["comment after code (without blank line)"] = (
-"""# ::
+"""\
+# ::
 
 block1 = 'first block'
 # commented code
 
 # text again
 """,
-"""::
+"""\
+::
 
   block1 = 'first block'
   # commented code
@@ -975,7 +1013,8 @@ text again
 """)
 
 codesamples["comment block after code (without blank line)"] = (
-"""# ::
+"""\
+# ::
 
 block1 = 'first block'
 # commented code

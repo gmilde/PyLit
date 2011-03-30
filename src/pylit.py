@@ -105,11 +105,13 @@ with embedded documentation.
 #                     use DefaultDict for language-dependent defaults,
 #                     new defaults setting `add_missing_marker`_.
 # 0.7.7   2010-06-23  New command line option --codeindent.
+# 0.7.8   2011-03-30  bugfix: do not overwrite custom `add_missing_marker` value,
+#                     allow directive options following the 'code' directive.
 # ======  ==========  ===========================================================
 # 
 # ::
 
-_version = "0.7.7"
+_version = "0.7.8"
 
 __docformat__ = 'restructuredtext'
 
@@ -410,6 +412,7 @@ class TextCodeConverter(object):
     strip = defaults.strip
     strip_marker = defaults.strip_marker
     add_missing_marker = defaults.add_missing_marker
+    directive_option_regexp = re.compile(r' +:(\w|[-._+:])+:( |$)')
     state = "" # type of current block, see `TextCodeConverter.convert`_
 
 # Interface methods
@@ -776,40 +779,39 @@ class Text2Code(TextCodeConverter):
 # 
 # The 'documentation' handler processes everything that is not recognised as
 # "code_block". Documentation is quoted with `self.comment_string`
-# (or filtered with `--strip=True`). ::
+# (or filtered with `--strip=True`).
 
-    def documentation_handler(self, lines):
-        """Convert documentation blocks from text to code format
-        """
-
-# Test for the end of the documentation block: does the second last line end
-# with `::` but is neither a comment nor a directive?
-# 
 # If end-of-documentation marker is detected,
 # 
 # * set state to 'code_block'
 # * set `self._textindent` (needed by `Text2Code.set_state`_ to find the
 #   next "documentation" block)
-# * do not comment the last line (the blank line separating documentation
-#   and code blocks).
-# 
 # ::
 
-        endnum = len(lines) - 2
-        for (num, line) in enumerate(lines):
-            if not self.strip:
-                if self.state == "code_block":
-                    yield line
-                else:
-                    yield self.comment_string + line
-            if (num == endnum and self.marker_regexp.search(line)):
+    def documentation_handler(self, lines):
+        """Convert documentation blocks from text to code format
+        """
+        for line in lines:
+            # test lines following the code-block marker for false positives
+            if (self.state == "code_block" and line.rstrip()
+                and not self.directive_option_regexp.search(line)):
+                self.state = "documentation"
+            # test for end of documentation block
+            if self.marker_regexp.search(line):
                 self.state = "code_block"
                 self._textindent = self.get_indent(line)
+            # yield lines
+            if self.strip:
+                continue
+            # do not comment blank lines preceding a code block
+            if self.state == "code_block" and not line.rstrip(): 
+                yield line
+            else:
+                yield self.comment_string + line
 
-# TODO: Ensure a trailing blank line? Would need to test all documentation
-# lines for end-of-documentation marker and add a line by calling the
-# `ensure_trailing_blank_line` method (which also issues a warning)
-# 
+                    
+
+ 
 # .. _Text2Code.code_block_handler:
 # 
 # code_block_handler
@@ -984,9 +986,9 @@ class Code2Text(TextCodeConverter):
 # 
 # Replace the literal marker with the equivalent of Docutils replace rules
 # 
-# * strip `::`-line (and preceding blank line) if on a line on its own
-# * strip `::` if it is preceded by whitespace.
-# * convert `::` to a single colon if preceded by text
+# * strip ``::``-line (and preceding blank line) if on a line on its own
+# * strip ``::`` if it is preceded by whitespace.
+# * convert ``::`` to a single colon if preceded by text
 # 
 # `lines` is a list of documentation lines (with a trailing blank line).
 # It is modified in-place::
@@ -1560,7 +1562,8 @@ def run_doctest(infile="-", txt2code=True,
 
     (data, out_stream) = open_streams(infile, "-")
     if txt2code is False:
-        converter = Code2Text(data, add_missing_marker=False, **keyw)
+        keyw.update({'add_missing_marker': False})
+        converter = Code2Text(data, **keyw)
         docstring = str(converter)
     else:
         docstring = data.read()

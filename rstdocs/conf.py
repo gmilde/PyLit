@@ -125,6 +125,11 @@ pygments_style = 'friendly'
 html_style = 'pylit-sphinx.css'
 # html_style = 'sphinxdoc.css'
 
+# Options to the theme, like a sidebar that is visible even when
+# scrolling (TODO: how to get this to work (maybe just update Spinx)?)::
+
+#html_theme_options = {'stickysidebar': 'true'}
+
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation". ::
 
