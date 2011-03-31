@@ -629,13 +629,13 @@ this = 'code'
 textsamples["no code-block directive options"] = (
 """\
 ::
-  text following :: without blank line
+  text following ``::`` without blank line
 
   more documentation
 """,
 """\
 # ::
-#   text following :: without blank line
+#   text following ``::`` without blank line
 # 
 #   more documentation
 """)
@@ -935,7 +935,7 @@ codesamples["ignore trailing whitespace in comment string for blank line"] = (
 
 block1 = 'first block'
 
-# 
+#
 # more text
 """,
 """::
@@ -1058,6 +1058,39 @@ foo = 'first'
 """text followed by code without double colon
 
 """)
+
+codesamples["ignore directive options when looking for code-block marker"] = (
+"""\
+# ::
+#   :option: argument
+#   :option2: argument
+
+this = 'code'
+""",
+"""\
+::
+  :option: argument
+  :option2: argument
+
+  this = 'code'
+""")
+
+codesamples["code-block marker followed by text not a directive option"] = (
+"""\
+# ::
+#   text following ``::`` without blank line
+
+this = 'code'
+""",
+"""\
+::
+  text following ``::`` without blank line
+
+::
+
+  this = 'code'
+""")
+
 
 ## header samples
 ## ~~~~~~~~~~~~~~
