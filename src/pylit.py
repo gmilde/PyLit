@@ -107,6 +107,7 @@ with embedded documentation.
 # 0.7.7   2010-06-23  New command line option --codeindent.
 # 0.7.8   2011-03-30  bugfix: do not overwrite custom `add_missing_marker` value,
 #                     allow directive options following the 'code' directive.
+# 0.7.9   2011-04-05  Decode doctest string if 'magic comment' gives encoding.
 # ======  ==========  ===========================================================
 #
 # ::
@@ -924,14 +925,15 @@ class Code2Text(TextCodeConverter):
         lines = [self.uncomment_line(line) for line in block]
 
 # If the code block is stripped, the literal marker would lead to an
-# error when the text is converted with Docutils. Strip it as well.
-# Otherwise, check for the `code_block_marker`_ at the end of the
-# documentation block::
+# error when the text is converted with Docutils. Strip it as well. ::
 
         if self.strip or self.strip_marker:
             self.strip_code_block_marker(lines)
+
+# Otherwise, check for the `code_block_marker`_ at the end of the
+# documentation block (skipping directive options that might follow it)::
+
         elif self.add_missing_marker:
-            # test lines for the code-block marker
             for line in lines[::-1]:
                 if self.marker_regexp.search(line):
                     self._add_code_block_marker = False
@@ -1574,6 +1576,15 @@ def run_doctest(infile="-", txt2code=True,
     else:
         docstring = data.read()
 
+# decode doc string if there is a "magic comment" in the first or second line
+# (http://docs.python.org/reference/lexical_analysis.html#encoding-declarations)
+# ::
+
+    firstlines = ' '.join(docstring.splitlines()[:2])
+    match = re.search('coding[=:]\s*([-\w.]+)', firstlines)
+    if match:
+        docencoding = match.group(1)
+        docstring = docstring.decode(docencoding)
 
 # Use the doctest Advanced API to run all doctests in the source text::
 
