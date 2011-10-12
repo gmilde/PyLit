@@ -5,13 +5,16 @@
 SPHINXOPTS    = -q
 SPHINXBUILD   = sphinx-build
 
-INDIR	      = rstdocs
+INDIR	      = .
 HTMLDIR	      = build/html
 
 # Internal variables.
 ALLSPHINXOPTS   = -d build/doctrees $(SPHINXOPTS) $(INDIR)
 
 .PHONY: help clean html web pickle htmlhelp latex changes linkcheck
+
+logo/pylit-bold-framed.png:
+	inkscape --export-png=logo/pylit-bold-framed.png logo/pylit-bold-framed.svg
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -26,7 +29,8 @@ help:
 clean:
 	-rm -rf build/*
 
-html:
+html:   logo/pylit-bold-framed.png
+	echo $(INDIR)
 	mkdir -p $(HTMLDIR) build/doctrees
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(HTMLDIR)
 	@echo

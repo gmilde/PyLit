@@ -10,6 +10,7 @@ PyLit
    The idea is that you do not document programs (after the fact), but
    write documents that *contain* the programs. [1]_
 
+
 Features
 --------
 
@@ -49,35 +50,20 @@ Download
 Project page
 ------------
 
-The PyLit project is hosted at `BerliOS`_. The `project page`_
-provides project statistics and info as well as links to the
-
-* Bugtracker_,
-* `Feature Requests`_,
-* pylit-users `Mail List`_, and
-* the `SVN repository`_.
-
-.. _`project page`: http://developer.berlios.de/projects/pylit/
-.. _BerliOS: http://www.berlios.de
-.. _Bugtracker: http://developer.berlios.de/bugs/?group_id=7974
-.. _`Feature requests`: http://developer.berlios.de/feature/?group_id=7974
-.. _`Mail List`: http://developer.berlios.de/mail/?group_id=7974
-.. _`SVN repository`: http://svn.berlios.de/wsvn/pylit
-
+The PyLit project is hosted at https://github.com/gmilde/PyLit.
 
 Changes
 -------
 
-PyLit `versions`_ and `SVN log`_.
+PyLit `versions`_.
 
 Usage, behaviour, and API are not fixed yet.  Ideas and feedback welcome.
 
-The `PyLit source`_ has a chapter on `open questions`_ and ideas.
+The `PyLit source`_ has a chapter on open questions and ideas.
 
 .. _versions: examples/pylit.py.html#changelog
-.. _SVN log: http://svn.berlios.de/wsvn/pylit/?op=log
 
-.. _PyLit source: examples/pylit.py.html
+.. _PyLit source: raw/master/pylit.py
 .. _open questions: examples/pylit.py.html#open-questions
 
 Copyright
@@ -88,14 +74,14 @@ Copyright
 
 License
   PyLit is `free software`_, released under the `GNU General Public License`_
-  (GPL)
+  (GPL) version 2 or later.
 
   PyLit is distributed in the hope that it will be useful, but WITHOUT ANY
   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
   FOR A PARTICULAR PURPOSE.  See the `GNU General Public License`_ for more
   details.
 
-I am using PyLit in my daily work for more than two years now without major
+I am using PyLit in my daily work for more than six years now without major
 problems. It works for me, but your mileage might vary.
 
 Remember to back up your data. A version control system is recommended.
@@ -108,21 +94,16 @@ About this site
 ---------------
 
 The PyLit site is created from `reStructuredText`_ sources with Sphinx_.
-(Earlier versions used the rest2web_ site builder.)
-
-It is located at http://pylit.berlios.de/ on `BerliOS`_, a free
-(and ad-free!) service to Open Source developers by the Fraunhofer-Institut
-für Offene Kommunikationssysteme (FOKUS) in Berlin.
-
-.. [1]  John Max Skaller in a `Charming Python interview`_
+It is located at http://github.com/gmilde/PyLit on `github`_, a free
+service to Open Source developers by `GitHub, Inc`.
 
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
-.. _rest2web: http://www.voidspace.org.uk/python/rest2web/
 .. _Sphinx: http://sphinx.pocoo.org/
+.. _github: http://github.com
 
+.. References
 
-.. _Python: http://www.python.org
-.. _Docutils: http://docutils.sourceforge.net/
+.. [1]  John Max Skaller in a `Charming Python interview`_
 
 .. _Charming Python interview:
     http://www.ibm.com/developerworks/library/l-pyth7.html

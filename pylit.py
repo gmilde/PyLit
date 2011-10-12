@@ -17,8 +17,8 @@
 
 """pylit: bidirectional text <-> code converter
 
-Covert between a *text source* with embedded computer code and a *code source*
-with embedded documentation.
+Convert between a *text document* with embedded code 
+and *source code* with embedded documentation.
 """
 
 # .. contents::
