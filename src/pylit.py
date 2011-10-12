@@ -112,7 +112,7 @@ with embedded documentation.
 #
 # ::
 
-_version = "0.7.8"
+_version = "0.7.9"
 
 __docformat__ = 'restructuredtext'
 
@@ -781,12 +781,13 @@ class Text2Code(TextCodeConverter):
 # The 'documentation' handler processes everything that is not recognised as
 # "code_block". Documentation is quoted with `self.comment_string`
 # (or filtered with `--strip=True`).
-
+#
 # If end-of-documentation marker is detected,
 #
 # * set state to 'code_block'
 # * set `self._textindent` (needed by `Text2Code.set_state`_ to find the
 #   next "documentation" block)
+#
 # ::
 
     def documentation_handler(self, lines):

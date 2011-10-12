@@ -48,7 +48,7 @@ master_doc = 'index'
 # General substitutions::
 
 project = 'PyLit'
-copyright = '2009, Günter Milde'
+copyright = u'2009, Günter Milde'
 
 # The default replacements for ``|version|`` and ``|release|``, also used in
 # various other places throughout the built documents.
@@ -57,7 +57,7 @@ copyright = '2009, Günter Milde'
 # The short X.Y version.
 version = '0.7'
 # The full version, including alpha/beta/rc tags.
-release = '0.7.4'
+release = '0.7.9'
 
 # There are two options for replacing ``|today|``: either, you set today to
 # some non-false value, then it is used::
@@ -72,11 +72,24 @@ today_fmt = '%B %d, %Y'
 
 #unused_docs = ["rstdocs/download/index.txt", "tutorial/*.py.txt"]
 
-# List of directories, relative to source directories, that shouldn't be
-# searched for source files::
+# A list of glob-style patterns that should be excluded when looking for
+# source files. [1] They are matched against the source file names relative
+# to the source directory, using slashes as directory separators on all
+# platforms.
 
-#exclude_dirs = []
-exclude_dirnames = [".svn"]
+exclude_patterns = ['**/.svn']
+
+# Deprecated since version 1.0: Use exclude_patterns instead.
+# exclude_dirnames = [".svn"]
+
+# The name of the default domain. Can also be None to disable a default
+# domain. The default is 'py'. Those objects in other domains (whether the
+# domain name is given explicitly, or selected by a default-domain directive)
+# require the domain name explicitly prepended when named.
+
+# primary_domain = 'py'
+primary_domain = None
+
 
 # The reST default role (used for this markup: ```text```) to use for all
 # documents::
@@ -233,7 +246,7 @@ reldelim1 = ' / '
 
 latex_documents = [
   ('index', 'PyLit.tex', 'PyLit Documentation',
-   'Günter Milde', 'manual'),
+   u'Günter Milde', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top
