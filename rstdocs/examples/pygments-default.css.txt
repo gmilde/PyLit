@@ -1,34 +1,37 @@
-Stylesheet for pygments enhanced reStructured Text
-==================================================
+Stylesheet for reStructured Text code blocks
+============================================
 
 :Author:    Guenter Milde
-:Copyright: 2007 G. Milde
+:Copyright: © 2007, 2011 G. Milde
             This stylesheet is released under the GPL v. 2 or later
 
-This stylesheet provides syntax highlight for documents generated with a
-pygments_ enhanced reStructured Text -> html converter.
+This stylesheet provides syntax highlight for documents using
+the `code` directive (new in Docutils 0.9).
 
 Import the default docutils style sheet
 ---------------------------------------
 ::
 
-  @import url("/stylesheets/html4css1.css");         
+  @import url("/stylesheets/html4css1.css");
   
-Indent the code block
+Style code block
 ---------------------
 
-Content copied from the `html4css1.css` rule for literal blocks.
-Selector adapted to the output of Pygments_. ::
+Content copied from the `html4css1.css` rule for literal blocks::
 
-  div.highlight {
+  pre.code {
     margin-left: 2em ;
     margin-right: 2em ;
     background-color: #eeeeee
     }
   
+  pre.code .ln { /* line numbers */
+  //   color: grey;
+    font-size: small;
+  }
   
-Colour code blocks
-------------------
+Syntax highlight
+----------------
 
 Pygments_ has an option to generate stylesheets for html and latex.
 The following code is generated with the command
